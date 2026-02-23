@@ -1,6 +1,7 @@
 package com.heang.springmybatistest.mapper;
 
 import com.heang.springmybatistest.dto.ProductRequest;
+import com.heang.springmybatistest.dto.ProductSearchRequest;
 import com.heang.springmybatistest.model.Product;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
@@ -17,6 +18,9 @@ public interface ProductMapper {
     void insertProduct(ProductRequest productRequest);
 
     List<Product> selectProductList();
+    List<Product> searchProducts(ProductSearchRequest request);
+    List<Product> searchProductsPaged(ProductSearchRequest request);
+    int countProducts(ProductSearchRequest request);
 
     Product selectProductById(Long id);
 
@@ -29,5 +33,4 @@ public interface ProductMapper {
 
     int countProduct();
 
-    int countProductByCategoryId(Long categoryId);
 }

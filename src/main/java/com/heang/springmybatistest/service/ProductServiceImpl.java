@@ -1,6 +1,7 @@
 package com.heang.springmybatistest.service;
 
 import com.heang.springmybatistest.dto.ProductRequest;
+import com.heang.springmybatistest.dto.ProductSearchRequest;
 import com.heang.springmybatistest.mapper.ProductMapper;
 import com.heang.springmybatistest.model.Product;
 import lombok.AllArgsConstructor;
@@ -18,9 +19,22 @@ public class ProductServiceImpl implements ProductService {
 
     private final ProductMapper productMapper;
 
+
     @Override
-    public List<Product> findAll() {
-        return productMapper.selectProductList();
+    public List<Product> search(ProductSearchRequest request) {
+        return productMapper.searchProducts(request);
+    }
+
+    @Override
+    public List<Product> searchPaged(ProductSearchRequest request) {
+        request.getOffset();
+        request.getLimit();
+        return productMapper.searchProductsPaged(request);
+    }
+
+    @Override
+    public int countSearch(ProductSearchRequest request) {
+        return productMapper.countProducts(request);
     }
 
     @Override

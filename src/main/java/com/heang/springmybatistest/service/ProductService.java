@@ -1,6 +1,7 @@
 package com.heang.springmybatistest.service;
 
 import com.heang.springmybatistest.dto.ProductRequest;
+import com.heang.springmybatistest.dto.ProductSearchRequest;
 import com.heang.springmybatistest.model.Product;
 
 import java.util.List;
@@ -11,7 +12,9 @@ import java.util.List;
  */
 public interface ProductService {
 
-    List<Product> findAll();
+    List<Product> search(ProductSearchRequest request);
+    List<Product> searchPaged(ProductSearchRequest request);
+    int countSearch(ProductSearchRequest request);
 
     Product findById(Long id);
 

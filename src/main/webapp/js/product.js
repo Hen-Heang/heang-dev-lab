@@ -6,6 +6,8 @@
 // API base URL (API 기본 URL)
 const API_BASE = '/api/products';
 const CATEGORY_API = '/api/categories';
+const PAGE_SIZE = 10;
+let currentPage = 1;
 
 // ===================================
 // Initialization (초기화)
@@ -35,7 +37,18 @@ function bindEvents() {
 
     // Search button (검색 버튼)
     $('#btnSearch').on('click', function () {
-        loadProducts();
+        loadProducts(1);
+    });
+
+    $('#searchKeyword, #searchCategory, #searchMinPrice, #searchMaxPrice, #searchSortBy, #searchSortOrder').on('keydown', function (e) {
+        if (e.key === 'Enter') {
+            e.preventDefault();
+            loadProducts(1);
+        }
+    });
+
+    $('#searchSortBy, #searchSortOrder').on('change', function () {
+        loadProducts(1);
     });
 
     // Reset button (초기화 버튼)
@@ -44,7 +57,9 @@ function bindEvents() {
         $('#searchCategory').val('');
         $('#searchMinPrice').val('');
         $('#searchMaxPrice').val('');
-        loadProducts();
+        $('#searchSortBy').val('');
+        $('#searchSortOrder').val('DESC');
+        loadProducts(1);
     });
 
     // Close modal on outside click (모달 외부 클릭 시 닫기)
@@ -65,17 +80,41 @@ function bindEvents() {
 // ===================================
 // Load Products (SELECT) - 상품 목록 조회
 // ===================================
-function loadProducts() {
+function loadProducts(page) {
+    currentPage = page || currentPage || 1;
+    const keyword = $('#searchKeyword').val().trim();
+    const categoryId = $('#searchCategory').val();
+    const minPrice = $('#searchMinPrice').val();
+    const maxPrice = $('#searchMaxPrice').val();
+    const sortBy = $('#searchSortBy').val();
+    const sortOrder = $('#searchSortOrder').val();
+
+    const params = {};
+    params.page = currentPage;
+    params.size = PAGE_SIZE;
+    if (keyword) params.keyword = keyword;
+    if (categoryId) params.categoryId = categoryId;
+    if (minPrice !== '') params.minPrice = minPrice;
+    if (maxPrice !== '') params.maxPrice = maxPrice;
+    if (sortBy) params.sortBy = sortBy;
+    if (sortOrder) params.sortOrder = sortOrder;
+
     $.ajax({
-        url: API_BASE,
+        url: `${API_BASE}/paged`,
         method: 'GET',
+        data: params,
         success: function (response) {
             console.log('Product API Response:', response);
             if (response.status && response.status.code === 200) {
-                renderProductTable(response.data);
+                const data = response.data || {};
+                const products = data.products || [];
+                renderProductTable(products);
+                renderPagination(data.page || currentPage, data.totalPages || 0, data.total || 0);
             } else if (response.data) {
-                // Fallback: if status check fails but data exists
-                renderProductTable(response.data);
+                const data = response.data || {};
+                const products = data.products || [];
+                renderProductTable(products);
+                renderPagination(data.page || currentPage, data.totalPages || 0, data.total || 0);
             } else {
                 showError(response.status ? response.status.message : 'Unknown error');
             }
@@ -83,6 +122,42 @@ function loadProducts() {
         error: function (xhr) {
             console.error('Product API Error:', xhr);
             showError('Failed to load product list (상품 목록 로드 실패)');
+        }
+    });
+}
+
+function renderPagination(page, totalPages, total) {
+    const pagination = $('#pagination');
+    pagination.empty();
+
+    if (!totalPages || totalPages < 1) {
+        totalPages = 1;
+    }
+    if (!page || page < 1) {
+        page = 1;
+    }
+    if (page > totalPages) {
+        page = totalPages;
+    }
+
+    const prevDisabled = page <= 1 ? 'disabled' : '';
+    pagination.append(`<button type="button" class="btn btn-sm btn-secondary ${prevDisabled}" data-page="${page - 1}">Prev</button>`);
+
+    const start = Math.max(1, page - 2);
+    const end = Math.min(totalPages, page + 2);
+
+    for (let i = start; i <= end; i++) {
+        const cls = i === page ? 'btn btn-sm btn-primary' : 'btn btn-sm btn-secondary';
+        pagination.append(`<button type="button" class="${cls}" data-page="${i}">${i}</button>`);
+    }
+
+    const nextDisabled = page >= totalPages ? 'disabled' : '';
+    pagination.append(`<button type="button" class="btn btn-sm btn-secondary ${nextDisabled}" data-page="${page + 1}">Next</button>`);
+
+    pagination.find('button').not('.disabled').on('click', function () {
+        const targetPage = parseInt($(this).data('page'), 10);
+        if (Number.isInteger(targetPage) && targetPage >= 1 && targetPage <= totalPages) {
+            loadProducts(targetPage);
         }
     });
 }

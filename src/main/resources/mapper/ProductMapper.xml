@@ -15,6 +15,38 @@
         <result property="categoryName" column="category_name"/>
     </resultMap>
 
+    <sql id="ProductSearchWhere">
+        <where>
+            <if test="keyword != null and keyword != ''">
+                AND LOWER(p.name) LIKE LOWER(CONCAT('%', #{keyword}, '%'))
+            </if>
+            <if test="categoryId != null">
+                AND p.category_id = #{categoryId}
+            </if>
+            <if test="minPrice != null">
+                AND p.price &gt;= #{minPrice}
+            </if>
+            <if test="maxPrice != null">
+                AND p.price &lt;= #{maxPrice}
+            </if>
+        </where>
+    </sql>
+
+    <sql id="ProductSearchOrder">
+        ORDER BY
+        <choose>
+            <when test="sortBy == 'name'">p.name</when>
+            <when test="sortBy == 'price'">p.price</when>
+            <when test="sortBy == 'stock'">p.stock</when>
+            <when test="sortBy == 'createdAt'">p.created_at</when>
+            <otherwise>p.id</otherwise>
+        </choose>
+        <choose>
+            <when test="sortOrder == 'ASC'">ASC</when>
+            <otherwise>DESC</otherwise>
+        </choose>
+    </sql>
+
     <!-- INSERT -->
     <insert id="insertProduct" parameterType="com.heang.springmybatistest.dto.ProductRequest">
         INSERT INTO product (name, price, stock, category_id)
@@ -34,6 +66,43 @@
         FROM product p
         LEFT JOIN category c ON p.category_id = c.id
         ORDER BY p.id DESC
+    </select>
+
+    <select id="searchProducts" parameterType="com.heang.springmybatistest.dto.ProductSearchRequest" resultMap="ProductMap">
+        SELECT
+            p.id,
+            p.name,
+            p.price,
+            p.stock,
+            p.category_id,
+            p.created_at,
+            c.name AS category_name
+        FROM product p
+        LEFT JOIN category c ON p.category_id = c.id
+        <include refid="ProductSearchWhere"/>
+        <include refid="ProductSearchOrder"/>
+    </select>
+
+    <select id="searchProductsPaged" parameterType="com.heang.springmybatistest.dto.ProductSearchRequest" resultMap="ProductMap">
+        SELECT
+            p.id,
+            p.name,
+            p.price,
+            p.stock,
+            p.category_id,
+            p.created_at,
+            c.name AS category_name
+        FROM product p
+        LEFT JOIN category c ON p.category_id = c.id
+        <include refid="ProductSearchWhere"/>
+        <include refid="ProductSearchOrder"/>
+        LIMIT #{limit} OFFSET #{offset}
+    </select>
+
+    <select id="countProducts" parameterType="com.heang.springmybatistest.dto.ProductSearchRequest" resultType="int">
+        SELECT COUNT(*)
+        FROM product p
+        <include refid="ProductSearchWhere"/>
     </select>
 
     <!-- SELECT BY ID -->

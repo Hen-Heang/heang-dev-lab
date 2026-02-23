@@ -64,6 +64,23 @@
                     <label for="searchMaxPrice">Max Price</label>
                     <input type="number" id="searchMaxPrice" class="form-control" placeholder="999999">
                 </div>
+                <div class="search-item">
+                    <label for="searchSortBy">Sort By</label>
+                    <select id="searchSortBy" class="form-control">
+                        <option value="">Newest</option>
+                        <option value="name">Name</option>
+                        <option value="price">Price</option>
+                        <option value="stock">Stock</option>
+                        <option value="createdAt">Created At</option>
+                    </select>
+                </div>
+                <div class="search-item">
+                    <label for="searchSortOrder">Order</label>
+                    <select id="searchSortOrder" class="form-control">
+                        <option value="DESC">DESC</option>
+                        <option value="ASC">ASC</option>
+                    </select>
+                </div>
                 <div class="search-item search-actions">
                     <button type="button" id="btnSearch" class="btn btn-primary">Search</button>
                     <button type="button" id="btnReset" class="btn btn-secondary">Reset</button>
