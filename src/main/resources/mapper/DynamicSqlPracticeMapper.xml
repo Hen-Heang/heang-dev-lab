@@ -83,7 +83,7 @@
          PRACTICE 2: <choose><when><otherwise> - Switch-like Logic
 
          Similar to Java's switch statement:
-         - Evaluates <when> conditions in order
+         - Evaluates <when> conditions.html in order
          - Uses <otherwise> as default
          Only ONE branch executes!
          ============================================================ -->
@@ -137,7 +137,7 @@
          Use <foreach> to:
          - Build IN clauses
          - Batch INSERT/UPDATE/DELETE
-         - Generate multiple conditions
+         - Generate multiple conditions.html
 
          Key attributes:
          - collection: the list/array parameter name

@@ -13,7 +13,7 @@ import java.util.List;
  * <p>
  * This mapper demonstrates all major Dynamic SQL features:
  * 1. <if> - conditional inclusion
- * 2. <choose><when><otherwise> - switch-like conditions
+ * 2. <choose><when><otherwise> - switch-like conditions.html
  * 3. <where> - smart WHERE clause handling
  * 4. <set> - smart SET clause for updates
  * 5. <foreach> - iteration over collections
@@ -52,7 +52,7 @@ public interface DynamicSqlPracticeMapper {
 
     /**
      * Find users by multiple statuses
-     * Demonstrates: <foreach> for multiple conditions
+     * Demonstrates: <foreach> for multiple conditions.html
      */
     List<Users> findUsersByStatuses(@Param("statuses") List<String> statuses);
 

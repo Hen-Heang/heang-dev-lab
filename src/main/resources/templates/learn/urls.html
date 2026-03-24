@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport"
+          content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Learn Thymeleaf</title>
+</head>
+<body>
+
+<h1>Step 4: URL 표현식 @{}</h1>
+
+<!-- 1. 기본 URL -->
+<a th:href="@{/learn/hello}">Step1으로 가기</a>
+<br>
+
+<!-- 2. Path variable (경로 변수) -->
+<a th:href="@{/users/{id}(id=${userId})}">사용자 상세 (ID: 42)</a>
+<br>
+
+<!-- 3. Query parameter (쿼리 파라미터) -->
+<a th:href="@{/learn/users(page=1, size=10)}">사용자 목록 (페이지)</a>
+<br>
+
+<!-- 4. Path variable + Query parameter 혼합 -->
+<a th:href="@{/users/{id}/posts(id=${userId}, sort='desc')}">사용자 글 목록</a>
+<br>
+
+<!-- 5. Static files (CSS, JS, images) -->
+<!-- <link th:href="@{/css/style.css}" rel="stylesheet"> -->
+<!-- <script th:src="@{/js/app.js}"></script> -->
+
+<hr>
+<h3>현재 userId 값: <span th:text="${userId}">0</span></h3>
+
+<!-- 링크 목록 -->
+<h3>네비게이션</h3>
+<ul>
+    <li><a th:href="@{/learn/hello}">Step 1 - 기본 변수</a></li>
+    <li><a th:href="@{/learn/users}">Step 2 - 반복문</a></li>
+    <li><a th:href="@{/learn/condition}">Step 3 - 조건문</a></li>
+    <li><a th:href="@{/learn/urls}">Step 4 - URL</a></li>
+</ul>
+
+</body>
+</html>

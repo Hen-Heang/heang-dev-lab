@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <title th:text="${pageTitle}">Learn Thymeleaf</title>
+</head>
+<body>
+
+<h1>Step 1: 기본 변수 출력</h1>
+
+<!-- th:text → 태그 내용을 변수값으로 교체 -->
+<p th:text="${greeting}">여기에 인사말이 나옵니다</p>
+
+<!-- 텍스트 중간에 변수 사용 -->
+<p>내 점수는 <span th:text="${score}">0</span> 점입니다.</p>
+
+<!-- 삼항 연산자 (Ternary Operator) -->
+<p th:text="${isAdmin} ? '관리자입니다' : '일반 사용자입니다'">역할</p>
+
+<!-- th:utext → HTML 태그 포함 출력 (주의: 사용자 입력값엔 사용 금지) -->
+<p th:utext="'<strong>굵은 텍스트</strong> 출력'">HTML 출력</p>
+
+<hr>
+<a th:href="@{/learn/users}">Step 2 - 반복문 →</a>
+
+</body>
+</html>

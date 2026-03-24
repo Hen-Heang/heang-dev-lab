@@ -369,10 +369,10 @@ Without WHERE, you get ALL rows. WHERE filters to get only what you need.
 -- Exact match
 SELECT * FROM users WHERE status = 'ACTIVE';
 
--- Multiple conditions with AND (both must be true)
+-- Multiple conditions.html with AND (both must be true)
 SELECT * FROM users WHERE status = 'ACTIVE' AND age >= 18;
 
--- Multiple conditions with OR (either can be true)
+-- Multiple conditions.html with OR (either can be true)
 SELECT * FROM users WHERE status = 'ACTIVE' OR status = 'PENDING';
 
 -- Combine AND and OR (use parentheses!)
@@ -1086,7 +1086,7 @@ WHERE username LIKE CONCAT('%', #{keyword}, '%')
     SELECT <include refid="userColumns"/>
     FROM users
     <where>
-        <!-- Simple conditions -->
+        <!-- Simple conditions.html -->
         <if test="username != null and username != ''">
             AND username LIKE CONCAT('%', #{username}, '%')
         </if>
@@ -2479,4 +2479,36 @@ Created for learning Korean Enterprise Web Development Stack.
 
 ---
 
-*Last Updated: 2026-03-10*
+*Last Updated: 2026-03-24*
+
+---
+
+## 📚 Thymeleaf Learning Notes
+
+> Personal learning progress — Thymeleaf from basic to advanced.
+
+### Week 1 — Basics (Completed ✅)
+
+| Step | URL | Topic |
+|---|---|---|
+| 1 | `/learn/hello` | Basic variables: `th:text`, ternary, `th:utext` |
+| 2 | `/learn/users` | Loops: `th:each`, stat (count, index, first, last) |
+| 3 | `/learn/condition` | Conditions: `th:if`, `th:unless`, `th:switch` |
+| 4 | `/learn/urls` | URL expressions: `@{}`, path variables, query params |
+
+All practice pages are in `src/main/resources/templates/learn/`
+Controller: `ThymeleafLearnController.java` (hardcoded data, no DB needed)
+
+### Week 2 — Layouts & Fragments (Up Next)
+- `th:fragment` — define reusable pieces (navbar, footer)
+- `th:replace` / `th:insert` — use fragments in pages
+- Base layout template — all pages share one layout
+
+### Week 3 — Forms & Validation
+- `th:object`, `th:field` — bind form to DTO
+- `BindingResult` + `th:errors` — show validation errors
+
+### Week 4 — Advanced
+- Spring Security integration (`sec:authorize`)
+- i18n / 다국어 처리 (`#{message.key}`)
+- Utility objects: `#strings`, `#temporals`, `#numbers`, `#lists`

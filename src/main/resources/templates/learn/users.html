@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <title>Step 2 - 반복문</title>
+</head>
+<body>
+
+<h1>Step 2: th:each 반복문</h1>
+
+<table border="1" cellpadding="8">
+    <thead>
+        <tr>
+            <th>ID</th>
+            <th>번호 (count)</th>
+            <th>이름</th>
+            <th>이메일</th>
+            <th>역할</th>
+            <th>상태</th>
+            <th>첫번째?</th>
+            <th>마지막?</th>
+        </tr>
+    </thead>
+    <tbody>
+        <!--
+            th:each="변수, 상태변수 : ${리스트}"
+            stat.count  → 1부터 시작
+            stat.index  → 0부터 시작
+            stat.first  → 첫 번째 항목이면 true
+            stat.last   → 마지막 항목이면 true
+            stat.size   → 전체 개수
+        -->
+        <tr th:each="user, stat : ${users}">
+            <td th:text="${user.id}">1</td>
+            <td th:text="${stat.count}">1</td>
+            <td th:text="${user.name}">이름</td>
+            <td th:text="${user.email}">이메일</td>
+            <td th:text="${user.role}">역할</td>
+            <td th:text="${user.status}">상태</td>
+            <td th:text="${stat.first}">false</td>
+            <td th:text="${stat.last}">false</td>
+        </tr>
+    </tbody>
+</table>
+
+<hr>
+<p>총 사용자 수: <strong th:text="${#lists.size(users)}">0</strong>명</p>
+
+<a th:href="@{/learn/hello}">← Step 1</a>
+&nbsp;&nbsp;
+<a th:href="@{/learn/condition}">Step 3 - 조건문 →</a>
+
+</body>
+</html>
