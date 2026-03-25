@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="">
+<body>
+
+<!--
+  A page can have MULTIPLE fragments defined.
+  This file has two: "footer" and "copyright"
+  You can pick which one you want when you include it.
+-->
+
+<!-- Fragment 1: full footer with links -->
+<footer th:fragment="footer"
+        style="background:#34495e; color:#ecf0f1; padding:20px 24px; margin-top:40px;">
+
+    <div style="display:flex; justify-content:space-between; align-items:center;">
+        <div>
+            <strong>Thymeleaf Practice Project</strong><br>
+            <small>Spring Boot + Thymeleaf Learning</small>
+        </div>
+        <div>
+            <!--
+              ${#temporals.format(#temporals.createNow(), 'yyyy-MM-dd')}
+                → Thymeleaf utility object #temporals
+                → Gets today's date and formats it
+                → No need to pass it from the controller!
+            -->
+            <small>Today:
+                <span th:text="${#temporals.format(#temporals.createNow(), 'yyyy-MM-dd')}">2024-01-01</span>
+            </small>
+        </div>
+    </div>
+</footer>
+
+<!-- Fragment 2: just the copyright line (simpler version) -->
+<p th:fragment="copyright"
+   style="text-align:center; color:#7f8c8d; font-size:12px; margin-top:20px;">
+    © 2024 Thymeleaf Practice. All rights reserved.
+</p>
+
+</body>
+</html>

@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="">
+<body>
+
+<!--
+  th:fragment="navbar"
+    → This names this <nav> block "navbar"
+    → Other pages can pull it in with: ~{learn/fragments/navbar :: navbar}
+
+  Think of th:fragment like a function definition:
+    "Here is a reusable block called 'navbar'"
+    Other pages call it by name.
+-->
+<nav th:fragment="navbar"
+     style="background:#2c3e50; padding:12px 24px; display:flex; gap:16px; align-items:center;">
+
+    <!--
+      @{/learn/hello}  →  absolute path URL
+      Thymeleaf adds the context path automatically.
+      Result: href="/learn/hello"
+    -->
+    <a th:href="@{/learn/hello}"
+       style="color:white; text-decoration:none; font-weight:bold;">
+        📝 Hello
+    </a>
+
+    <a th:href="@{/learn/users}"
+       style="color:white; text-decoration:none; font-weight:bold;">
+        👥 Users
+    </a>
+
+    <a th:href="@{/learn/condition}"
+       style="color:white; text-decoration:none; font-weight:bold;">
+        🔀 Conditions
+    </a>
+
+    <a th:href="@{/learn/urls}"
+       style="color:white; text-decoration:none; font-weight:bold;">
+        🔗 URLs
+    </a>
+
+    <a th:href="@{/learn/layout}"
+       style="color:#f39c12; text-decoration:none; font-weight:bold;">
+        🧩 Layout (Step 5)
+    </a>
+
+    <a th:href="@{/learn/layout-page}"
+       style="color:#f39c12; text-decoration:none; font-weight:bold;">
+        📄 Layout Page (Step 6)
+    </a>
+</nav>
+
+</body>
+</html>

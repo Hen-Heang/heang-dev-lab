@@ -108,6 +108,46 @@ public class ThymeleafLearnController {
     }
 
     // ============================================================
+    // STEP 5: Fragments concept page
+    // URL: http://localhost:8080/learn/layout
+    // ============================================================
+    @GetMapping("/layout")
+    public String layout() {
+        // No model data needed — this page just demonstrates fragment syntax.
+        // The navbar and footer are pulled in via th:replace.
+        return "learn/layout";
+    }
+
+    // ============================================================
+    // STEP 6: Real page using shared navbar + footer fragments
+    // URL: http://localhost:8080/learn/layout-page
+    // ============================================================
+    @GetMapping("/layout-page")
+    public String layoutPage(Model model) {
+        // Same user list from Step 2
+        List<Users> userList = List.of(
+                Users.builder().id(1L).name("김철수").email("kim@test.com").role("ADMIN").status("ACTIVE").build(),
+                Users.builder().id(2L).name("이영희").email("lee@test.com").role("USER").status("ACTIVE").build(),
+                Users.builder().id(3L).name("박민준").email("park@test.com").role("USER").status("INACTIVE").build(),
+                Users.builder().id(4L).name("최수아").email("choi@test.com").role("USER").status("ACTIVE").build(),
+                Users.builder().id(5L).name("홍길동").email("hong@test.com").role("USER").status("ACTIVE").build()
+        );
+
+        model.addAttribute("pageTitle", "Step 6 - Layout Page (All Concepts Combined)");
+        model.addAttribute("users", userList);
+
+        // Compute some summary stats in Java — show them as stat cards in HTML
+        long activeCount = userList.stream().filter(u -> "ACTIVE".equals(u.getStatus())).count();
+        long adminCount  = userList.stream().filter(u -> "ADMIN".equals(u.getRole())).count();
+
+        model.addAttribute("totalUsers", userList.size());
+        model.addAttribute("activeCount", activeCount);
+        model.addAttribute("adminCount", adminCount);
+
+        return "learn/layout-page";
+    }
+
+    // ============================================================
     // STEP 4: URL Expressions (@{})
     // URL: http://localhost:8080/learn/urls
     // ============================================================

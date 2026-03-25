@@ -1,0 +1,184 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Step 5 - Fragments & Layout</title>
+    <style>
+        body { font-family: Arial, sans-serif; margin: 0; background: #f5f5f5; }
+        .content { padding: 24px; max-width: 900px; margin: 0 auto; }
+        .box { background: white; border-radius: 8px; padding: 20px; margin-bottom: 24px; box-shadow: 0 1px 4px rgba(0,0,0,.1); }
+        h1 { color: #2c3e50; }
+        h2 { color: #8e44ad; margin-top: 0; }
+        .label { display: inline-block; background: #8e44ad; color: white; padding: 2px 10px; border-radius: 4px; font-size: 13px; margin-bottom: 8px; }
+        .label.green { background: #27ae60; }
+        code { background: #f8f8f8; border: 1px solid #ddd; padding: 2px 6px; border-radius: 3px; font-size: 13px; }
+        pre { background: #2c3e50; color: #ecf0f1; padding: 16px; border-radius: 6px; overflow-x: auto; font-size: 13px; line-height: 1.6; }
+        .diff { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+        .output-box { border: 2px dashed #8e44ad; padding: 12px; border-radius: 6px; background: #f9f4ff; }
+        .output-box.green { border-color: #27ae60; background: #f4fff6; }
+    </style>
+</head>
+<body>
+
+<!--
+  ==============================================================
+  th:replace="~{learn/fragments/navbar :: navbar}"
+
+  SYNTAX BREAKDOWN:
+    ~{ ... }                      → fragment expression (tells Thymeleaf "this is a fragment reference")
+    learn/fragments/navbar        → path to the file (under templates/, no .html needed)
+    ::                            → separator — means "inside that file, find..."
+    navbar                        → the fragment NAME (th:fragment="navbar")
+
+  th:replace:
+    → The ENTIRE <div> tag you write gets REPLACED by the fragment
+    → The <div> tag disappears — only the <nav> from navbar.html appears
+  ==============================================================
+-->
+<div th:replace="~{learn/fragments/navbar :: navbar}">
+    <!-- This content is NEVER shown. th:replace removes this entire div. -->
+    Placeholder — replaced by navbar
+</div>
+
+<div class="content">
+    <h1>Step 5: Fragments &amp; Layout</h1>
+    <p>Thymeleaf fragments let you write HTML once and reuse it everywhere — navbars, footers, modals, sidebars.</p>
+
+    <!-- =========================================================
+         CONCEPT 1: th:replace vs th:insert
+         ========================================================= -->
+    <div class="box">
+        <h2>🔄 th:replace vs th:insert</h2>
+        <p>These are the two ways to include a fragment. They look similar but behave differently:</p>
+
+        <div class="diff">
+            <div>
+                <span class="label">th:replace</span>
+                <pre>&lt;div th:replace="~{fragments/footer :: copyright}"&gt;
+  placeholder
+&lt;/div&gt;
+
+<!-- OUTPUT: the &lt;div&gt; is GONE -->
+&lt;p&gt;© 2024 All rights reserved.&lt;/p&gt;</pre>
+                <p><strong>th:replace</strong> = the tag you write <em>disappears</em>. Only the fragment content remains.</p>
+            </div>
+            <div>
+                <span class="label green">th:insert</span>
+                <pre>&lt;div th:insert="~{fragments/footer :: copyright}"&gt;
+  placeholder
+&lt;/div&gt;
+
+<!-- OUTPUT: the &lt;div&gt; stays as wrapper -->
+&lt;div&gt;
+  &lt;p&gt;© 2024 All rights reserved.&lt;/p&gt;
+&lt;/div&gt;</pre>
+                <p><strong>th:insert</strong> = the tag you write <em>stays</em> as a wrapper around the fragment.</p>
+            </div>
+        </div>
+    </div>
+
+    <!-- =========================================================
+         LIVE DEMO: th:replace
+         ========================================================= -->
+    <div class="box">
+        <h2>📌 Live Demo — th:replace</h2>
+        <p>The <code>&lt;p&gt;</code> tag below gets <strong>replaced</strong> by the copyright fragment.
+           Inspect the HTML source — there is no extra wrapper <code>&lt;p&gt;</code>.</p>
+
+        <div class="output-box">
+            <!--
+              th:replace on a <p> tag:
+                → This <p> is replaced by the <p th:fragment="copyright"> from footer.html
+                → Result: one clean <p> in the DOM, no double wrapping
+            -->
+            <p th:replace="~{learn/fragments/footer :: copyright}">
+                copyright placeholder
+            </p>
+        </div>
+    </div>
+
+    <!-- =========================================================
+         LIVE DEMO: th:insert
+         ========================================================= -->
+    <div class="box">
+        <h2>📌 Live Demo — th:insert</h2>
+        <p>The <code>&lt;div&gt;</code> below <strong>keeps itself</strong> and the fragment goes inside it.
+           Inspect the HTML source — there is a wrapper div around the copyright <code>&lt;p&gt;</code>.</p>
+
+        <div class="output-box green">
+            <!--
+              th:insert on a <div> tag:
+                → This <div> stays
+                → The copyright <p> goes inside it
+                → Result: <div><p>copyright text</p></div>
+            -->
+            <div th:insert="~{learn/fragments/footer :: copyright}">
+                copyright placeholder
+            </div>
+        </div>
+    </div>
+
+    <!-- =========================================================
+         CONCEPT 2: Fragment syntax — all 3 forms
+         ========================================================= -->
+    <div class="box">
+        <h2>📐 Fragment Reference Syntax — 3 Forms</h2>
+        <pre>
+<!-- Form 1: file + named fragment (most common) -->
+th:replace="~{learn/fragments/navbar :: navbar}"
+                      ↑ file path               ↑ fragment name
+
+<!-- Form 2: whole file as one fragment (no :: needed) -->
+th:replace="~{learn/fragments/navbar}"
+  → uses the entire file body as the fragment
+
+<!-- Form 3: fragment from the SAME file -->
+th:replace="~{:: myFragment}"
+  → looks for th:fragment="myFragment" in the current page
+        </pre>
+    </div>
+
+    <!-- =========================================================
+         CONCEPT 3: Fragments with parameters
+         ========================================================= -->
+    <div class="box">
+        <h2>🎯 Fragments with Parameters</h2>
+        <p>You can pass values INTO a fragment — like a function with arguments:</p>
+
+        <pre>
+<!-- In the fragment file (e.g., alerts.html): -->
+&lt;div th:fragment="alert(message, type)"
+     th:class="'alert alert-' + ${type}"&gt;
+    &lt;span th:text="${message}"&gt;&lt;/span&gt;
+&lt;/div&gt;
+
+<!-- In the page using it: -->
+&lt;div th:replace="~{alerts :: alert('Saved successfully!', 'success')}"&gt;&lt;/div&gt;
+&lt;div th:replace="~{alerts :: alert('An error occurred.', 'danger')}"&gt;&lt;/div&gt;
+
+<!-- Result: same fragment, different content each time -->
+        </pre>
+        <p>We will use this pattern in Week 3 (form validation) for error messages.</p>
+    </div>
+
+    <!-- =========================================================
+         NEXT STEP
+         ========================================================= -->
+    <div class="box" style="border-left: 4px solid #f39c12;">
+        <h2>👉 Next: Step 6 — Real Layout Page</h2>
+        <p>Now let's see how a real page uses the navbar + footer fragments together.</p>
+        <a th:href="@{/learn/layout-page}"
+           style="background:#f39c12; color:white; padding:10px 20px; border-radius:6px; text-decoration:none; display:inline-block;">
+            View Step 6 →
+        </a>
+    </div>
+</div>
+
+<!--
+  Footer included with th:replace.
+  ~{learn/fragments/footer :: footer} → the "footer" fragment (not "copyright")
+-->
+<div th:replace="~{learn/fragments/footer :: footer}">footer placeholder</div>
+
+</body>
+</html>
