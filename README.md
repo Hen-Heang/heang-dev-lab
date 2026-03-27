@@ -1655,8 +1655,8 @@ This is the modern direction Korean government projects are moving toward — bu
 # Run with Maven
 mvn spring-boot:run
 
-# Run a specific profile (dev, prod, etc.)
-java -jar <jar-file> --spring.profiles.active=<profile-name>
+# Run a specific profile.html (dev, prod, etc.)
+java -jar <jar-file> --spring.profiles.active=<profile.html-name>
 ```
 
 In IDE: Right-click project → Run As → Spring Boot App

@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <title th:text = "${pageTitle}" >Page Title</title>
+    <style>
+        body { font-family: Arial, sans-serif; max-width: 600px; margin: 40px auto; }
+        .card { border: 1px solid #ccc; border-radius: 8px; padding: 20px; }
+        label { font-weight: bold; color: #555; }
+        p { margin: 5px 0 15px 0; }
+    </style>
+</head>
+<body>
+
+        <div class="card">
+            <h1 th:text="${pageTitle}">User Profile</h1>
+
+            <!-- th:text — display data from the model -->
+            <label>Name:</label>
+            <p th:text="${user.name}">Default Name</p>
+
+            <label>Email:</label>
+            <p th:text="${user.email}">default@email.com</p>
+
+            <label>Phone:</label>
+            <p th:text="${user.phone}">000-0000-0000</p>
+
+            <label>Age : </label>
+            <p th:text="${user.age}">0</p>
+
+            <label>Status : </label>
+<!--            <p th:text="${user.active} ? 'Active' : 'Inactive'">Inactive</p>-->
+<!--            <p th:text = "${user.active} ? 'Active' : 'Inactive'">Inactive</p>-->
+            <p th:if = "${user.active}">✅ Active </p>
+            <p th:unless="${user.active}">❌ Inactive </p>
+            <label>Bio:</label>
+            <p th:text="${user.bio} ?: 'No bio yet.'">No bio yet.</p>
+
+            <!-- th:href — link with dynamic value -->
+            <a th:href="@{/learn/users/{id}/edit(id=${user.id})}">Edit Profile</a>
+
+        </div>
+
+
+</body>
+</html>

@@ -1,9 +1,11 @@
-package com.heang.springmybatistest.controller;
+package com.heang.springmybatistest.thymeleaf;
 
 import com.heang.springmybatistest.model.Users;
+import com.heang.springmybatistest.thymeleaf.domain.User;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 
 import java.util.List;
@@ -47,6 +49,8 @@ public class ThymeleafLearnController {
         model.addAttribute("isAdmin", true);                       // boolean
         model.addAttribute("currentDate", "2024-06-01");           // String (date as text)
         model.addAttribute("username", "김철수");                   // String
+        model.addAttribute("hasError", false);                     // boolean
+        model.addAttribute("userId", 7);
 
         // --------------------------------------------------------
         // return "learn/hello"
@@ -164,4 +168,32 @@ public class ThymeleafLearnController {
         // → templates/learn/urls.html
         return "learn/urls";
     }
+
+    @GetMapping("/profile")
+    public String showProfile(Model model) {
+        // --------------------------------------------------------
+        // Example of passing a complex object (User) to HTML
+        // In a real app, this would come from the database:
+        //   User user = userService.findById(123);
+        // --------------------------------------------------------
+        User user = new User();
+        user.setId(1L);
+        user.setName("히엉");
+        user.setEmail("heang@gmail");
+        user.setAge(23);
+        user.setPhone("010-1234-5678");
+        user.setBio("Spring Boot를 좋아하는 개발자입니다.");
+        user.setActive(true);
+
+        model.addAttribute("user", user);
+        model.addAttribute("pageTitle", "User Profile Information");
+        return "profile";
+    }
+
+    @GetMapping("/users/{id}/edit")
+    public String editProfile(@PathVariable Long id, Model model) {
+        model.addAttribute("userId", id);
+        return "learn/hello"; // reuse any existing template for now
+    }
+
 }

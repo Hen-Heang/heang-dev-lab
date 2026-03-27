@@ -20,6 +20,25 @@
 <!-- th:utext → HTML 태그 포함 출력 (주의: 사용자 입력값엔 사용 금지) -->
 <p th:utext="'<strong>굵은 텍스트</strong> 출력'">HTML 출력</p>
 
+<p th:class="${isAdmin} ? 'admin-box' : 'user-box'"
+   style="padding:8px;">
+    역할에 따라 CSS 클래스가 바뀝니다
+</p>
+
+<p class="box" th:classappend="${hasError} ? 'error'"
+   style="padding:8px; border:1px solid gray;">
+    기본 클래스는 유지되고 조건부 클래스가 추가됩니다
+</p>
+
+<p th:style="${isAdmin} ? 'color: red; font-weight: bold;' : 'color: gray;'">
+    관리자는 빨간색, 일반 사용자는 회색
+</p>
+<div th:id="|user-${userId}|">
+    이 div의 id는 "user-7" 이 됩니다
+</div>
+
+
+
 <hr>
 <a th:href="@{/learn/users}">Step 2 - 반복문 →</a>
 
