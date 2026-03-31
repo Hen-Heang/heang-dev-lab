@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>New Post</title>
+</head>
+<body>
+
+<h2>New Post</h2>
+
+<!-- =====================================================
+     Registration form
+     action → POST /smpBoard/registProc.do
+     method="post" → data is sent in the request body, not the URL
+====================================================== -->
+<form th:action="@{/smpBoard/registProc.do}" method="post">
+
+    <table border="1">
+        <tr>
+            <th>Title</th>
+            <td>
+                <label>
+                    <input type="text"
+                           name="boardTitle"
+                           placeholder="Enter title"/>
+                </label>
+            </td>
+        </tr>
+        <tr>
+            <th>Content</th>
+            <td>
+                <label>
+<textarea name="boardCn"
+          rows="10" cols="50"
+          placeholder="Enter content"></textarea>
+                </label>
+            </td>
+        </tr>
+    </table>
+
+    <button type="submit">Save</button>
+    <a th:href="@{/smpBoard/list.do}">
+        <button type="button">Cancel</button>
+    </a>
+
+</form>
+
+</body>
+</html>

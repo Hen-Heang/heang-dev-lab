@@ -81,7 +81,7 @@ public class BoardMvcController {
      * Save a new board post (게시글 등록 처리)
      *
      * @ModelAttribute → Spring automatically maps form fields to BoardVO
-     *   form: boardTitle=Hello&boardCn=Content&useYn=Y
+     *   form: boardTitle=Hello&boardCn=Content&user=Y
      *     ↓ auto mapping
      *   boardVO.boardTitle = "Hello"
      *   boardVO.boardCn = "Content"

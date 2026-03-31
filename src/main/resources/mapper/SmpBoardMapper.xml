@@ -1,0 +1,220 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!--  This is just a declaration that says "this file is XML format, and it uses UTF-8 encoding."
+  UTF-8 is important — without it, special characters will show as garbage symbols-->
+
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<!--  This tells the XML editor what tags are allowed in this file. It loads MyBatis's rule book (DTD = Document Type Definition). Without this line, your IDE doesn't know that <select>, <insert>, <update> are valid tags. You never
+  need to memorize this — always copy it.
+-->
+<mapper namespace="com.heang.springmybatistest.mapper.SmpBoardMapper">
+    <!-- namespace is the address that connects this XML file to its Java interface.-->
+
+    <!--
+     Think of it like a phone number. When MyBatis needs to run SmpBoardMapper.selectList(), it looks for an XML file whose namespace exactly matches com.heang.springmybatistest.mapper.SmpBoardMapper. If the address is wrong by
+      even one character — you get an error called "Invalid bound statement" which means "I can't find the SQL for this method."
+
+      Rule: namespace = full package path + class name of the Mapper interface.
+
+    -->
+    <!--
+        resultMap — maps DB columns (snake_case) to Java fields (camelCase)
+        type = full package path of the OutVO class
+    -->
+
+    <resultMap id="smpBoard" type="com.heang.springmybatistest.vo.SmpBoardOutVO">
+        <id column="board_sn" property="boardSn"/>
+        <result column="board_title" property="boardTitle"/>
+        <result column="board_cn" property="boardCn"/>
+        <result column="use_yc" property="useYn"/>
+        <result column="data_reg_id" property="dataRegId"/>
+        <result column="data_reg_dt" property="dataRegDt"/>
+        <result column="data_chg_id" property="dataChagId"/>
+        <result column="data_chg_dt" property="dataChgDt"/>
+
+    </resultMap>
+    <!--  This is a translation table between the database and Java.
+      The database uses snake_case names like board_title. Java uses camelCase like boardTitle. They don't match automatically, so you need to tell MyBatis how to translate.
+    -->
+    <!--      id= vs result=:
+      - <id> — use this for the Primary Key column only. MyBatis uses it internally to identify and cache objects correctly.
+      - <result> — use this for all other regular columns.
+
+      type= tells MyBatis which Java class to create. For every row the database returns, MyBatis creates one SmpBoardOutVO object and fills its fields according to this map.
+    -->
+    <!-- type= tells MyBatis which Java class to create. For every row the database returns, MyBatis creates one SmpBoardOutVO object and fills its fields according to this map.
+    -->
+    <!-- =====================================================
+              List query (search + pagination)
+              Mapper method: List<SmpBoardOutVO> selectList(SmpBoardInVO inVO)
+         ====================================================== -->
+
+    <select id="selectList" parameterType="com.heang.springmybatistest.vo.SmpBoardInVO" resultMap="smpBoard">
+        SELECT
+        board_sn,
+        board_title,
+        use_yn,
+        data_reg_id,
+        data_reg_dt
+        FROM co_smp_board_m
+        WHERE use_yn = 'Y'
+
+        <if test="searchKeyword != null and searchKeyword != ''">
+        AND board_title Like '%' || #{searchKeyword} || '%'
+        </if>
+
+        ORDER By board_sn DESC
+        LIMIT #{_rowcount} OFFSET #{_startrow}
+
+    </select>
+    <!--This is conditional SQL — the SQL inside <if> is only added when the condition is true.
+
+      test="searchKeyword != null and searchKeyword != ''" means:
+      - searchKeyword != null — the user actually sent a value (not anything)
+      - searchKeyword != '' — the value is not an empty string
+
+      Both conditions must be true for the search filter to be added. If the user clicks search without typing anything, this entire line is skipped and you get all records.
+
+      Why this matters:
+      User types "hello"  → SQL becomes: WHERE use_yn='Y' AND board_title LIKE '%hello%'
+      User types nothing  → SQL becomes: WHERE use_yn='Y'
+      One SQL method handles both cases. Without <if>, you would need to write two separate SQL queries.
+    -->
+    <!--  parameterType — the Java class of the object you are passing INTO this SQL. When the Java code calls selectList(inVO), the inVO object is passed here. Inside the SQL, you access its fields using #{fieldName}.
+
+      resultMap="smpBoard" — tells MyBatis to use the smpBoard resultMap (defined above) to convert the database results into SmpBoardOutVO objects.
+    -->
+    <!--      This filters out soft-deleted records. When someone "deletes" a board post, the row is NOT removed from the database — instead, use_yn is changed from 'Y' to 'N'. This is called soft delete.
+
+      So every SELECT query must include WHERE use_yn = 'Y' to only show active (non-deleted) records. Without this, deleted posts would still appear on screen.
+    -->
+    <!-- =====================================================
+         Single record detail query
+         Mapper method: SmpBoardOutVO selectDetail(SmpBoardInVO inVO)
+    ====================================================== -->
+
+    <select id="selectDetail" parameterType="com.heang.springmybatistest.vo.SmpBoardInVO" resultMap="smpBoard">
+        SELECT board_sn,
+               board_title,
+               board_cn,
+               use_yn,
+               data_reg_id,
+               data_reg_dt,
+               data_chg_id,
+               data_chg_dt
+        FROM co_smp_board_m
+        where board_sn = #{boardSn}
+          And use_yn = 'Y'
+    </select>
+
+
+    <!-- =====================================================
+             Total count query (used to calculate total pages)
+             Mapper method: int selectListTotCnt(SmpBoardInVO inVO)
+        ====================================================== -->
+    <select id="selectListToCnt" parameterType="com.heang.springmybatistest.vo.SmpBoardInVO" resultType="int">
+        SELECT COUNT(*)
+        FROM co_smp_board_m where use_yn = 'y'
+        <if test="searchKeyword != null and searchKeyword != ''">
+        AND board_title LIKE '%' || #{searchKeyword} || '%'
+        </if>
+    </select>
+    <!-- LIKE '%' || #{searchKeyword} || '%'
+
+      This performs a "contains" search — finds records where the title contains the keyword anywhere.
+
+      || is PostgreSQL's string concatenation operator (like + in JavaScript for strings).
+
+      So if searchKeyword = "hello", this becomes: LIKE '%hello%'
+
+      - % at the start = anything can come before the keyword
+      - % at the end = anything can come after the keyword
+
+      Examples:
+      "hello world"   → matches (hello is inside)
+      "say hello"     → matches (hello is at the end)
+      "goodbye"       → does NOT match
+    -->
+    <!-- =====================================================
+         Insert
+         Mapper method: void insert(SmpBoardInVO inVO)
+    ====================================================== -->
+    <insert id="insert" parameterType="com.heang.springmybatistest.vo.SmpBoardInVO">
+        INSERT INTO co_board_m (board_title,
+                                board_cn,
+                                use_yn,
+                                data_reg_id)
+        values (#{boardTitle},
+                #{boardCn},
+                'Y',
+                #{_ssuserId})
+    </insert>
+
+
+    <!-- =====================================================
+         Update
+         Mapper method: void update(SmpBoardInVO inVO)
+    ====================================================== -->
+
+    <update id="update" parameterType="com.heang.springmybatistest.vo.SmpBoardInVO">
+        UPDATE co_smp_board_m
+        set board_title = #{boardTitle},
+            board_cn    = #{boardCn},
+            data_chg_id = #{_ssuserId},
+            data_chg_dt = NOW()
+        Where board_sn = #{boardSn}
+          AND use_yn = 'Y'
+    </update>
+    <!-- #{searchKeyword}   ← SAFE ✅
+      ${searchKeyword}   ← DANGEROUS ❌
+
+      This is one of the most important things in MyBatis.
+
+      #{} — MyBatis treats the value as a parameter and passes it safely using Java's PreparedStatement. The value is never directly inserted into the SQL string. This completely prevents SQL Injection attacks.
+
+      ${} — MyBatis directly pastes the value as raw text into the SQL string. If a user types '; DROP TABLE co_smp_board_m;
+      - as a search keyword, and you used ${}, your entire table could be deleted.
+
+      Simple rule: Always use #{} for anything that comes from the user.
+
+      The only time ${} is acceptable is for column names or table names that come from your own trusted code (not user input).
+    -->
+    <!-- =====================================================
+       Soft delete (set use_yn = 'N')
+       Mapper method: void delete(SmpBoardInVO inVO)
+       NOTE: uses <update> tag — this is NOT a real DELETE!
+  ====================================================== -->
+    <update id="delete" parameterType="com.heang.springmybatistest.vo.SmpBoardInVO">
+        UPDATE co_smp_board_m
+        SET use_yn      = 'N',
+            data_chg_id = #{_ssuserId},
+            data_chg_dt = NOW()
+        Where board_sn = #{boardSn}
+    </update>
+
+</mapper>
+
+        <!--ORDER BY board_sn DESC
+
+          This sorts the results. board_sn is the auto-incrementing Primary Key — a higher number means a newer record.
+
+          - DESC = Descending = largest number first = newest posts appear at the top
+          - ASC = Ascending = smallest number first = oldest posts appear at the top
+
+          Board systems always use DESC so the latest posts show first.
+
+       LIMIT #{_rowcount} OFFSET #{_startrow}
+
+          Without pagination, if there are 10,000 board posts, the database would return all 10,000 rows at once — very slow, and impossible to display.
+
+          LIMIT #{_rowcount} — only return this many rows. _rowcount comes from CmmVO, default is 10. So only 10 rows are returned per query.
+
+          OFFSET #{_startrow} — skip this many rows from the beginning. _startrow also comes from CmmVO.
+
+          How page numbers translate to OFFSET:
+          Page 1: LIMIT 10 OFFSET 0   → rows 1–10-  Page 2: LIMIT 10 OFFSET 10  → rows 11–20-  Page 3: LIMIT 10 OFFSET 20  → rows 21–30
+
+          Formula: _startrow = (pageIndex - 1) × _rowcount
+
+          These fields (_rowcount, _startrow) are already inside CmmVO which SmpBoardInVO extends — so they are automatically available without you adding them to InVO.-->

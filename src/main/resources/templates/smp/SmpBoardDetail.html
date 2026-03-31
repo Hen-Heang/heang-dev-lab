@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Board Detail</title>
+</head>
+<body>
+
+<h2>Board Detail</h2>
+
+<!-- =====================================================
+     Display post info
+====================================================== -->
+<table border="1">
+    <tr>
+        <th>No</th>
+        <td th:text="${result.boardSn}">1</td>
+    </tr>
+    <tr>
+        <th>Title</th>
+        <td th:text="${result.boardTitle}">Title</td>
+    </tr>
+    <tr>
+        <th>Content</th>
+        <td th:text="${result.boardCn}">Content</td>
+    </tr>
+    <tr>
+        <th>Created By</th>
+        <td th:text="${result.dataRegId}">admin</td>
+    </tr>
+    <tr>
+        <th>Created Date</th>
+        <td th:text="${result.dataRegDt}">2026-01-01</td>
+    </tr>
+</table>
+
+<!-- =====================================================
+     Edit form
+     boardSn is sent as a hidden field so the server knows which post to update
+====================================================== -->
+<form th:action="@{/smpBoard/updateProc.do}" method="post">
+
+    <input type="hidden" name="boardSn" th:value="${result.boardSn}"/>
+
+    <table border="1">
+        <tr>
+            <th>Edit Title</th>
+            <td>
+                <label>
+                    <input type="text"
+                           name="boardTitle"
+                           th:value="${result.boardTitle}"/>
+                </label>
+            </td>
+        </tr>
+        <tr>
+            <th>Edit Content</th>
+            <td>
+                <label>
+<textarea name="boardCn"
+          rows="10" cols="50"
+          th:text="${result.boardCn}"></textarea>
+                </label>
+            </td>
+        </tr>
+    </table>
+
+    <button type="submit">Save</button>
+
+</form>
+
+<!-- =====================================================
+     Delete form
+     Separate form — DELETE is handled via POST (HTML only supports GET/POST)
+====================================================== -->
+<form th:action="@{/smpBoard/deleteProc.do}" method="post">
+
+    <input type="hidden" name="boardSn" th:value="${result.boardSn}"/>
+
+    <button type="submit"
+            onclick="return confirm('Are you sure you want to delete this post?')">Delete</button>
+
+</form>
+
+<!-- Back to list -->
+<a th:href="@{/smpBoard/list.do}">
+    <button type="button">Back to List</button>
+</a>
+
+</body>
+</html>
