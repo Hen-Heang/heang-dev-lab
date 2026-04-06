@@ -8,16 +8,16 @@ import java.io.Serializable;
 
 /**
  * CmmVO — Common Value Object
- *
+ * <p>
  * This is the parent class for all InVO and OutVO classes.
  * In real team projects this would extend egovframework.com.cmm.CmmVO.
  * This is a simplified version for practice without the UCM framework.
- *
+ * <p>
  * Responsibilities:
  *   1. Pagination  — _rowcount, _startrow, _endrow, rnum
  *   2. Security    — _ssuserId, _ssuserNo, _ssuserIp, _txid
  *   3. Domain info — _appCd, _menuId, _userType, _ctpvCd
- *
+ * <p>
  * Usage:
  *   public class SmpBoardInVO extends CmmVO { ... }
  *   public class SmpBoardOutVO extends CmmVO { ... }

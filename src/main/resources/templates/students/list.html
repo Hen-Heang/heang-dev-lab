@@ -1,0 +1,258 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Student Management</title>
+    <style>
+        :root {
+            --primary-color: #4a90e2;
+            --secondary-color: #f5f7fa;
+            --danger-color: #e74c3c;
+            --success-color: #2ecc71;
+            --text-color: #333;
+            --border-radius: 8px;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: var(--secondary-color);
+            color: var(--text-color);
+            margin: 0;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 1000px;
+            margin: 0 auto;
+            background: white;
+            padding: 30px;
+            border-radius: var(--border-radius);
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+        }
+
+        h1 {
+            color: var(--primary-color);
+            border-bottom: 2px solid var(--secondary-color);
+            padding-bottom: 10px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        button {
+            cursor: pointer;
+            padding: 10px 20px;
+            border: none;
+            border-radius: 4px;
+            font-weight: bold;
+            transition: opacity 0.2s;
+        }
+
+        button:hover {
+            opacity: 0.8;
+        }
+
+        .btn-add { background-color: var(--primary-color); color: white; }
+        .btn-edit { background-color: var(--success-color); color: white; margin-right: 5px; }
+        .btn-delete { background-color: var(--danger-color); color: white; }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 20px;
+        }
+
+        th, td {
+            text-align: left;
+            padding: 15px;
+            border-bottom: 1px solid #eee;
+        }
+
+        th { background-color: #fafafa; }
+
+        tr:hover { background-color: #f9f9f9; }
+
+        /* Modal Styles */
+        .modal {
+            display: none;
+            position: fixed;
+            z-index: 1;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0,0,0,0.5);
+        }
+
+        .modal-content {
+            background-color: white;
+            margin: 10% auto;
+            padding: 20px;
+            width: 400px;
+            border-radius: var(--border-radius);
+        }
+
+        .form-group {
+            margin-bottom: 15px;
+        }
+
+        label { display: block; margin-bottom: 5px; font-weight: bold; }
+        input {
+            width: 100%;
+            padding: 8px;
+            box-sizing: border-box;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+        }
+
+        .modal-footer {
+            text-align: right;
+            margin-top: 20px;
+        }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <h1>
+        Student List
+        <button class="btn-add" onclick="openModal()">+ Register Student</button>
+    </h1>
+
+    <table>
+        <thead>
+        <tr>
+            <th>ID</th>
+            <th>Name</th>
+            <th>Email</th>
+            <th>Age</th>
+            <th>Major</th>
+            <th>Actions</th>
+        </tr>
+        </thead>
+        <tbody id="studentTableBody">
+        <!-- Data will be populated by JavaScript -->
+        </tbody>
+    </table>
+</div>
+
+<!-- Register/Edit Modal -->
+<div id="studentModal" class="modal">
+    <div class="modal-content">
+        <h2 id="modalTitle">Register Student</h2>
+        <input type="hidden" id="studentId">
+        <div class="form-group">
+            <label>Name</label>
+            <input type="text" id="name">
+        </div>
+        <div class="form-group">
+            <label>Email</label>
+            <input type="email" id="email">
+        </div>
+        <div class="form-group">
+            <label>Age</label>
+            <input type="number" id="age">
+        </div>
+        <div class="form-group">
+            <label>Major</label>
+            <input type="text" id="major">
+        </div>
+        <div class="modal-footer">
+            <button onclick="closeModal()">Cancel</button>
+            <button class="btn-add" onclick="saveStudent()">Save</button>
+        </div>
+    </div>
+</div>
+
+<script>
+    const API_URL = '/api/students';
+
+    // Load students on page load
+    document.addEventListener('DOMContentLoaded', fetchStudents);
+
+    function fetchStudents() {
+        fetch(API_URL)
+            .then(res => res.json())
+            .then(data => {
+                const tbody = document.getElementById('studentTableBody');
+                tbody.innerHTML = '';
+                data.forEach(student => {
+                    tbody.innerHTML += `
+                        <tr>
+                            <td>${student.id}</td>
+                            <td>${student.name}</td>
+                            <td>${student.email}</td>
+                            <td>${student.age}</td>
+                            <td>${student.major}</td>
+                            <td>
+                                <button class="btn-edit" onclick="editStudent(${student.id})">Edit</button>
+                                <button class="btn-delete" onclick="deleteStudent(${student.id})">Delete</button>
+                            </td>
+                        </tr>
+                    `;
+                });
+            });
+    }
+
+    function openModal(id = null) {
+        document.getElementById('studentModal').style.display = 'block';
+        if (!id) {
+            document.getElementById('modalTitle').innerText = 'Register Student';
+            document.getElementById('studentId').value = '';
+            document.getElementById('name').value = '';
+            document.getElementById('email').value = '';
+            document.getElementById('age').value = '';
+            document.getElementById('major').value = '';
+        }
+    }
+
+    function closeModal() {
+        document.getElementById('studentModal').style.display = 'none';
+    }
+
+    function saveStudent() {
+        const id = document.getElementById('studentId').value;
+        const student = {
+            name: document.getElementById('name').value,
+            email: document.getElementById('email').value,
+            age: parseInt(document.getElementById('age').value),
+            major: document.getElementById('major').value
+        };
+
+        const method = id ? 'PUT' : 'POST';
+        const url = id ? `${API_URL}/${id}` : API_URL;
+
+        fetch(url, {
+            method: method,
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(student)
+        }).then(() => {
+            closeModal();
+            fetchStudents();
+        });
+    }
+
+    function editStudent(id) {
+        fetch(`${API_URL}/${id}`)
+            .then(res => res.json())
+            .then(student => {
+                document.getElementById('studentId').value = student.id;
+                document.getElementById('name').value = student.name;
+                document.getElementById('email').value = student.email;
+                document.getElementById('age').value = student.age;
+                document.getElementById('major').value = student.major;
+                document.getElementById('modalTitle').innerText = 'Edit Student';
+                document.getElementById('studentModal').style.display = 'block';
+            });
+    }
+
+    function deleteStudent(id) {
+        if (confirm('Are you sure you want to delete this student?')) {
+            fetch(`${API_URL}/${id}`, { method: 'DELETE' })
+                .then(() => fetchStudents());
+        }
+    }
+</script>
+
+</body>
+</html>

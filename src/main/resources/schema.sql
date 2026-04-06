@@ -17,6 +17,7 @@
 DROP TABLE IF EXISTS product;
 DROP TABLE IF EXISTS category;
 DROP TABLE IF EXISTS users;
+DROP TABLE IF EXISTS students;
 
 -- Drop JWT-related tables too (keep schema reset clean)
 DROP TABLE IF EXISTS tb_partner_otp;
@@ -336,3 +337,28 @@ SELECT * FROM users WHERE status = 'SUSPENDED';
 
 -- User login example (로그인 예시)
 SELECT * FROM users WHERE username = 'john doe' AND password = 'password123';
+
+-- =====================================================
+-- 8. Students table (학생 테이블)
+-- =====================================================
+CREATE TABLE students (
+    id SERIAL PRIMARY KEY,
+    name VARCHAR(100) NOT NULL,
+    email VARCHAR(100) UNIQUE NOT NULL,
+    age INTEGER,
+    major VARCHAR(100),
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);
+
+COMMENT ON TABLE students IS 'Student table (학생 테이블)';
+COMMENT ON COLUMN students.id IS 'Student ID (PK)';
+COMMENT ON COLUMN students.name IS 'Student name (이름)';
+COMMENT ON COLUMN students.email IS 'Email address (이메일)';
+COMMENT ON COLUMN students.age IS 'Age (나이)';
+COMMENT ON COLUMN students.major IS 'Major (전공)';
+COMMENT ON COLUMN students.created_at IS 'Created timestamp (생성일시)';
+
+-- Sample Students Data
+INSERT INTO students (name, email, age, major) VALUES ('Alice Smith', 'alice@example.com', 20, 'Computer Science');
+INSERT INTO students (name, email, age, major) VALUES ('Bob Johnson', 'bob@example.com', 22, 'Mathematics');
+INSERT INTO students (name, email, age, major) VALUES ('Charlie Brown', 'charlie@example.com', 21, 'Physics');

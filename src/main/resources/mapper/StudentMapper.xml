@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.heang.springmybatistest.mapper.StudentMapper">
+
+    <select id="findAll" resultType="com.heang.springmybatistest.model.Student">
+        SELECT * FROM students ORDER BY id DESC
+    </select>
+
+    <select id="findById" resultType="com.heang.springmybatistest.model.Student">
+        SELECT * FROM students WHERE id = #{id}
+    </select>
+
+    <insert id="insert" useGeneratedKeys="true" keyProperty="id">
+        INSERT INTO students (name, email, age, major)
+        VALUES (#{name}, #{email}, #{age}, #{major})
+    </insert>
+
+    <update id="update">
+        UPDATE students
+        SET name = #{name},
+            email = #{email},
+            age = #{age},
+            major = #{major}
+        WHERE id = #{id}
+    </update>
+
+    <delete id="delete">
+        DELETE FROM students WHERE id = #{id}
+    </delete>
+
+</mapper>

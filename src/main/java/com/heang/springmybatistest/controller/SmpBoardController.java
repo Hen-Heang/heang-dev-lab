@@ -10,7 +10,6 @@ import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.RequestMapping;
 import java.util.List;
 
-@RequestMapping
 @Controller
 @RequiredArgsConstructor
 public class SmpBoardController {
