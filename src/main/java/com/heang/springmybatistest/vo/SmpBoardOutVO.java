@@ -1,23 +1,27 @@
 package com.heang.springmybatistest.vo;
 
 import com.heang.springmybatistest.common.CmmVO;
+import lombok.Getter;
+import lombok.Setter;
 
 import java.io.Serial;
 
 /**
  * SmpBoardOutVO — Sample Board OUTPUT Value Object
- *
+ * <p>
  * Extends CmmVO, so it automatically inherits rnum (row number)
  * which can be displayed on screen as ${item.rnum}.
- *
+ * <p>
  * Purpose: holds data coming FROM the DB TO the view (HTML)
  *   - Mapped by the SQL resultMap in SmpBoardMapper.xml
  *   - Accessed in HTML via th:text="${item.boardTitle}"
- *
+ * <p>
  * InVO vs OutVO:
  *   InVO  = browser → server  (data the user sends)
  *   OutVO = DB      → view    (data the server displays)
  */
+@Setter
+@Getter
 public class SmpBoardOutVO extends CmmVO {
 
     @Serial
@@ -80,27 +84,4 @@ public class SmpBoardOutVO extends CmmVO {
     // Getters & Setters
     // ──────────────────────────────────────────────────
 
-    public Long getBoardSn() { return boardSn; }
-    public void setBoardSn(Long boardSn) { this.boardSn = boardSn; }
-
-    public String getBoardTitle() { return boardTitle; }
-    public void setBoardTitle(String boardTitle) { this.boardTitle = boardTitle; }
-
-    public String getBoardCn() { return boardCn; }
-    public void setBoardCn(String boardCn) { this.boardCn = boardCn; }
-
-    public String getUseYn() { return useYn; }
-    public void setUseYn(String useYn) { this.useYn = useYn; }
-
-    public String getDataRegId() { return dataRegId; }
-    public void setDataRegId(String dataRegId) { this.dataRegId = dataRegId; }
-
-    public String getDataRegDt() { return dataRegDt; }
-    public void setDataRegDt(String dataRegDt) { this.dataRegDt = dataRegDt; }
-
-    public String getDataChgId() { return dataChgId; }
-    public void setDataChgId(String dataChgId) { this.dataChgId = dataChgId; }
-
-    public String getDataChgDt() { return dataChgDt; }
-    public void setDataChgDt(String dataChgDt) { this.dataChgDt = dataChgDt; }
 }

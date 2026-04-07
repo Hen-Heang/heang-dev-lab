@@ -7,7 +7,6 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
-
 import java.util.List;
 
 // ================================================================
@@ -16,6 +15,7 @@ import java.util.List;
 //   - Different from @RestController which returns JSON.
 //   - With @Controller, the return value is a VIEW NAME (HTML file).
 // ================================================================
+
 @Controller
 
 // ================================================================
@@ -23,6 +23,7 @@ import java.util.List;
 //   - All URLs in this controller start with /learn
 //   - Example: @GetMapping("/hello") → full URL = /learn/hello
 // ================================================================
+
 @RequestMapping("/learn")
 public class ThymeleafLearnController {
 
@@ -30,6 +31,7 @@ public class ThymeleafLearnController {
     // STEP 1: Basic Variables
     // URL: http://localhost:8080/learn/hello
     // ============================================================
+
     @GetMapping("/hello")
     public String hello(Model model) {
         // --------------------------------------------------------
@@ -65,8 +67,10 @@ public class ThymeleafLearnController {
     // STEP 2: Loops (th:each)
     // URL: http://localhost:8080/learn/users
     // ============================================================
+
     @GetMapping("/users")
     public String users(Model model) {
+
         // --------------------------------------------------------
         // List.of(...) = creates a fixed list with fake data
         // In a real project, this would come from the database:
@@ -75,6 +79,7 @@ public class ThymeleafLearnController {
         // Users.builder()... = Lombok @Builder pattern
         //   Creates a Users object field by field
         // --------------------------------------------------------
+
         List<Users> userList = List.of(
                 Users.builder().id(1L).name("김철수").email("kim@test.com").role("ADMIN").status("ACTIVE").build(),
                 Users.builder().id(2L).name("이영희").email("lee@test.com").role("USER").status("ACTIVE").build(),
@@ -126,6 +131,7 @@ public class ThymeleafLearnController {
     // STEP 6: Real page using shared navbar + footer fragments
     // URL: http://localhost:8080/learn/layout-page
     // ============================================================
+
     @GetMapping("/layout-page")
     public String layoutPage(Model model) {
         // Same user list from Step 2

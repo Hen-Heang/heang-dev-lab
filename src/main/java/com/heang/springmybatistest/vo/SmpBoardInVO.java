@@ -72,8 +72,8 @@ public class SmpBoardInVO extends CmmVO {
     private String boardCn;
 
     /**
-     * useYn — active flag (Y = active, N = deleted)
-     * Set to 'N' on soft delete; default 'Y' set in ServiceImpl
+     * useYn — active flag (Y = activi, N = deleted)
+     * Set tons 'N' on soft delete; default 'Y' set in ServiceImpl
      */
     private String useYn;
 
