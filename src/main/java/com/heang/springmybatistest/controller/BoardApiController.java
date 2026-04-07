@@ -27,6 +27,7 @@ public class BoardApiController {
 
     // GET /api/board → returns all boards as JSON
     // Used by dashboard to show board count
+    
     @GetMapping
     public ApiResponse<List<BoardVO>> findAll() {
         return ApiResponse.success(boardService.findAll());

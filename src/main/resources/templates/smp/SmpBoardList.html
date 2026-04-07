@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Board List</title>
+</head>
+<body>
+
+<h2>Board List</h2>
+
+<form th:action="@{/smpBoard/list.do}" method="get">
+    <label>
+        <select name="searchCondition">
+            <option value="1"
+                    th:selected="${searchVO.searchCondition == '1'}">Title
+            </option>
+            <option value="2"
+                    th:selected="${searchVO.searchCondition == '2'}">Content
+            </option>
+        </select>
+
+    <input
+    name="searchKeyword"
+    th:value="${searchVO.searchKeyword}"
+    placeholder="Enter search keyword"
+    />
+        <button type="submit">Search</button>
+
+    </label>
+</form>
+
+<!-- Total count -->
+<p>Total: <span th:text="${totCnt}">0</span> records</p>
+
+<!-- =====================================================
+     List table
+====================================================== -->
+
+<table border="1">
+    <thead>
+    <tr>
+        <th>No</th>
+        <th>Title</th>
+        <th>Created By</th>
+        <th>Created Date</th>
+    </tr>
+    </thead>
+    <tbody>
+    <!-- Show this row when resultList is empty -->
+    <tr th:if="${#lists.isEmpty(resultList)}">
+        <td colspan="4">No posts found.</td>
+    </tr>
+
+    <!-- Loop through resultList to generate rows -->
+    <tr th:each="item : ${resultList}">
+        <td th:text="${item.boardSn}">1</td>
+        <td>
+            <a th:href="@{/smpBoard/detail.do(boardSn=${item.boardSn})}"
+               th:text="${item.boardTitle}">Title</a>
+        </td>
+        <td th:text="${item.dataRegId}">admin</td>
+        <td th:text="${item.dataRegDt}">2026-01-01</td>
+    </tr>
+    </tbody>
+</table>
+
+<!-- New post button -->
+<a th:href="@{/smpBoard/regist.do}">
+    <button type="button">New Post</button>
+</a>
+
+</body>
+</html>

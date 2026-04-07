@@ -1,5 +1,6 @@
 package com.heang.springmybatistest.exception;
 
+import org.springframework.dao.DuplicateKeyException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.HttpStatusCode;
 import org.springframework.http.ProblemDetail;
@@ -42,6 +43,13 @@ public class GlobalExceptionHandler {
     ProblemDetail handleNotMatchException(NotModifiedException notModifiedException){
         ProblemDetail problemDetail = ProblemDetail.forStatusAndDetail(HttpStatusCode.valueOf(304), notModifiedException.getMessage());
         problemDetail.setType(URI.create("localhost:8080/error/not-modified"));
+        return problemDetail;
+    }
+
+    @ExceptionHandler(DuplicateKeyException.class)
+    ProblemDetail handleDuplicateKeyException(DuplicateKeyException ex) {
+        ProblemDetail problemDetail = ProblemDetail.forStatusAndDetail(HttpStatusCode.valueOf(409), "Duplicate value violates unique constraint.");
+        problemDetail.setType(URI.create("localhost:8080/error/conflict"));
         return problemDetail;
     }
 
