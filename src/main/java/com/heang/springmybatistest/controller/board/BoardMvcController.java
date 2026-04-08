@@ -1,4 +1,4 @@
-package com.heang.springmybatistest.controller;
+package com.heang.springmybatistest.controller.board;
 
 import com.heang.springmybatistest.service.BoardService;
 import com.heang.springmybatistest.vo.BoardVO;

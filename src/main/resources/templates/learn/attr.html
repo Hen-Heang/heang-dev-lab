@@ -1,0 +1,222 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="ko">
+<head>
+
+    <title>Ste 1.B - th:attr</title>
+    <style>
+        body {
+            font-family: sans-serif;
+            max-width: 650px;
+            margin: 40px auto;
+            padding: 0 20px;
+        }
+
+        .card {
+            background: #f8f9fa;
+            border-left: 4px solid #4A90D9;
+            padding: 16px;
+            margin: 20px 0;
+            border-radius: 4px;
+        }
+
+        .note {
+            font-size: 13px;
+            color: #555;
+            margin-top: 8px;
+        }
+
+        .syntax {
+            background: #272822;
+            color: #f8f8f2;
+            padding: 10px 14px;
+            border-radius: 4px;
+            font-family: monospace;
+            font-size: 13px;
+            margin: 8px 0;
+        }
+
+        img {
+            border: 1px solid #ddd;
+            border-radius: 4px;
+        }
+
+        button {
+            padding: 8px 16px;
+            cursor: pointer;
+        }
+    </style>
+</head>
+<body>
+
+<h1>Step 1.B — th:attr</h1>
+<!-- ============================================================
+   th:attr — set a SINGLE custom attribute
+   EN: Use th:attr="attributeName=${variable}" to set any attribute.
+       Here we set data-id — a custom attribute used to pass data to JavaScript.
+       data-* attributes are not standard HTML — they are YOUR custom attributes.
+   KO: th:attr="속성명=${변수}"로 어떤 속성이든 설정할 수 있습니다.
+       여기서는 data-id를 설정합니다 — JavaScript에 데이터를 전달할 때 쓰는 커스텀
+ 속성입니다.
+       data-* 속성은 표준 HTML이 아닌 — 개발자가 직접 정의하는 커스텀 속성입니다.
+ ============================================================ -->
+<div class="card">
+    <h3>Custom data attribute</h3>
+</div>
+<!--
+      <button>
+      EN: A clickable button. Does nothing by itself — needs JavaScript or a form to act.
+          th:attr="data-id=${productId}" → sets data-id="42" on the button.
+          Right-click → Inspect Element → you can see data-id="42" in the HTML.
+      KO: 클릭 가능한 버튼입니다. 단독으로는 아무것도 하지 않습니다 — JS나 form이
+필요합니다.
+          th:attr="data-id=${productId}" → 버튼에 data-id="42"를 설정합니다.
+          우클릭 → 요소 검사 → HTML에서 data-id="42"를 확인할 수 있습니다.
+    -->
+
+<button th:attr="data-id = ${productId}">삭제 (Delete)</button>
+
+<div class="note">
+    EN: Inspect this button in browser DevTools (F12 → Elements tab) to see
+    <code>data-id="42"</code>.<br>
+    KO: 브라우저 개발자도구(F12 → Elements 탭)에서 이 버튼을 확인하면
+    <code>data-id="42"</code>가 보입니다.
+</div>
+
+
+<!-- ============================================================
+  th:attr — set the "title" attribute (tooltip)
+  EN: title="..." makes a tooltip appear when you hover your mouse over the element.
+      th:attr="title=${tooltipText}" sets this tooltip dynamically from Java.
+  KO: title="..."은 마우스를 올렸을 때 툴팁을 보여줍니다.
+      th:attr="title=${tooltipText}"로 Java에서 동적으로 툴팁 내용을 설정합니다.
+============================================================ -->
+
+<div class="card">
+    <h3>2. title 속성 (Tooltip)</h3>
+    <div class="syntax">
+        &lt;a th:href="@{/product/{id}(id=${productId})}"
+        th:attr="title=${tooltipText}"&gt;
+        상품 보기
+        &lt;/a&gt;
+    </div>
+
+    <!--
+      Hover your mouse over this link to see the tooltip
+      마우스를 이 링크 위에 올리면 툴팁이 보입니다
+    -->
+    <a th:href="@{/product/{id}(id=${productId})}" th:attr="title=${tooltipText}">
+        상품 보기 (hover me!)
+    </a>
+
+    <div class="note">
+        EN: Hover your mouse over the link to see the tooltip text from Java.<br>
+        KO: 링크 위에 마우스를 올리면 Java에서 보낸 툴팁 텍스트가 보입니다.
+    </div>
+</div>
+
+
+<!-- ============================================================
+  th:attr — set MULTIPLE attributes at once
+  EN: You can set multiple attributes in one th:attr by separating with comma.
+      th:attr="src=${imageUrl}, alt=${productName}"
+      → sets BOTH src and alt in one line.
+  KO: th:attr 하나로 여러 속성을 동시에 설정할 수 있습니다. 쉼표로 구분합니다.
+      th:attr="src=${imageUrl}, alt=${productName}"
+      → src와 alt를 한 줄에 동시에 설정합니다.
+
+  NOTE: For src and alt, Thymeleaf has dedicated shortcuts:
+    th:src="${imageUrl}"  (same as th:attr="src=...")
+    th:alt="${productName}"
+  Use the shortcuts when available — th:attr is for when no shortcut exists.
+
+  참고: src, alt는 Thymeleaf 전용 단축어가 있습니다:
+    th:src="${imageUrl}"  (th:attr="src=..."와 동일)
+    th:alt="${productName}"
+  단축어가 있으면 단축어를 쓰고 — 없을 때만 th:attr를 사용합니다.
+============================================================ -->
+
+
+<div class="card">
+    <h3>3. 여러 속성 한번에 (Multiple attributes at once)</h3>
+    <div class="syntax">
+        &lt;img th:attr="src=${imageUrl}, alt=${productName}" /&gt;
+    </div>
+
+    <!--
+      <img>
+      EN: Displays an image. Two important attributes:
+            src="..."  → the URL of the image file
+            alt="..."  → text shown if the image fails to load (also for accessibility)
+          th:attr sets both src and alt dynamically from Java.
+      KO: 이미지를 표시합니다. 중요한 두 속성:
+            src="..."  → 이미지 파일의 URL
+            alt="..."  → 이미지 로딩 실패 시 표시할 텍스트 (접근성에도 중요)
+          th:attr로 Java에서 src와 alt를 동시에 동적으로 설정합니다.
+    -->
+    <img th:attr="src=${imageUrl}, alt=${productName}" alt=""/>
+
+    <div class="note">
+        EN: Both <code>src</code> and <code>alt</code> are set by one
+        <code>th:attr</code>.<br>
+        KO: <code>src</code>와 <code>alt</code> 두 속성이 <code>th:attr</code> 하나로
+        설정됩니다.
+    </div>
+</div>
+
+<!-- ============================================================
+   SHORTCUT reminder
+   EN: Thymeleaf has shortcuts for the most common attributes.
+       Use these instead of th:attr when available:
+         th:src      → sets src
+         th:href     → sets href
+         th:value    → sets value
+         th:action   → sets form action
+         th:name     → sets input name
+         th:id       → sets id
+       Only use th:attr when NO shortcut exists (e.g. data-*, title, custom attrs).
+   KO: 자주 쓰는 속성은 Thymeleaf 단축어가 있습니다.
+       가능하면 단축어를 사용하세요:
+         th:src      → src 설정
+         th:href     → href 설정
+         th:value    → value 설정
+         th:action   → form action 설정
+         th:name     → input name 설정
+         th:id       → id 설정
+       단축어가 없을 때만 th:attr를 사용합니다 (예: data-*, title, 커스텀 속성).
+ ============================================================ -->
+<div class="card">
+    <h3>정리 — th:attr vs 단축어 (Summary)</h3>
+    <table border="1" cellpadding="8" style="border-collapse: collapse; width: 100%;">
+        <!--
+          <table> = creates a table (rows and columns)
+          <tr>    = table row (가로 한 줄)
+          <th>    = table header cell (헤더 셀, bold)
+          <td>    = table data cell (일반 데이터 셀)
+        -->
+        <tr>
+            <th>Use shortcut / 단축어 사용</th>
+            <th>Use th:attr / th:attr 사용</th>
+        </tr>
+        <tr>
+            <td><code>th:src="${url}"</code></td>
+            <td><code>th:attr="data-id=${id}"</code></td>
+        </tr>
+        <tr>
+            <td><code>th:href="@{/path}"</code></td>
+            <td><code>th:attr="title=${tooltip}"</code></td>
+        </tr>
+        <tr>
+            <td><code>th:value="${val}"</code></td>
+            <td><code>th:attr="data-role=${role}"</code></td>
+        </tr>
+    </table>
+</div>
+
+<hr>
+<a href="/learn/inputs">← Step 1.A (inputs)</a>
+&nbsp;&nbsp;
+<a href="/learn/hello">Step 1 (hello) →</a>
+
+
+</body>
+</html>

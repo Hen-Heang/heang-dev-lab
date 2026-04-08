@@ -1,0 +1,290 @@
+<!DOCTYPE html>
+
+<!--
+  DOCTYPE html
+  EN: Always the first line. Tells the browser this is a modern HTML5 page.
+  KO: 항상 첫 줄에 써야 합니다. 브라우저에게 이것이 HTML5 페이지임을 알려줍니다.
+-->
+
+<!--
+  <html xmlns:th="http://www.thymeleaf.org">
+  EN: The root element that wraps everything on the page.
+      xmlns:th="..." → activates Thymeleaf so you can use th:* attributes.
+      Without this, th:value / th:text / etc. won't work.
+  KO: 페이지의 모든 내용을 감싸는 최상위 태그입니다.
+      xmlns:th="..." → Thymeleaf를 활성화합니다. 이게 없으면 th:* 속성이 작동하지 않습니다.
+-->
+
+<html xmlns:th="http://www.thymeleaf.org" lang="ko">
+
+<!--
+  <head>
+  EN: Contains page settings that are NOT visible on the page.
+      Things like: title, CSS styles, character encoding.
+  KO: 페이지에서 보이지 않는 설정들을 담는 태그입니다.
+      예: 제목, CSS 스타일, 문자 인코딩 등.
+-->
+
+<head>
+
+    <!--
+      <meta charset="UTF-8">
+      EN: Tells the browser to use UTF-8 encoding.
+          Required for Korean characters (한글) to display correctly.
+          Without this, Korean text will look broken (garbled).
+      KO: 브라우저에게 UTF-8 인코딩을 사용하라고 지시합니다.
+          한글이 깨지지 않으려면 반드시 필요합니다.
+    -->
+    <meta charset="UTF-8">
+
+    <!--
+      <title>
+      EN: Sets the text shown on the browser tab.
+          Not visible on the page itself — only on the browser tab.
+      KO: 브라우저 탭에 표시되는 텍스트를 설정합니다.
+          페이지 본문에는 보이지 않고 탭에만 표시됩니다.
+    -->
+    <title>Step 1.A - Input Attributes</title>
+
+    <!--
+      <style>
+      EN: Where you write CSS rules to control how elements look.
+          CSS written here applies only to this HTML file.
+      KO: CSS 규칙을 작성하는 곳입니다. 요소들의 모양을 제어합니다.
+          여기에 작성한 CSS는 이 HTML 파일에만 적용됩니다.
+    -->
+    <style>
+        /* body = the entire visible page area */
+        body {
+            font-family: sans-serif;   /* clean modern font */
+            max-width: 600px;          /* limit width so it doesn't stretch too wide */
+            margin: 40px auto;         /* center the page horizontally, 40px top space */
+            padding: 0 20px;
+        }
+
+        /* applies to ALL <input> tags on this page */
+        input {
+            display: block;            /* each input goes on its own line */
+            margin: 8px 0 20px;        /* spacing: 8px top, 0 sides, 20px bottom */
+            padding: 8px;              /* inner spacing inside the input box */
+            width: 100%;               /* stretch to full width of container */
+            box-sizing: border-box;    /* include padding in the width calculation */
+        }
+
+        /* .card = custom class for the blue-left-border boxes */
+        .card {
+            background: #f8f9fa;
+            border-left: 4px solid #4A90D9;
+            padding: 16px;
+            margin: 20px 0;
+            border-radius: 4px;
+        }
+
+        /* .note = small gray explanation text */
+        .note {
+            font-size: 13px;
+            color: #555;
+            margin-top: 6px;
+        }
+    </style>
+
+</head>
+
+<!--
+  <body>
+  EN: Everything inside <body> is VISIBLE on the page.
+      This is where all your actual content goes.
+  KO: <body> 안의 모든 내용은 페이지에 보입니다.
+      실제 콘텐츠는 모두 여기에 작성합니다.
+-->
+<body>
+
+<!--
+  <h1>
+  EN: The biggest heading on the page. Use only once per page.
+      h1 = most important title
+      h2 = section title
+      h3 = sub-section title
+  KO: 페이지에서 가장 큰 제목입니다. 페이지당 한 번만 사용합니다.
+      h1 = 가장 중요한 제목
+      h2 = 섹션 제목
+      h3 = 하위 섹션 제목
+-->
+<h1>Step 1.A — Input Attributes</h1>
+
+<!-- ============================================================
+  SECTION 1: th:value
+  EN: th:value sets the VALUE inside an input field.
+      Used when you want to pre-fill a form with existing data.
+      Example: editing a user profile — the name is already filled in.
+  KO: th:value는 input 필드 안의 값을 설정합니다.
+      기존 데이터를 폼에 미리 채워 넣을 때 사용합니다.
+      예시: 사용자 프로필 수정 시 — 이름이 이미 채워져 있음.
+============================================================ -->
+
+<!--
+  <div class="card">
+  EN: <div> is a generic container — just a box with no visual meaning.
+      class="card" applies the CSS style we defined above (.card).
+      We use <div> to GROUP related elements together.
+  KO: <div>는 의미 없는 범용 컨테이너입니다 — 그냥 박스입니다.
+      class="card"는 위에서 정의한 CSS 스타일(.card)을 적용합니다.
+      관련 요소들을 묶을 때 사용합니다.
+-->
+<div class="card">
+
+    <!--
+      <h3>
+      EN: Sub-section title. Smaller than h1 and h2.
+      KO: 하위 섹션 제목. h1, h2보다 작습니다.
+    -->
+    <h3>1. th:value — 입력값 미리 채우기 (Pre-fill Input)</h3>
+
+    <!--
+      <p>
+      EN: Paragraph tag. Used for regular text content.
+          Adds a line break before and after automatically.
+      KO: 단락 태그. 일반 텍스트 내용에 사용합니다.
+          앞뒤로 자동으로 줄바꿈이 생깁니다.
+    -->
+    <p>Syntax: <code>&lt;input type="text" th:value="${username}" /&gt;</code></p>
+
+    <!--
+      <label>
+      EN: A label for an input. When you click the label text,
+          the connected input gets focused.
+          Wrap <input> inside <label> to connect them automatically.
+      KO: input의 설명 텍스트입니다. 라벨 텍스트를 클릭하면
+          연결된 input이 포커스됩니다.
+          <label> 안에 <input>을 넣으면 자동으로 연결됩니다.
+    -->
+    <label>
+        이름 (Name):
+
+        <!--
+          <input type="text" th:value="${username}">
+          EN: type="text" → a single-line text input box
+              th:value="${username}" → Thymeleaf fills the value from Java Model
+              In plain HTML: <input value="heang"> (static)
+              With Thymeleaf: <input th:value="${username}"> (dynamic from Java)
+          KO: type="text" → 한 줄 텍스트 입력창
+              th:value="${username}" → Thymeleaf가 Java Model의 값으로 채워줍니다.
+              일반 HTML: <input value="heang"> (고정값)
+              Thymeleaf: <input th:value="${username}"> (Java에서 동적으로 값이 옴)
+        -->
+        <input type="text" th:value="${username}" />
+    </label>
+
+    <div class="note">
+        EN: The input shows "heang" because the controller did: <code>model.addAttribute("username", "heang")</code><br>
+        KO: 컨트롤러에서 <code>model.addAttribute("username", "heang")</code>을 했기 때문에 "heang"이 표시됩니다.
+    </div>
+</div>
+
+<!-- ============================================================
+  SECTION 2: th:placeholder
+  EN: th:placeholder sets the HINT TEXT shown inside an empty input.
+      The hint disappears as soon as the user starts typing.
+      Normal HTML: placeholder="Enter name"  (static text)
+      Thymeleaf:   th:placeholder="${hint}"  (dynamic from Java)
+  KO: th:placeholder는 빈 input 안에 보이는 힌트 텍스트를 설정합니다.
+      사용자가 입력을 시작하면 힌트가 사라집니다.
+      일반 HTML: placeholder="이름 입력"   (고정 텍스트)
+      Thymeleaf: th:placeholder="${hint}"  (Java에서 동적으로 옴)
+============================================================ -->
+<div class="card">
+    <h3>2. th:placeholder — 힌트 텍스트 (Hint Text)</h3>
+    <p>Syntax: <code>&lt;input type="text" th:placeholder="${hint}" /&gt;</code></p>
+
+    <label>
+        이름 (Name):
+
+        <!--
+          th:placeholder="${hint}"
+          EN: No value is pre-filled. Only the hint text is shown.
+              The hint comes from Java: model.addAttribute("hint", "이름을 입력하세요")
+          KO: 값은 비어있고 힌트 텍스트만 보입니다.
+              힌트는 Java에서 옵니다: model.addAttribute("hint", "이름을 입력하세요")
+        -->
+        <input type="text" th:placeholder="${hint}" />
+    </label>
+
+    <div class="note">
+        EN: Click inside the input — the hint text disappears. That is placeholder behavior.<br>
+        KO: input 안을 클릭하면 힌트 텍스트가 사라집니다. 이것이 placeholder 동작입니다.
+    </div>
+</div>
+
+<!-- ============================================================
+  SECTION 3: th:disabled
+  EN: th:disabled disables the input when the condition is true.
+      A DISABLED input:
+        - appears grayed out
+        - cannot be clicked
+        - cannot be typed in
+        - its value is NOT sent when the form is submitted
+      Use case: show data but don't allow editing (read-only view).
+  KO: th:disabled는 조건이 true일 때 input을 비활성화합니다.
+      비활성화된 input은:
+        - 회색으로 표시됩니다
+        - 클릭할 수 없습니다
+        - 입력할 수 없습니다
+        - 폼 제출 시 값이 전송되지 않습니다
+      사용 예: 데이터를 보여주되 수정은 허용하지 않을 때.
+============================================================ -->
+<div class="card">
+    <h3>3. th:disabled — 비활성화 (Disable Input)</h3>
+    <p>Syntax: <code>&lt;input type="email" th:value="${email}" th:disabled="${isReadOnly}" /&gt;</code></p>
+
+    <label>
+        이메일 (Email):
+
+        <!--
+          type="email"
+          EN: type="email" → a text input that validates email format.
+              The browser will warn the user if the format is wrong (e.g. missing @).
+              Other common types: "text", "password", "number", "date"
+          KO: type="email" → 이메일 형식을 검사하는 텍스트 입력창입니다.
+              형식이 틀리면 (예: @ 없음) 브라우저가 경고를 표시합니다.
+              다른 자주 쓰는 type: "text", "password", "number", "date"
+
+          th:disabled="${isReadOnly}"
+          EN: If isReadOnly = true  → adds disabled attribute → input is grayed out
+              If isReadOnly = false → no disabled attribute → input is normal
+              Try changing isReadOnly to false in the controller, then restart.
+          KO: isReadOnly = true  → disabled 속성 추가 → input 비활성화 (회색)
+              isReadOnly = false → disabled 속성 없음 → input 정상 작동
+              컨트롤러에서 isReadOnly를 false로 바꾼 후 재시작해보세요.
+        -->
+        <input type="email" th:value="${email}" th:disabled="${isReadOnly}" />
+    </label>
+
+    <div class="note">
+        EN: <code>isReadOnly = true</code> → grayed out, cannot type.<br>
+        Change to <code>false</code> in controller → restart → input becomes editable.<br>
+        KO: <code>isReadOnly = true</code> → 회색, 입력 불가.<br>
+        컨트롤러에서 <code>false</code>로 바꾸고 재시작하면 입력 가능해집니다.
+    </div>
+</div>
+
+<!--
+  <hr>
+  EN: Horizontal Rule — draws a horizontal divider line across the page.
+      No closing tag needed. Just a visual separator.
+  KO: 수평선을 그립니다. 닫는 태그가 필요 없습니다. 시각적 구분선입니다.
+-->
+<hr>
+
+<!--
+  <a href="...">
+  EN: Anchor tag — creates a clickable link.
+      href="..." → the URL to go to when clicked.
+  KO: 링크를 만드는 태그입니다.
+      href="..." → 클릭했을 때 이동할 URL.
+-->
+<a href="/learn/hello">← Step 1 (hello)</a>
+&nbsp;&nbsp;
+<a href="/learn/users">Step 2 (users) →</a>
+
+</body>
+</html>

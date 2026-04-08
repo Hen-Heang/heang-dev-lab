@@ -7,6 +7,7 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
+
 import java.util.List;
 
 // ================================================================
@@ -26,6 +27,16 @@ import java.util.List;
 
 @RequestMapping("/learn")
 public class ThymeleafLearnController {
+
+    // ============================================================
+    // PRACTICE INDEX — Dashboard of all lesson pages
+    // URL: http://localhost:8080/learn
+    // ============================================================
+
+    @GetMapping("")
+    public String index() {
+        return "learn/index";
+    }
 
     // ============================================================
     // STEP 1: Basic Variables
@@ -148,7 +159,7 @@ public class ThymeleafLearnController {
 
         // Compute some summary stats in Java — show them as stat cards in HTML
         long activeCount = userList.stream().filter(u -> "ACTIVE".equals(u.getStatus())).count();
-        long adminCount  = userList.stream().filter(u -> "ADMIN".equals(u.getRole())).count();
+        long adminCount = userList.stream().filter(u -> "ADMIN".equals(u.getRole())).count();
 
         model.addAttribute("totalUsers", userList.size());
         model.addAttribute("activeCount", activeCount);
@@ -200,6 +211,31 @@ public class ThymeleafLearnController {
     public String editProfile(@PathVariable Long id, Model model) {
         model.addAttribute("userId", id);
         return "learn/hello"; // reuse any existing template for now
+    }
+
+
+    @GetMapping("/inputs")
+    public String inputs(Model model) {
+
+        model.addAttribute("username", "Heang");
+        model.addAttribute("email", "heang@gmail.com");
+        model.addAttribute("isReadOnly", true);
+        model.addAttribute("hint", "이금을 입력하세요.");
+
+
+        return "learn/inputs";
+    }
+
+
+    @GetMapping("/attr")
+    public String attr(Model model) {
+
+        model.addAttribute("productId", 42);
+        model.addAttribute("productName", "무선 마우스");
+        model.addAttribute("imageUrl", "https://placehold.co/200x150");
+        model.addAttribute("tooltipText", "클릭하면 상품 상세페이지로 이동합니다");
+
+        return "learn/attr";
     }
 
 }

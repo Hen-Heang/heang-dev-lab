@@ -4,23 +4,98 @@
     <meta charset="UTF-8">
     <title th:text="${pageTitle}">Learn Thymeleaf</title>
     <style>
-        body { font-family: sans-serif; max-width: 800px; margin: 40px auto; padding: 0 20px; }
-        .card { background: #f8f9fa; border-left: 4px solid #4A90D9; padding: 16px; margin: 20px 0; border-radius: 4px; }
-        .label { font-size: 12px; color: #888; text-transform: uppercase; letter-spacing: 1px; margin-bottom: 4px; }
-        .syntax { background: #272822; color: #f8f8f2; padding: 10px 14px; border-radius: 4px; font-family: monospace; font-size: 14px; margin: 8px 0; }
-        .result { background: #e8f5e9; padding: 10px 14px; border-radius: 4px; margin: 4px 0; }
-        .note { font-size: 13px; color: #555; margin-top: 6px; }
-        .admin-box { background: #fff3cd; border: 2px solid #f0ad4e; padding: 8px; border-radius: 4px; }
-        .user-box  { background: #d1ecf1; border: 2px solid #17a2b8; padding: 8px; border-radius: 4px; }
-        .box       { padding: 8px; border: 1px solid gray; border-radius: 4px; }
-        .error     { border-color: red !important; background: #fff0f0; }
-        h2 { color: #333; border-bottom: 2px solid #4A90D9; padding-bottom: 6px; margin-top: 40px; }
-        nav { margin-bottom: 30px; }
-        nav a { margin-right: 16px; color: #4A90D9; text-decoration: none; }
+        body {
+            font-family: sans-serif;
+            max-width: 800px;
+            margin: 40px auto;
+            padding: 0 20px;
+        }
+
+        .card {
+            background: #f8f9fa;
+            border-left: 4px solid #4A90D9;
+            padding: 16px;
+            margin: 20px 0;
+            border-radius: 4px;
+        }
+
+        .label {
+            font-size: 12px;
+            color: #888;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            margin-bottom: 4px;
+        }
+
+        .syntax {
+            background: #272822;
+            color: #f8f8f2;
+            padding: 10px 14px;
+            border-radius: 4px;
+            font-family: monospace;
+            font-size: 14px;
+            margin: 8px 0;
+        }
+
+        .result {
+            background: #e8f5e9;
+            padding: 10px 14px;
+            border-radius: 4px;
+            margin: 4px 0;
+        }
+
+        .note {
+            font-size: 13px;
+            color: #555;
+            margin-top: 6px;
+        }
+
+        .admin-box {
+            background: #fff3cd;
+            border: 2px solid #f0ad4e;
+            padding: 8px;
+            border-radius: 4px;
+        }
+
+        .user-box {
+            background: #d1ecf1;
+            border: 2px solid #17a2b8;
+            padding: 8px;
+            border-radius: 4px;
+        }
+
+        .box {
+            padding: 8px;
+            border: 1px solid gray;
+            border-radius: 4px;
+        }
+
+        .error {
+            border-color: red !important;
+            background: #fff0f0;
+        }
+
+        h2 {
+            color: #333;
+            border-bottom: 2px solid #4A90D9;
+            padding-bottom: 6px;
+            margin-top: 40px;
+        }
+
+        nav {
+            margin-bottom: 30px;
+        }
+
+        nav a {
+            margin-right: 16px;
+            color: #4A90D9;
+            text-decoration: none;
+        }
     </style>
 </head>
 <body>
 
+<!--This is link to other functions-->
 <nav>
     <a th:href="@{/learn/hello}">Step 1</a>
     <a th:href="@{/learn/users}">Step 2</a>
@@ -48,7 +123,8 @@
         <p th:text="${greeting}">여기에 인사말이 나옵니다</p>
     </div>
     <div class="note">
-        EN: <code>${greeting}</code> reads the value Java put in Model with <code>model.addAttribute("greeting", "...")</code><br>
+        EN: <code>${greeting}</code> reads the value Java put in Model with <code>model.addAttribute("greeting",
+        "...")</code><br>
         KO: <code>${greeting}</code>는 Java 컨트롤러에서 <code>model.addAttribute("greeting", "...")</code>로 넣은 값을 읽습니다.
     </div>
 </div>
@@ -58,6 +134,7 @@
   EN: Use <span th:text> inside a sentence to inject a variable mid-sentence.
   KO: 문장 중간에 변수를 넣으려면 <span th:text>를 사용합니다.
 ============================================================ -->
+
 <h2>2. 문장 중간에 변수 삽입 (Inline Variable in Sentence)</h2>
 <div class="card">
     <div class="label">Syntax / 문법</div>
@@ -100,6 +177,7 @@
   KO: th:text와 같지만 HTML 태그를 그대로 렌더링합니다.
       주의: 사용자 입력값에는 절대 사용 금지 — XSS 보안 위험.
 ============================================================ -->
+
 <h2>4. th:utext — HTML 태그 포함 출력</h2>
 <div class="card">
     <div class="label">Syntax / 문법</div>
@@ -108,8 +186,10 @@
     <div class="result">
         <p th:utext="'<strong>굵은 텍스트</strong> 출력'">HTML 출력</p>
     </div>
+
     <div class="note">
-        EN: <code>th:text</code> would display the raw HTML string (escaped). <code>th:utext</code> renders it as real HTML.<br>
+        EN: <code>th:text</code> would display the raw HTML string (escaped). <code>th:utext</code> renders it as real
+        HTML.<br>
         KO: <code>th:text</code>는 HTML을 문자열로 보여주지만, <code>th:utext</code>는 실제 HTML로 렌더링합니다.
     </div>
 </div>
@@ -120,6 +200,7 @@
       The entire class value is replaced.
   KO: 조건에 따라 class 속성 전체를 교체합니다.
 ============================================================ -->
+
 <h2>5. th:class — 조건부 CSS 클래스</h2>
 <div class="card">
     <div class="label">Syntax / 문법</div>
@@ -131,13 +212,14 @@
         </p>
     </div>
     <div class="note">
-        EN: If <code>isAdmin=true</code> → class becomes <code>admin-box</code> (yellow). If false → <code>user-box</code> (blue).<br>
+        EN: If <code>isAdmin=true</code> → class becomes <code>admin-box</code> (yellow). If false →
+        <code>user-box</code> (blue).<br>
         KO: <code>isAdmin=true</code>면 class가 <code>admin-box</code>(노란색), false면 <code>user-box</code>(파란색)가 됩니다.
     </div>
 </div>
 
 <!-- ============================================================
-  th:classappend — Add class without removing existing ones
+  th:class append — Add class without removing existing ones
   EN: Adds an extra class on top of the existing class attribute.
       The base class stays — only the extra class is conditional.
   KO: 기존 class는 그대로 유지하고, 조건부 class만 추가합니다.
@@ -153,7 +235,8 @@
         </p>
     </div>
     <div class="note">
-        EN: <code>class="box"</code> always stays. If <code>hasError=true</code>, it becomes <code>class="box error"</code>.<br>
+        EN: <code>class="box"</code> always stays. If <code>hasError=true</code>, it becomes <code>class="box
+        error"</code>.<br>
         KO: <code>class="box"</code>는 항상 유지됩니다. <code>hasError=true</code>면 <code>class="box error"</code>가 됩니다.
     </div>
 </div>
@@ -166,7 +249,9 @@
 <h2>7. th:style — 동적 인라인 스타일</h2>
 <div class="card">
     <div class="label">Syntax / 문법</div>
-    <div class="syntax">&lt;p th:style="${isAdmin} ? 'color: red; font-weight: bold;' : 'color: gray;'"&gt;...&lt;/p&gt;</div>
+    <div class="syntax">&lt;p th:style="${isAdmin} ? 'color: red; font-weight: bold;' : 'color:
+        gray;'"&gt;...&lt;/p&gt;
+    </div>
     <div class="label">Result / 결과</div>
     <div class="result">
         <p th:style="${isAdmin} ? 'color: red; font-weight: bold;' : 'color: gray;'">
@@ -174,7 +259,8 @@
         </p>
     </div>
     <div class="note">
-        EN: Prefer <code>th:class</code> + CSS over <code>th:style</code> in real projects. <code>th:style</code> is for quick demos.<br>
+        EN: Prefer <code>th:class</code> + CSS over <code>th:style</code> in real projects. <code>th:style</code> is for
+        quick demos.<br>
         KO: 실제 프로젝트에서는 <code>th:class</code> + CSS를 권장합니다. <code>th:style</code>은 간단한 테스트용입니다.
     </div>
 </div>
@@ -197,7 +283,8 @@
         </div>
     </div>
     <div class="note">
-        EN: <code>|user-${userId}|</code> → produces <code>user-7</code>. Same as <code>'user-' + ${userId}</code> but cleaner.<br>
+        EN: <code>|user-${userId}|</code> → produces <code>user-7</code>. Same as <code>'user-' + ${userId}</code> but
+        cleaner.<br>
         KO: <code>|user-${userId}|</code> → <code>user-7</code>이 됩니다. <code>'user-' + ${userId}</code>와 같지만 더 깔끔합니다.
     </div>
 </div>

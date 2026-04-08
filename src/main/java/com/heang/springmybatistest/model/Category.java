@@ -16,6 +16,7 @@ import java.time.LocalDateTime;
  * - name: Category name, required (카테고리명, 필수)
  * - created_at: Created timestamp, auto (생성일시, 자동)
  */
+
 @Data
 @Builder
 @NoArgsConstructor

@@ -1,0 +1,168 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="en">
+<head>
+    <meta>
+    charset="UTF-8">
+    <title>Thymeleaf Practices Index </title>
+
+    <style>
+        body {
+            font-family: sans-serif;
+            max-width: 800px;
+            margin: 40px auto;
+            padding: 0 20px;
+            background: #f5f5f5;
+        }
+
+        h1 {
+            color: #333;
+            border-bottom: 3px solid #4CAF50;
+            padding-bottom: 10px;
+        }
+
+        h2 {
+            color: #555;
+            margin-top: 30px;
+            font-size: 1rem;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .cards {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+            gap: 16px;
+        }
+
+        .card {
+            background: white;
+            border-radius: 8px;
+            padding: 16px;
+            box-shadow: 0 2px 6px rgba(0, 0, 0, .1);
+        }
+
+        .card a {
+            text-decoration: none;
+            color: #2196F3;
+            font-weight: bold;
+            font-size: 1rem;
+        }
+
+        .card a:hover {
+            text-decoration: underline;
+        }
+
+        .card p {
+            margin: 6px 0 0;
+            color: #777;
+            font-size: 0.85rem;
+        }
+
+        .badge {
+            display: inline-block;
+            background: #e8f5e9;
+            color: #388e3c;
+            border-radius: 4px;
+            padding: 2px 8px;
+            font-size: 0.75rem;
+            margin-bottom: 8px;
+        }
+
+        .badge.wip {
+            background: #fff3e0;
+            color: #e65100;
+        }
+    </style>
+</head>
+<body>
+
+<h1>Thymeleaf Practice Index</h1>
+<p>모든 연습 페이지 목록입니다. 각 링크를 클릭해서 복습하세요.</p>
+
+<h2>Level 1 </h2>
+<div class="cards">
+
+    <div class="card">
+        <span class="badge">Step 1</span>
+        <a th:href="@{/learn/hello}">Hello / Basic Variables</a>
+        <p>th:text, th:utext, th:class, th:style, ternary, literal substitution</p>
+    </div>
+
+
+    <div class="card">
+        <span class="badge">Step 2</span>
+        <a th:href="@{/learn/users}">Loops</a>
+        <p>th:each, stat (index, count, first, last, size)</p>
+    </div>
+
+    <div class="card">
+        <span class="badge">Step 3</span>
+        <a th:href="@{/learn/conditions}">Conditions</a>
+        <p>th:if, th:unless, th:switch, th:case</p>
+    </div>
+
+    <div class="card">
+        <span class="badge">Step 4</span>
+        <a th:href="@{/learn/urls}">URLs</a>
+        <p>th:href, th:src, @{} syntax</p>
+    </div>
+
+    <div class="card">
+        <span class="badge">Step 5</span>
+        <a th:href="@{/learn/layout}">URL Expressions</a>
+        <p>@{}, path variables, query params</p>
+    </div>
+
+    <div class="card">
+        <span class="badge"> Step 6</span>
+        <a th:href="@{/learn/layout-page}">Shared Layout Page</a>
+        <p>Real Page Navbar + footer fragments combined</p>
+    </div>
+
+    <div class="card">
+        <span class="badge">Step 7</span>
+        <a th:href="@{/learn/profile}">Profile - Object Access</a>
+        <p>Object fields, ?: Elvis, th:if active budge, dynamic link </p>
+    </div>
+
+    <div class="card">
+        <span class="badge">Step 8 </span>
+        <a href="@{/learn/inputs">Inputs </a>
+        <p>th:value, th:placeholder, th:readonly, th:attr</p>
+    </div>
+
+    <h2>Level 2 - 오브젝트 (Objects) — 진행 중</h2>
+    <div class="cards">
+        <div class="card">
+            <span class="badge wip">Next </span>
+            <a th:href="@{learn/employee}">Nested Objects</a>
+            <p>employ.department.name, safe navigation ?., Elvis ?: </p>
+        </div>
+
+        <div class="card">
+            <span class="badge wip">예정</span>
+            <span style="color: #aaa ; font-weight: bold">Maps</span>
+            <p>Map&lt;String, Object &gt; -> th:each on entries </p>
+        </div>
+
+        <div class="card">
+            <span class="badge wip">예정</span>
+            <span style="color:#aaa; font-weight:bold">Utility Objects</span>
+            <p>#strings, #numbers, #dates utility methods</p>
+        </div>
+
+    </div>
+
+    <h2>Level 3 — 폼 & 유효성 검사 (Forms)</h2>
+    <div class="cards">
+        <div class="card">
+            <span class="badge wip">예정</span>
+            <span style="color:#aaa; font-weight:bold">Form & Validation</span>
+            <p>th:object, th:field, @Valid, Binding Result, th:errors</p>
+        </div>
+
+    </div>
+</div>
+
+</body>
+</html>

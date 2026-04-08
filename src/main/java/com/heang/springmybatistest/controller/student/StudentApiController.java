@@ -1,4 +1,4 @@
-package com.heang.springmybatistest.controller;
+package com.heang.springmybatistest.controller.student;
 
 import com.heang.springmybatistest.model.Student;
 import com.heang.springmybatistest.service.StudentService;

@@ -1,5 +1,6 @@
 package com.heang.springmybatistest.controller;
 
+import com.heang.springmybatistest.controller.board.BoardMvcController;
 import com.heang.springmybatistest.exception.NotFoundException;
 import com.heang.springmybatistest.service.BoardService;
 import com.heang.springmybatistest.vo.BoardVO;
