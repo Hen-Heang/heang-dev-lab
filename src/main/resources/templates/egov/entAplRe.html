@@ -1,0 +1,205 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="ko">
+
+<head>
+    <th:block th:replace="~{layout/default :: head}"></th:block>
+    <title>신청 접수내역</title>
+</head>
+
+<body class="sub-page">
+
+<header th:replace="~{layout/default :: header}"></header>
+
+<div class="container">
+    <div th:replace="~{layout/default :: lnb}"></div>
+
+    <div class="content-wrap">
+        <div class="content-header">
+            <div class="title-wrap">
+                <div class="title">신청 접수내역</div>
+                <div class="location">
+                    <i class="icon-home"></i>
+                    <span>홈</span>
+                    <span>기업/근로자관리</span>
+                    <span>신청 기업 관리</span>
+                    <span>신청 접수내역</span>
+                </div>
+            </div>
+        </div>
+        <div class="content-body">
+            <div class="search-form-wrap">
+                <form>
+                    <div class="search-form-inner">
+                        <div class="search-form">
+                            <div class="row">
+                                <div class="col-12">
+                                    <label class="form-label" for="지자체"><span>지자체</span></label>
+                                    <div class="form-container">
+                                        <select class="form-select select2" id="지자체" name="시도" data-placeholder="시/도 선택" disabled>
+                                            <option value=""></option>
+                                            <option value="경기도" selected>경기도</option>
+                                        </select>
+                                        <select class="form-select select2" id="시군" name="시군" data-placeholder="시/군 선택">
+                                            <option value=""></option>
+                                            <option value="옵션1">옵션1</option>
+                                            <option value="옵션2">옵션2</option>
+                                            <option value="옵션3">옵션3</option>
+                                        </select>
+                                        <select class="form-select select2" id="구" name="구" data-placeholder="구 선택">
+                                            <option value=""></option>
+                                            <option value="옵션1">옵션1</option>
+                                            <option value="옵션2">옵션2</option>
+                                            <option value="옵션3">옵션3</option>
+                                        </select>
+                                        <select class="form-select select2" id="기업명" name="entNm" data-placeholder="기업명 선택">
+                                            <option value=""></option>
+                                            <option value="옵션1">옵션1</option>
+                                            <option value="옵션2">옵션2</option>
+                                            <option value="옵션3">옵션3</option>
+                                        </select>
+                                    </div>
+                                </div><!-- .col -->
+                            </div><!-- .row -->
+                            <div class="row">
+                                <div class="col-12">
+                                    <label class="form-label" for="기간S"><span>조회기간</span></label>
+                                    <div class="form-container">
+                                        <div class="input-wrap input_datepicker_wrap">
+                                            <input class="from" type="text" id="기간S" name="fromDt" value="" maxlength="10" placeholder="YYYY.MM.DD" />
+                                        </div>
+                                        <div class="input-wrap input_datepicker_wrap">
+                                            <input class="to" type="text" id="기간E" name="toDt" value="" maxlength="10" placeholder="YYYY.MM.DD" />
+                                        </div>
+                                        <div class="form-check">
+                                            <input class="form-check-input" type="checkbox" id="전체기간" name="allPeriodYn" value="Y" />
+                                            <label class="form-check-label" for="전체기간">전체기간</label>
+                                        </div>
+                                    </div><!-- .form-container -->
+                                </div><!-- .col -->
+                            </div><!-- .row -->
+                            <div class="row">
+                                <div class="col-6">
+                                    <label class="form-label" for="신청상태"><span>신청상태</span></label>
+                                    <div class="form-container">
+                                        <select class="form-select select2" id="신청상태" name="aplStcd" data-placeholder="전체 선택">
+                                            <option value=""></option>
+                                            <option value="01" selected>신청</option>
+                                            <option value="02">접수</option>
+                                            <option value="03">반려</option>
+                                        </select>
+                                    </div><!-- .form-container -->
+                                </div><!-- .col -->
+                                <div class="col-6">
+                                    <label class="form-label" for="신청자명"><span>신청자명</span></label>
+                                    <div class="form-container">
+                                        <div class="input-wrap">
+                                            <input type="text" id="신청자명" name="aplNm" value="" placeholder="" />
+                                        </div>
+                                    </div><!-- .form-container -->
+                                </div><!-- .col -->
+                            </div><!-- .row -->
+                        </div><!-- .search-form -->
+                        <div class="button-wrap">
+                            <button type="button" class="btn btn-primary">
+                                <i class="icon-search"></i>
+                                <span>검색</span>
+                            </button>
+                        </div>
+                    </div><!-- .search-form-inner -->
+                </form>
+            </div><!-- .search_form_wrap -->
+
+            <div class="section-header">
+                <div class="title-wrap">
+                    <div class="title">검색결과<span class="small text-primary">(99건)</span></div>
+                </div>
+                <div class="button-wrap">
+                    <button type="button" class="btn btn-line">
+                        <i class="icon-filedown"></i>
+                        <span>엑셀다운</span>
+                    </button>
+                </div>
+            </div><!-- .section-header -->
+
+            <div class="section-body">
+                <ul class="tab-menu">
+                    <li class="on"><button type="button" class="btn btn-tab">Tab메뉴-1</button></li>
+                    <li><button type="button" class="btn btn-tab">Tab메뉴-2</button></li>
+                    <li><button type="button" class="btn btn-tab">Tab메뉴-3</button></li>
+                    <li><button type="button" class="btn btn-tab">Tab메뉴-4</button></li>
+                    <li><button type="button" class="btn btn-tab">Tab메뉴-5</button></li>
+                </ul>
+                <div class="tab-content">
+                    <div class="tab-section on">
+                        <div class="grid-area">
+                            <div id="ib-container" style="text-align: center; font-size: 20px;"></div>
+                        </div>
+                    </div>
+                    <div class="tab-section">
+                        <div class="grid-area">
+                            <div id="ib-container2" style="text-align: center; font-size: 20px;"></div>
+                        </div>
+                    </div>
+                </div>
+            </div><!-- .section-body -->
+
+            <div class="section-foot">
+                <div class="pagination-wrap">
+                    <ul class="pagination">
+                        <li class="first"><button class="btn"><i class="icon-arrow-first"></i></button></li>
+                        <li class="prev"><button class="btn"><i class="icon-arrow-prev"></i></button></li>
+                        <li class="page"><span>1</span></li>
+                        <li class="page"><span>2</span></li>
+                        <li class="page"><span>3</span></li>
+                        <li class="page"><span>4</span></li>
+                        <li class="page active"><span>5</span></li>
+                        <li class="page"><span>6</span></li>
+                        <li class="next"><button class="btn disabled"><i class="icon-arrow-next"></i></button></li>
+                        <li class="last"><button class="btn disabled"><i class="icon-arrow-last"></i></button></li>
+                    </ul>
+                </div>
+            </div><!-- .section-foot -->
+        </div>
+    </div><!-- .content-wrap -->
+</div><!-- .container -->
+
+<script th:inline="javascript">
+    $(document).ready(function() {
+        fn_pageLoad();
+    });
+
+    function fn_pageLoad() {
+        $('.select2').select2();
+
+        var DTL = {
+            "Def": { "Col": {"CanEdit": 0}, "Header": {"Align": "Center"} },
+            Cfg: { InfoRowConfig: 1 },
+            HeaderMode: { "Sort": 0, "ColMove": 0, "ColResize": 0, "HeaderCheck": 0 },
+            LeftCols: [
+                {Header: "선택",    Type: "Radio",  Name: "sCheck",  Align: "Center", CanEdit: "1", HRadio: 0},
+                {Header: "순번",    Name: "rownum", Align: "Center", Width: "80"},
+                {Header: "가맹점번호", Name: "frcsNo", Align: "Center", Width: "100"},
+                {Header: "가맹점",  Name: "frcsNm", Align: "Left",   Width: "160"}
+            ],
+            Cols: [
+                {Header: "구분코드", Name: "frcsDvcd",  Type: "Text", Align: "center", Visible: 0},
+                {Header: "구분",    Name: "frcsDvnm",  Type: "Text", Align: "Left",   MinWidth: 130},
+                {Header: "지자체",  Name: "admdstNm",  Type: "Text", Align: "Left",   MinWidth: 100},
+                {Header: "상태",    Name: "frcsStcd",  Type: "Text", Align: "center", MinWidth: 80},
+                {Header: "주소",    Name: "bplcDaddr", Type: "Text", Align: "Left",   MinWidth: 160},
+                {Header: "사업자번호", Name: "brno",   Type: "Text", Align: "center", MinWidth: 120},
+                {Header: "전화번호", Name: "frcsTelno", Type: "Text", Align: "center", MinWidth: 120}
+            ],
+            "Events": { OnClick: function(evtParam) {} }
+        };
+
+        // IBSheet8 객체 생성 (IBSheet CDN 로드 후 동작)
+        if (typeof IBSheet !== 'undefined') {
+            IBSheet.create({ id: "dtlSheet", el: "ib-container", options: DTL });
+            dtlSheet.setTheme("LC", /*[[@{/css/ibsheet_custom.css}]]*/ '', 1);
+        }
+    }
+</script>
+
+</body>
+</html>

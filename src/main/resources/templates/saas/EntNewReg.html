@@ -1,0 +1,1028 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+    <!-- <link rel="icon" type="image/x-icon" href="../../../favicon.ico"> -->
+    <title>대상 기업 신규등록</title>
+
+    <!--v Packages -->
+    <script src="../../../js/jquery.min.js"></script>
+
+    <link href="../../../css/jquery-ui.min.css" rel="stylesheet" />
+    <script src="../../../js/jquery-ui.min.js"></script>
+
+    <link href="../../../css/select2.min.css" rel="stylesheet" />
+    <script src="../../../js/select2.min.js"></script>
+
+    <!-- IB Sheet -->
+    <script src="https://www.ibsheet.com/ibleaders.js"></script>
+    <script src="https://www.ibsheet.com/demo/js/lib/sheet/ibsheetinfo.js"></script>
+    <script src="https://www.ibsheet.com/demo/js/lib/sheet/ibsheet.js"></script>
+    <script src="https://www.ibsheet.com/demo/js/lib/sheet/ibsheet-global.js"></script>
+    <!--^ Packages -->
+
+    <link href="../../../css/all_pub.css" rel="stylesheet" />
+    <script src="../../../js/pubUtil.js"></script>
+</head>
+
+<body class="sub-page">
+<header>
+    <div class="inner">
+        <h1 class="logo">
+            <a href="#">
+                <img src="../../../img/logo.svg" alt="직장인 든든한 점심밥 지원사업" />
+            </a>
+        </h1>
+        <div class="my-menu">
+            <div class="info">
+                <div class="name">관리자</div>
+            </div>
+            <div class="log">
+                <span>최종 로그인</span>
+                <span class="time">2022.08.29 14:14</span>
+            </div>
+            <div class="button-wrap">
+                <button type="button" class="btn">
+                    <i class="icon-setting"></i>
+                </button>
+                <button type="button" class="btn">
+                    <i class="icon-logout"></i>
+                </button>
+            </div>
+        </div>
+    </div>
+    <div id="gnb">
+        <ul class="gnb-list">
+            <li>
+                <a href="#">
+                    <span>홈</span>
+                </a>
+            </li>
+            <li>
+                <a href="#">기업/근로자관리</a>
+                <div class="gnb-sub-menu">
+                    <ul class="menu-list">
+                        <li>
+                            <span>신청 기업 관리</span>
+                            <ul class="sub-menu">
+                                <li>
+                                    <a href="#">
+                                        <span>신청 접수내역</span>
+                                    </a>
+                                </li>
+                                <li>
+                                    <a href="#">
+                                        <span>대상 기업 신규등록</span>
+                                    </a>
+                                </li>
+                                <li>
+                                    <a href="#">
+                                        <span>참여 기업 종합관리</span>
+                                    </a>
+                                </li>
+                            </ul>
+                        </li>
+                        <li>
+                            <span>참여 근로자 관리</span>
+                            <ul class="sub-menu">
+                                <li>
+                                    <a href="#">
+                                        <span>근로자 신청내역</span>
+                                    </a>
+                                </li>
+                                <li>
+                                    <a href="#">
+                                        <span>근로자 자격관리</span>
+                                    </a>
+                                </li>
+                                <li>
+                                    <a href="#">
+                                        <span>근로자 종합관리</span>
+                                    </a>
+                                </li>
+                            </ul>
+                        </li>
+                    </ul>
+                </div>
+            </li>
+            <li>
+                <a href="#">거래/예산/정산현황</a>
+                <div class="gnb-sub-menu">
+                    <ul class="menu-list">
+                        <li>
+                            <span>거래내역</span>
+                            <ul class="sub-menu">
+                                <li>
+                                    <a href="#">
+                                        <span>거래요약조회</span>
+                                    </a>
+                                </li>
+                                <li>
+                                    <a href="#">
+                                        <span>충전/소멸/사용 현황</span>
+                                    </a>
+                                </li>
+                            </ul>
+                        </li>
+                        <li>
+                            <span>예산관리</span>
+                            <ul class="sub-menu">
+                                <li>
+                                    <a href="#">
+                                        <span>예산관리</span>
+                                    </a>
+                                </li>
+                                <li>
+                                    <a href="#">
+                                        <span>예산운영현황</span>
+                                    </a>
+                                </li>
+                            </ul>
+                        </li>
+                        <li>
+                            <span>정산관리</span>
+                            <ul class="sub-menu">
+                                <li>
+                                    <a href="#">
+                                        <span>정산조회</span>
+                                    </a>
+                                </li>
+                                <li>
+                                    <a href="#">
+                                        <span>결제사 미정산내역</span>
+                                    </a>
+                                </li>
+                            </ul>
+                        </li>
+                    </ul><!-- .menu-list -->
+                </div>
+            </li>
+            <li>
+                <a href="#">통계/분석</a>
+                <div class="gnb-sub-menu">
+                    <ul class="menu-list">
+                        <li class="on">
+                            <span>이용현황분석</span>
+                            <ul class="sub-menu">
+                                <li class="on">
+                                    <a href="#">
+                                        <span>기업별 이용현황</span>
+                                    </a>
+                                </li>
+                                <li>
+                                    <a href="#">
+                                        <span>지자체별 이용현황</span>
+                                    </a>
+                                </li>
+                            </ul>
+                        </li>
+                        <li>
+                            <span>통계현황</span>
+                            <ul class="sub-menu">
+                                <li>
+                                    <a href="#">
+                                        <span>결제사별 이용금액</span>
+                                    </a>
+                                </li>
+                                <li>
+                                    <a href="#">
+                                        <span>지원금액통계</span>
+                                    </a>
+                                </li>
+                                <li>
+                                    <a href="#">
+                                        <span>추진실적통계</span>
+                                    </a>
+                                </li>
+                            </ul>
+                        </li>
+                    </ul>
+                </div>
+            </li>
+            <li>
+                <a href="#">플랫폼 관리</a>
+                <div class="gnb-sub-menu">
+                    <ul class="menu-list">
+                        <li>
+                            <span>배너관리</span>
+                            <ul class="sub-menu">
+                                <li>
+                                    <a href="#">
+                                        <span>배너관리</span>
+                                    </a>
+                                </li>
+                            </ul>
+                        </li>
+                        <li>
+                            <span>팝업관리</span>
+                            <ul class="sub-menu">
+                                <li>
+                                    <a href="#">
+                                        <span>팝업관리</span>
+                                    </a>
+                                </li>
+                            </ul>
+                        </li>
+                        <li>
+                            <span>사용자 게시판관리</span>
+                            <ul class="sub-menu">
+                                <li>
+                                    <a href="#">
+                                        <span>공지게시판 관리</span>
+                                    </a>
+                                </li>
+                                <li>
+                                    <a href="#">
+                                        <span>1:1 문의게시판 관리</span>
+                                    </a>
+                                </li>
+                                <li>
+                                    <a href="#">
+                                        <span>교육자료실 관리</span>
+                                    </a>
+                                </li>
+                                <li>
+                                    <a href="#">
+                                        <span>시스템 오류 접수</span>
+                                    </a>
+                                </li>
+                            </ul>
+                        </li>
+                        <li>
+                            <span>상담정보관리</span>
+                            <ul class="sub-menu">
+                                <li>
+                                    <a href="#">
+                                        <span>상담정보관리</span>
+                                    </a>
+                                </li>
+                            </ul>
+                        </li>
+                        <li>
+                            <span>메뉴관리</span>
+                            <ul class="sub-menu">
+                                <li>
+                                    <a href="#">
+                                        <span>메뉴관리</span>
+                                    </a>
+                                </li>
+                            </ul>
+                        </li>
+                    </ul>
+                </div>
+            </li>
+            <li>
+                <a href="#">환경설정</a>
+                <div class="gnb-sub-menu">
+                    <ul class="menu-list">
+                        <li>
+                            <span>공지관리</span>
+                            <ul class="sub-menu">
+                                <li>
+                                    <a href="#">
+                                        <span>관리자 공지관리</span>
+                                    </a>
+                                </li>
+                            </ul>
+                        </li>
+                        <li>
+                            <span>계정관리</span>
+                            <ul class="sub-menu">
+                                <li>
+                                    <a href="#">
+                                        <span>관리자 승인</span>
+                                    </a>
+                                </li>
+                                <li>
+                                    <a href="#">
+                                        <span>관리자 계정 관리</span>
+                                    </a>
+                                </li>
+                                <li>
+                                    <a href="#">
+                                        <span>관리자 권한 관리</span>
+                                    </a>
+                                </li>
+                                <li>
+                                    <a href="#">
+                                        <span>지자체 관리</span>
+                                    </a>
+                                </li>
+                                <li>
+                                    <a href="#">
+                                        <span>IP승인</span>
+                                    </a>
+                                </li>
+                            </ul>
+                        </li>
+                        <li>
+                            <span>시스템 관리</span>
+                            <ul class="sub-menu">
+                                <li>
+                                    <a href="#">
+                                        <span>대량등록 양식관리</span>
+                                    </a>
+                                </li>
+                                <li>
+                                    <a href="#">
+                                        <span>메뉴이용현황관리</span>
+                                    </a>
+                                </li>
+                                <li>
+                                    <a href="#">
+                                        <span>변경이력관리</span>
+                                    </a>
+                                </li>
+                                <li>
+                                    <a href="#">
+                                        <span>개인정보접근 이력조회</span>
+                                    </a>
+                                </li>
+                            </ul>
+                        </li>
+                        <li>
+                            <span>알림서비스 관리</span>
+                            <ul class="sub-menu">
+                                <li>
+                                    <a href="#">
+                                        <span>알림서비스 전송관리</span>
+                                    </a>
+                                </li>
+                                <li>
+                                    <a href="#">
+                                        <span>알림 발송이력 조회</span>
+                                    </a>
+                                </li>
+                                <li>
+                                    <a href="#">
+                                        <span>알림 템플릿 관리</span>
+                                    </a>
+                                </li>
+                            </ul>
+                        </li>
+                        <li>
+                            <span>지원정책</span>
+                            <ul class="sub-menu">
+                                <li>
+                                    <a href="#">
+                                        <span>바우처 정책 관리</span>
+                                    </a>
+                                </li>
+                            </ul>
+                        </li>
+                        <li>
+                            <span>데이터 관리</span>
+                            <ul class="sub-menu">
+                                <li>
+                                    <a href="#">
+                                        <span>공공데이터관리</span>
+                                    </a>
+                                </li>
+                                <li>
+                                    <a href="#">
+                                        <span>메타데이터관리</span>
+                                    </a>
+                                </li>
+                                <li>
+                                    <a href="#">
+                                        <span>연계전문관리</span>
+                                    </a>
+                                </li>
+                                <li>
+                                    <a href="#">
+                                        <span>연계데이터관리</span>
+                                    </a>
+                                </li>
+                            </ul>
+                        </li>
+                    </ul>
+                </div>
+            </li>
+        </ul>
+        <button type="button" class="btn">
+            <span>전체보기</span>
+            <i class="icon-menu"></i>
+        </button>
+    </div>
+</header>
+
+<div class="container">
+    <div id="lnb">
+        <div class="group-title">
+            <span>기업/근로자관리</span>
+        </div>
+        <button type="button" class="btn btn-primary btn_lnb_control">
+            <i class="icon-arrow-prev"></i>
+        </button>
+        <ul class="menu-list">
+            <li class="on">
+                <a href="#">
+                    <span>신청 기업 관리</span>
+                    <i class="icon-circle-plus"></i>
+                </a>
+                <ul class="sub-menu">
+                    <li>
+                        <a href="#">
+                            <i class="icon-menu-depth"></i>
+                            <span>신청 접수내역</span>
+                        </a>
+                    </li>
+                    <li class="on">
+                        <a href="#">
+                            <i class="icon-menu-depth"></i>
+                            <span>대상 기업 신규등록</span>
+                        </a>
+                    </li>
+                    <li>
+                        <a href="#">
+                            <i class="icon-menu-depth"></i>
+                            <span>참여 기업 종합관리</span>
+                        </a>
+                    </li>
+                </ul>
+            </li>
+            <li>
+                <a href="#">
+                    <span>참여 근로자 관리</span>
+                    <i class="icon-circle-plus"></i>
+                </a>
+                <ul class="sub-menu">
+                    <li>
+                        <a href="#">
+                            <i class="icon-menu-depth"></i>
+                            <span>근로자 신청내역</span>
+                        </a>
+                    </li>
+                    <li>
+                        <a href="#">
+                            <i class="icon-menu-depth"></i>
+                            <span>근로자 자격관리</span>
+                        </a>
+                    </li>
+                    <li>
+                        <a href="#">
+                            <i class="icon-menu-depth"></i>
+                            <span>근로자 종합관리</span>
+                        </a>
+                    </li>
+                </ul>
+            </li>
+        </ul>
+    </div>
+    <!-- #lnb -->
+    <div class="content-wrap">
+        <div class="content-header">
+            <div class="title-wrap">
+                <div class="title">대상자 신규등록</div>
+                <div class="location">
+                    <i class="icon-home"></i>
+                    <span>홈</span>
+                    <span>기업/근로자관리</span>
+                    <span>신청 기업 관리</span>
+                    <span>대상 기업 신규등록</span>
+                </div>
+            </div>
+        </div>
+        <div class="content-body mt30">
+            <div class="section-body">
+                <div class="section-header">
+                    <div class="title-wrap">
+                        <div class="title">사업자 인증</div>
+                    </div>
+                </div>
+                <div class="table-wrap">
+                    <table class="tbl-form">
+                        <colgroup>
+                            <col style="width:100px;">
+                            <col style="width:45%">
+                            <col style="width:100px;">
+                            <col style="width:45%">
+                        </colgroup>
+                        <tbody>
+                        <tr>
+                            <th>
+                                <label class="form-label required" for="사업자 등록번호/고유번호">사업자 등록번호/고유번호</label>
+                                </td>
+                            <td>
+                                <div class="form-container">
+                                    <div class="input-wrap">
+                                        <input type="text" id="사업자 등록번호/고유번호" name="사업자 등록번호/고유번호" value="" placeholder="하이픈(-)없이 10자리 숫자만 입력" />
+                                    </div>
+                                    <button type="button" class="btn btn-sub-line rounded">
+                                        <span>사업자 인증</span>
+                                    </button>
+                                </div>
+                            </td>
+                            <th></th>
+                            <td></td>
+                        </tr>
+                        </tbody>
+                    </table>
+                </div>
+                <div class="guide-box">
+                    <ul>
+                        <li>
+                            본/지사가 있는 경우 <br />(1)본사에서 일괄 참여신정, 또는 (2)각, 사업장별 참여신정(사업자등록증 기준) 모두 가능 단, 각 사업장별로 신청하실 경우 신청접수 및 관리가 사업장별로 이루어집니다.
+                        </li>
+                    </ul>
+                </div>
+            </div><!-- .section-body -->
+
+            <div class="section-body mt20">
+                <div class="section-header">
+                    <div class="title-wrap">
+                        <div class="title">기업 정보</div>
+                    </div>
+                </div>
+                <!-- <div class="table-wrap">
+                    <table class="tbl-form">
+                        <colgroup>
+                            <col style="width:100px;">
+                            <col style="width:45%">
+                            <col style="width:100px;">
+                            <col style="width:45%">
+                        </colgroup>
+                        <tbody>
+                        <tr>
+                            <th>
+                                <label class="form-label" for="지역구분">지역구분</label>
+                            </th>
+                            <td>
+                                <div class="form-container">
+                                    <select class="form-select select2" id="지역구분" name="지역구분" data-placeholder="선택">
+                                        <option></option>
+                                        <option value="1" selected="true">선택</option>
+                                        <option value="2">도시</option>
+                                        <option value="3">도시농촌</option>
+                                    </select>
+                                </div>
+                            </td>
+                            <th>
+                                <label class="form-label" for="세대구분">세대구분</label>
+                            </th>
+                            <td>
+                                <div class="form-container">
+                                    <select class="form-select select2" id="세대구분" name="세대구분" data-placeholder="선택">
+                                        <option></option>
+                                        <option value="1" selected="true">선택</option>
+                                        <option value="2">해당없음</option>
+                                        <option value="3">장애인</option>
+                                    </select>
+                                </div>
+                            </td>
+                        </tr>
+                        <tr>
+                            <th>
+                                <label class="form-label" for="가구원수">가구원수</label>
+                            </th>
+                            <td>
+                                <div class="form-container">
+                                    <div class="input-wrap">
+                                        <input class="number" type="text" id="가구원수" name="가구원수" value="" step="1" placeholder="숫자만 입력" oninput="numberLocaleString(this);" readonly>
+                                    </div>
+                                    <span class="unit">명</span>
+                                </div>
+                            </td>
+                            <th>
+                                <label class="form-label" for="5세 미만">5세 미만</label>
+                            </th>
+                            <td>
+                                <div class="form-container">
+                                    <div class="input-wrap">
+                                        <input class="number" type="text" id="5세 미만" name="5세 미만" value="" step="1" placeholder="숫자만 입력" oninput="numberLocaleString(this);" readonly>
+                                    </div>
+                                    <span class="unit">명</span>
+                                </div>
+                            </td>
+                        </tr>
+                        <tr>
+                            <th>
+                                <label class="form-label" for="18세 미만">18세 미만</label>
+                            </th>
+                            <td>
+                                <div class="form-container">
+                                    <div class="input-wrap">
+                                        <input class="number" type="text" id="18세 미만" name="18세 미만" value="" step="1" placeholder="숫자만 입력" oninput="numberLocaleString(this);" readonly>
+                                    </div>
+                                    <span class="unit">명</span>
+                                </div>
+                            </td>
+                            <th>
+                                <label class="form-label" for="65세 이상">65세 이상</label>
+                            </th>
+                            <td>
+                                <div class="form-container">
+                                    <div class="input-wrap">
+                                        <input class="number" type="text" id="65세 이상" name="65세 이상" value="" step="1" placeholder="숫자만 입력" oninput="numberLocaleString(this);" readonly>
+                                    </div>
+                                    <span class="unit">명</span>
+                                </div>
+                            </td>
+                        </tr>
+                        </tbody>
+                    </table>
+                </div> -->
+                <div class="table-wrap">
+                    <table class="tbl-form">
+                        <colgroup>
+                            <col style="width:100px;">
+                            <col style="width:45%">
+                            <col style="width:100px;">
+                            <col style="width:45%">
+                        </colgroup>
+                        <tbody>
+                        <tr>
+                            <th>
+                                <label class="form-label required" for="기업명">기업명</label>
+                            </th>
+                            <td>
+                                <div class="form-container">
+                                    <div class="input-wrap">
+                                        <input type="text" id="기업명" name="기업명" value="" placeholder="입력하세요" />
+                                    </div>
+                                </div>
+                            </td>
+                            <th>
+                                <label class="form-label required" for="대표자명">대표자명</label>
+                                </td>
+                            <td>
+                                <div class="form-container">
+                                    <div class="input-wrap">
+                                        <input type="text" id="대표자명" name="대표자명" value="" placeholder="입력하세요" />
+                                    </div>
+                                </div>
+                                <div class="guide-txt">공동대표일 경우 모두 입력하세요. (쉼표, 띄어쓰기 입력 무방)</div>
+                            </td>
+                        </tr>
+                        <tr>
+                            <th>
+                                <label class="form-label required" for="주소">주소</label>
+                            </th>
+                            <td colspan="10">
+                                <div class="form-container">
+                                    <div class="input-wrap address">
+                                        <input type="text" id="우편번호" name="우편번호" value="" placeholder="" disabled />
+                                    </div>
+                                    <button type="button" class="btn btn-sub-line rounded">
+                                        <span>우편번호</span>
+                                    </button>
+                                    <div class="input-wrap">
+                                        <input type="text" id="기본주소 자동입력" name="기본주소 자동입력" value="" placeholder="기본주소 자동입력" disabled />
+                                    </div>
+                                    <div class="input-wrap">
+                                        <input type="text" id="상세주소 입력" name="상세주소 입력" value="" placeholder="상세주소 입력" />
+                                    </div>
+                                </div>
+                            </td>
+                        </tr>
+                        <tr>
+                            <th>
+                                <label class="form-label" for="전화번호">전화번호</label>
+                            </th>
+                            <td>
+                                <div class="form-container">
+                                    <div class="input-wrap">
+                                        <input type="text" id="전화번호" name="전화번호" value="" placeholder="숫자만 입력" />
+                                    </div>
+                                    <!-- <div class="form-check">
+                                        <input class="form-check-input" type="checkbox" id="체크박스1" name="체크박스1" value="체크박스1" />
+                                        <label class="form-check-label" for="체크박스1">알림톡수신</label>
+                                    </div> -->
+                                </div>
+                            </td>
+                            <th>
+                                <label class="form-label" for="홈페이지">홈페이지</label>
+                                </td>
+                            <td>
+                                <div class="form-container">
+                                    <div class="input-wrap">
+                                        <input type="text" id="홈페이지" name="홈페이지" value="" placeholder="입력하세요" />
+                                    </div>
+                                    <!-- <div class="form-check">
+                                        <input class="form-check-input" type="checkbox" id="체크박스1" name="체크박스1" value="체크박스1" />
+                                        <label class="form-check-label" for="체크박스1">알림톡수신</label>
+                                    </div> -->
+                                </div>
+                            </td>
+                        </tr>
+                        <tr>
+                            <th>
+                                <label class="form-label required" for="법인여부">법인여부</label>
+                            </th>
+                            <td>
+                                <div class="form-container">
+                                    <div class="input-wrap">
+                                        <input type="text" id="법인여부" name="법인여부" value="온라인" placeholder="" disabled />
+                                    </div>
+                                    <select class="form-select select2" id="법인여부" name="법인여부" data-placeholder="선택">
+                                        <option></option>
+                                        <option value="1" selected="true">선택</option>
+                                        <option value="2">온라인</option>
+                                        <option value="3">온라인</option>
+                                    </select>
+                                </div>
+                            </td>
+                            <th>
+                                <label class="form-label required" for="기업구분">기업구분</label>
+                            </th>
+                            <td>
+                                <div class="form-container">
+                                    <select class="form-select select2" id="기업구분" name="기업구분" data-placeholder="선택">
+                                        <option></option>
+                                        <option value="1" selected="true">법인</option>
+                                        <option value="2">옵션2</option>
+                                        <option value="3">옵션3</option>
+                                    </select>
+                                </div>
+                                <div class="guide-txt">중소기업 및 소상공인은 ‘중소기업확인서'에 표기된 기업구분을 선택하세요.</div>
+                            </td>
+                        </tr>
+                        <tr>
+                            <th>
+                                <label class="form-label" for="참여경로">참여경로</label>
+                            </th>
+                            <td>
+                                <div class="form-container">
+                                    <div class="input-wrap">
+                                        <input type="text" id="참여경로" name="참여경로" value="참여경로" placeholder="" disabled />
+                                    </div>
+                                </div>
+                            </td>
+                            <th>
+                                <label class="form-label" for="업종구분">업종구분</label>
+                            </th>
+                            <td>
+                                <div class="form-container">
+                                    <select class="form-select select2" id="업종구분" name="업종구분" data-placeholder="선택">
+                                        <option></option>
+                                        <option value="1" selected="true">업종구분</option>
+                                        <option value="2">옵션2</option>
+                                        <option value="3">옵션3</option>
+                                    </select>
+                                </div>
+                            </td>
+                        </tr>
+                        <tr>
+                            <th>
+                                <label class="form-label required" for="신청구분">신청구분</label>
+                            </th>
+                            <td>
+                                <div class="form-container">
+                                    <select class="form-select select2" id="신청구분" name="신청구분" data-placeholder="선택">
+                                        <option></option>
+                                        <option value="1" selected="true">선택</option>
+                                        <option value="2">본인</option>
+                                        <option value="3">가구원</option>
+                                    </select>
+                                </div>
+                            </td>
+                            <th>
+                                <label class="form-label required" for="신청매체">신청매체</label>
+                            </th>
+                            <td>
+                                <div class="form-container">
+                                    <select class="form-select select2" id="신청매체" name="신청매체" data-placeholder="선택" disabled>
+                                        <option></option>
+                                        <option value="1" selected="true">행정복지센터</option>
+                                        <option value="2">옵션2</option>
+                                        <option value="3">옵션3</option>
+                                    </select>
+                                </div>
+                            </td>
+                        </tr>
+                        <tr>
+                            <th>
+                                <label class="form-label" for="식권/카드사">식권/카드사</label>
+                            </th>
+                            <td>
+                                <div class="form-container">
+                                    <select class="form-select select2" id="식권/카드사" name="식권/카드사" data-placeholder="선택">
+                                        <option></option>
+                                        <option value="1" selected="true">선택</option>
+                                        <option value="2">식권/카드사1</option>
+                                        <option value="3">식권/카드사2</option>
+                                    </select>
+                                </div>
+                            </td>
+                            <th></th>
+                            <td></td>
+                        </tr>
+                        <tr>
+                            <th>
+                                <label class="form-label" for="중소기업확인서">중소기업확인서</label>
+                            </th>
+                            <td>
+                                <div class="form-container">
+                                    <label class="form-label" for="파일0"><span class="input-group-text">파일첨부</span></label>
+                                    <input type="file" id="파일0" name="파일0" placeholder="파일을 선택하시요." style="display:none;" />
+                                    <p class="text-warning">※ PNG, JPG, GIF, PDF 파일만 등록 가능 (최대 10M)</p>
+                                </div>
+                            </td>
+                            <th></th>
+                            <td></td>
+                        </tr>
+                        <tr>
+                            <th>
+                                <label class="form-label" for="식대지급 증빙서류"><span>식대지급 증빙서류</span></label>
+                            </th>
+                            <td class="content">
+                                <div class="form-container">
+                                    <label class="form-label" for="파일1"><span class="input-group-text">파일첨부</span></label>
+                                    <input type="file" id="파일1" name="파일1" placeholder="파일을 선택하시요." style="display:none;" />
+                                    <p class="text-warning">※ PNG, JPG, GIF, PDF 파일만 등록 가능 (최대 10M)</p>
+                                </div>
+                                <ul class="file-list">
+                                    <li>
+                                        <a href="파일경로" download="파일 이름을 정할 수 있음" class="link-file">
+                                            <span>image1.jpg</span>
+                                            <i class="icon-filedown"></i>
+                                        </a>
+                                        <button type="button" class="btn btn-sm">
+                                            <i class="icon-trash"></i>
+                                        </button>
+                                    </li>
+                                    <li>
+                                        <a href="파일경로" download="파일 이름을 정할 수 있음" class="link-file">
+                                            <span>image2.jpg</span>
+                                            <i class="icon-filedown"></i>
+                                        </a>
+                                        <button type="button" class="btn btn-sm">
+                                            <i class="icon-trash"></i>
+                                        </button>
+                                    </li>
+                                    <li>
+                                        <a href="파일경로" download="파일 이름을 정할 수 있음" class="link-file">
+                                            <span>image3.jpg</span>
+                                            <i class="icon-filedown"></i>
+                                        </a>
+                                        <button type="button" class="btn btn-sm">
+                                            <i class="icon-trash"></i>
+                                        </button>
+                                    </li>
+                                </ul>
+                                <!-- <ul class="guide-info">
+                                    <li>※ 확장자가 JPG, GIF, BMP, PNG, TIFF, PDF, PPT, DOC, HWP 인 파일만 첨부가 가능합니다.</li>
+                                    <li>※ 파일은 최대 3개까지 등록 가능 합니다.</li>
+                                </ul> -->
+                            </td>
+                        </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div><!-- .section-body -->
+
+            <div class="section-body mt20">
+                <div class="section-header">
+                    <div class="title-wrap">
+                        <div class="title">지원대상 정보</div>
+                    </div>
+                </div>
+                <div class="table-wrap">
+                    <table class="tbl-form">
+                        <colgroup>
+                            <col style="width:100px;">
+                            <col style="width:45%">
+                            <col style="width:100px;">
+                            <col style="width:45%">
+                        </colgroup>
+                        <tbody>
+                        <tr>
+                            <th>
+                                <label class="form-label" for="참여신청 근로자수">참여신청 근로자수</label>
+                            </th>
+                            <td>
+                                <div class="form-container">
+                                    <div class="input-wrap">
+                                        <input type="text" id="참여신청 근로자수" name="참여신청 근로자수" value="300" placeholder="" />
+                                        <span class="unit">명</span>
+                                    </div>
+                                </div>
+                            </td>
+                            <th></th>
+                            <td></td>
+                        </tr>
+                        </tbody>
+                    </table>
+
+                    <div class="guide-box">
+                        <ul>
+                            <li>
+                                신청인원은 추후 변경 가능합니다.
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+            </div><!-- .section-body -->
+
+            <div class="section-body mt20">
+                <div class="section-header">
+                    <div class="title-wrap">
+                        <div class="title">담당자 정보</div>
+                    </div>
+                    <div class="sub-title text-primary">담당자 정보는 참여관련 공지 등에 사용되므로, 실제 연락이 가능한 연락처로 입력해주시기 바랍니다.</div>
+                    <!-- <div class="button-wrap">
+                        <button type="button" class="btn btn-line">
+                            <span>가족 행추가</span>
+                        </button>
+                    </div> -->
+                </div>
+                <div class="table-wrap">
+                    <table class="tbl-form">
+                        <colgroup>
+                            <col style="width:100px;">
+                            <col style="width:45%">
+                            <col style="width:100px;">
+                            <col style="width:45%">
+                        </colgroup>
+                        <tbody>
+                        <tr>
+                            <th>
+                                <label class="form-label" for="성명">성명</label>
+                            </th>
+                            <td>
+                                <div class="form-container">
+                                    <div class="input-wrap">
+                                        <input type="text" id="성명" name="성명" value="" placeholder="입력" />
+                                    </div>
+                                </div>
+                            </td>
+                            <th>
+                                <label class="form-label" for="직위">직위</label>
+                            </th>
+                            <td>
+                                <div class="form-container">
+                                    <div class="input-wrap">
+                                        <input type="text" id="직위" name="직위" value="" placeholder="입력" />
+                                    </div>
+                                </div>
+                            </td>
+                        </tr>
+                        <tr>
+                            <th>
+                                <label class="form-label" for="전화번호">전화번호</label>
+                                </td>
+                            <td>
+                                <div class="form-container">
+                                    <div class="input-wrap">
+                                        <input type="text" id="전화번호" name="전화번호" value="" placeholder="숫자만 입력" />
+                                    </div>
+                                </div>
+                            </td>
+                            <th>
+                                <label class="form-label" for="휴대폰번호">휴대폰번호</label>
+                                </td>
+                            <td>
+                                <div class="form-container">
+                                    <div class="input-wrap">
+                                        <input type="text" id="휴대폰번호" name="휴대폰번호" value="" placeholder="숫자만 입력" />
+                                    </div>
+                                </div>
+                            </td>
+                        </tr>
+                        <tr>
+                            <th>
+                                <label class="form-label" for="홍보물 수령주소">홍보물 수령주소</label>
+                            </th>
+                            <td colspan="10">
+                                <div class="form-container">
+                                    <div class="input-wrap address">
+                                        <input type="text" id="우편번호" name="우편번호" value="" placeholder="" disabled />
+                                    </div>
+                                    <button type="button" class="btn btn-sub-line rounded">
+                                        <span>우편번호</span>
+                                    </button>
+                                    <div class="input-wrap">
+                                        <input type="text" id="기본주소 자동입력" name="기본주소 자동입력" value="" placeholder="기본주소 자동입력" disabled />
+                                    </div>
+                                    <div class="input-wrap">
+                                        <input type="text" id="상세주소 입력" name="상세주소 입력" value="" placeholder="상세주소 입력" disabled />
+                                    </div>
+                                </div>
+                            </td>
+                        </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div><!-- .section-body -->
+
+            <div class="section-foot between">
+                <button type="button" class="btn btn-line">
+                    <span>인쇄</span>
+                </button>
+                <div class="button-wrap">
+                    <button type="button" class="btn btn-line">
+                        <span>취소</span>
+                    </button>
+                    <button type="button" class="btn btn-primary">
+                        <span>등록</span>
+                    </button>
+                </div>
+            </div><!-- .section-foot -->
+        </div>
+    </div><!-- .content-wrap -->
+</div><!-- .container -->
+</body>
+</html>

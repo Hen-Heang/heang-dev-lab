@@ -5,6 +5,7 @@ import org.jspecify.annotations.NonNull;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.web.servlet.config.annotation.CorsRegistry;
+import org.springframework.web.servlet.config.annotation.ResourceHandlerRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 
 @Configuration
@@ -23,6 +24,12 @@ public class CorsConfig {
                         .allowedMethods("GET","POST","PUT","DELETE")
                         .allowedHeaders("*")
                         .allowCredentials(false);
+            }
+
+            @Override
+            public void addResourceHandlers(@NonNull ResourceHandlerRegistry registry) {
+                registry.addResourceHandler("/css/**")
+                        .addResourceLocations("classpath:/css/");
             }
         };
     }

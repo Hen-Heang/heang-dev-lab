@@ -1,0 +1,99 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="ko">
+
+<!-- ===== HEAD fragment ===== -->
+<th:block th:fragment="head">
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+    <!-- jQuery -->
+    <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+    <!-- jQuery UI -->
+    <link rel="stylesheet" href="https://code.jquery.com/ui/1.13.3/themes/base/jquery-ui.css" />
+    <script src="https://code.jquery.com/ui/1.13.3/jquery-ui.min.js"></script>
+    <!-- Select2 -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css" />
+    <script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
+    <!-- Project CSS -->
+    <link th:href="@{/css/config.css}" rel="stylesheet" />
+    <link th:href="@{/css/layout.css}" rel="stylesheet" />
+    <link th:href="@{/css/components.css}" rel="stylesheet" />
+    <link th:href="@{/css/page.css}" rel="stylesheet" />
+</th:block>
+
+<body>
+
+<!-- ===== HEADER fragment ===== -->
+<header th:fragment="header">
+    <div class="inner">
+        <h1 class="logo">
+            <a th:href="@{/dashboard}">
+                <span style="font-size:18px; font-weight:700;">직장인 든든한 점심밥 지원사업</span>
+            </a>
+        </h1>
+        <div class="my-menu">
+            <div class="info">
+                <div class="name">관리자</div>
+            </div>
+            <div class="log">
+                <span>최종 로그인</span>
+                <span class="time">2024.01.01 00:00</span>
+            </div>
+            <div class="button-wrap">
+                <button type="button" class="btn">설정</button>
+                <button type="button" class="btn">로그아웃</button>
+            </div>
+        </div>
+    </div>
+    <div id="gnb">
+        <ul class="gnb-list">
+            <li><a th:href="@{/dashboard}"><span>홈</span></a></li>
+            <li>
+                <a href="#">기업/근로자관리</a>
+                <div class="gnb-sub-menu">
+                    <ul class="menu-list">
+                        <li>
+                            <span>신청 기업 관리</span>
+                            <ul class="sub-menu">
+                                <li><a th:href="@{/egov/entAplRe}"><span>신청 접수내역</span></a></li>
+                                <li><a th:href="@{/egov/entNewReg}"><span>대상 기업 신규등록</span></a></li>
+                            </ul>
+                        </li>
+                    </ul>
+                </div>
+            </li>
+        </ul>
+        <button type="button" class="btn"><span>전체보기</span></button>
+    </div>
+</header>
+
+<!-- ===== LNB fragment (기업/근로자관리) ===== -->
+<div th:fragment="lnb" id="lnb">
+    <div class="group-title"><span>기업/근로자관리</span></div>
+    <ul class="menu-list">
+        <li class="on">
+            <a href="#">
+                <span>신청 기업 관리</span>
+                <i class="icon-circle-plus"></i>
+            </a>
+            <ul class="sub-menu">
+                <li>
+                    <a th:href="@{/egov/entAplRe}">
+                        <i class="icon-menu-depth"></i>
+                        <span>신청 접수내역</span>
+                    </a>
+                </li>
+                <li>
+                    <a th:href="@{/egov/entNewReg}">
+                        <i class="icon-menu-depth"></i>
+                        <span>대상 기업 신규등록</span>
+                    </a>
+                </li>
+            </ul>
+        </li>
+    </ul>
+</div>
+
+</body>
+</html>
