@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="ko">
+
+<head>
+    <meta charset="UTF-8">
+    <title>Product List </title>
+    <style>
+        body {
+            font-family: sans-serif;
+            max-width: 900px;
+            margin: 40px auto;
+            padding: 0 20px;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 20px;
+        }
+
+        th, td {
+            border: 1px solid #ddd;
+            padding: 10px 14px;
+            text-align: left;
+        }
+
+        th {
+            background: #f0f0f0;
+        }
+
+        tr:hover {
+            background: #fafafa;
+        }
+
+        .btn {
+            padding: 6px 14px;
+            text-decoration: none;
+            border-radius: 4px;
+            font-size: 14px;
+        }
+
+        .btn-primary {
+            background: #4A90D9;
+            color: white;
+        }
+
+        .btn-sm {
+            padding: 4px 10px;
+            font-size: 13px;
+        }
+    </style>
+</head>
+
+<body>
+<h1>Product List </h1>
+<a href="@{/products/new" class="btn-primary">+ Add New Products</a>
+<table>
+    <thead>
+    <tr>
+        <th>ID</th>
+        <th>Category</th>
+        <th>Price</th>
+        <th>Stock</th>
+        <th>Action</th>
+
+    </tr>
+    </thead>
+
+    <tbody>
+    <!--    loop data from list controller -->
+    <tr th:each="product : ${products}">
+        <td th:text="${product.id}"></td>
+        <td th:text="${product.name}"></td>
+        <td th:text="${product.categoryName}"></td>
+
+        <!--        #separate comma-->
+        <td th:text="${#numbers.formatInteger(product.price , 0, 'COMMA')} + '₩'"></td>
+        <td th:text="${product.stock}"></td>
+        <!--        Link to detail page-->
+        <td>
+            <a th:href="@{/products/{id}(id = ${product.id})}" class="btn-sm">View</a>
+        </td>
+
+    </tr>
+    <!--        Show when list empty data-->
+    <tr th:if="${#lists.isEmpty(products)}">
+        <td style="text-align: center">No Products Found.</td>
+    </tr>
+    </tbody>
+</table>
+
+</body>
+
+</html>
