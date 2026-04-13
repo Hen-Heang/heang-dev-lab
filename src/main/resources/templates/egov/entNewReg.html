@@ -43,7 +43,7 @@
                             <td colspan="3">
                                 <div class="form-container">
                                     <div class="input-wrap">
-                                        <input type="text" id="사업자등록번호" name="brno" placeholder="하이픈(-)없이 10자리 숫자만 입력" />
+                                        <input type="text" id="사업자등록번호" name="brno" placeholder="하이픈(-)없이 10자리 숫자만 입력"/>
                                     </div>
                                     <button type="button" class="btn btn-sub-line rounded" onclick="fn_bizAuth()">
                                         <span>사업자 인증</span>
@@ -56,7 +56,9 @@
                 </div>
                 <div class="guide-box">
                     <ul>
-                        <li>본/지사가 있는 경우 <br />(1)본사에서 일괄 참여신청, 또는 (2)각, 사업장별 참여신청(사업자등록증 기준) 모두 가능 단, 각 사업장별로 신청하실 경우 신청접수 및 관리가 사업장별로 이루어집니다.</li>
+                        <li>본/지사가 있는 경우 <br/>(1)본사에서 일괄 참여신청, 또는 (2)각, 사업장별 참여신청(사업자등록증 기준) 모두 가능 단, 각 사업장별로 신청하실 경우
+                            신청접수 및 관리가 사업장별로 이루어집니다.
+                        </li>
                     </ul>
                 </div>
             </div><!-- .section-body -->
@@ -76,7 +78,7 @@
                             <td>
                                 <div class="form-container">
                                     <div class="input-wrap">
-                                        <input type="text" id="기업명" name="entNm" placeholder="입력하세요" />
+                                        <input type="text" id="기업명" name="entNm" placeholder="입력하세요"/>
                                     </div>
                                 </div>
                             </td>
@@ -84,7 +86,7 @@
                             <td>
                                 <div class="form-container">
                                     <div class="input-wrap">
-                                        <input type="text" id="대표자명" name="rprsvNm" placeholder="입력하세요" />
+                                        <input type="text" id="대표자명" name="rprsvNm" placeholder="입력하세요"/>
                                     </div>
                                 </div>
                                 <div class="guide-txt">공동대표일 경우 모두 입력하세요. (쉼표, 띄어쓰기 입력 무방)</div>
@@ -95,26 +97,28 @@
                             <td colspan="3">
                                 <div class="form-container">
                                     <div class="input-wrap address">
-                                        <input type="text" id="우편번호" name="zipNo" placeholder="" disabled />
+                                        <input type="text" id="우편번호" name="zipNo" placeholder="" disabled/>
                                     </div>
-                                    <button type="button" class="btn btn-sub-line rounded" onclick="fn_addrSearch('ent')">
+                                    <button type="button" class="btn btn-sub-line rounded"
+                                            onclick="fn_addrSearch('ent')">
                                         <span>우편번호</span>
                                     </button>
                                     <div class="input-wrap">
-                                        <input type="text" id="기본주소" name="rdnmadr" placeholder="기본주소 자동입력" disabled />
+                                        <input type="text" id="기본주소" name="rdnmadr" placeholder="기본주소 자동입력" disabled/>
                                     </div>
                                     <div class="input-wrap">
-                                        <input type="text" id="상세주소" name="dtlAddr" placeholder="상세주소 입력" />
+                                        <input type="text" id="상세주소" name="dtlAddr" placeholder="상세주소 입력"/>
                                     </div>
                                 </div>
                             </td>
                         </tr>
+
                         <tr>
                             <th><label class="form-label" for="전화번호">전화번호</label></th>
                             <td>
                                 <div class="form-container">
                                     <div class="input-wrap">
-                                        <input type="text" id="전화번호" name="telno" placeholder="숫자만 입력" />
+                                        <input type="text" id="전화번호" name="telno" placeholder="숫자만 입력"/>
                                     </div>
                                 </div>
                             </td>
@@ -122,11 +126,12 @@
                             <td>
                                 <div class="form-container">
                                     <div class="input-wrap">
-                                        <input type="text" id="홈페이지" name="hmpgAddr" placeholder="입력하세요" />
+                                        <input type="text" id="홈페이지" name="hmpgAddr" placeholder="입력하세요"/>
                                     </div>
                                 </div>
                             </td>
                         </tr>
+
                         <tr>
                             <th><label class="form-label required" for="법인여부">법인여부</label></th>
                             <td>
@@ -151,12 +156,13 @@
                                 <div class="guide-txt">중소기업 및 소상공인은 '중소기업확인서'에 표기된 기업구분을 선택하세요.</div>
                             </td>
                         </tr>
+
                         <tr>
                             <th><label class="form-label" for="참여경로">참여경로</label></th>
                             <td>
                                 <div class="form-container">
                                     <div class="input-wrap">
-                                        <input type="text" id="참여경로" name="ptcpPath" readonly />
+                                        <input type="text" id="참여경로" name="ptcpPath" readonly/>
                                     </div>
                                 </div>
                             </td>
@@ -187,7 +193,8 @@
                             <th><label class="form-label required" for="신청매체">신청매체</label></th>
                             <td>
                                 <div class="form-container">
-                                    <select class="form-select select2" id="신청매체" name="aplMdcd" data-placeholder="선택" disabled>
+                                    <select class="form-select select2" id="신청매체" name="aplMdcd" data-placeholder="선택"
+                                            disabled>
                                         <option value=""></option>
                                         <option value="1">행정복지센터</option>
                                         <option value="2">옵션2</option>
@@ -200,7 +207,8 @@
                             <th><label class="form-label" for="식권카드사">식권/카드사</label></th>
                             <td colspan="3">
                                 <div class="form-container">
-                                    <select class="form-select select2" id="식권카드사" name="mealCardCd" data-placeholder="선택">
+                                    <select class="form-select select2" id="식권카드사" name="mealCardCd"
+                                            data-placeholder="선택">
                                         <option value=""></option>
                                         <option value="1">선택</option>
                                         <option value="2">식권/카드사1</option>
@@ -215,25 +223,27 @@
                                 <div class="form-container">
                                     <span class="input-group-text">파일첨부</span>
                                     <div class="input-wrap on">
-                                        <input type="file" name="file0" />
+                                        <input type="file" name="file0"/>
                                     </div>
                                     <p class="text-warning">※ PNG, JPG, GIF, PDF 파일만 등록 가능 (최대 10M)</p>
                                 </div>
                             </td>
                         </tr>
+
                         <tr>
                             <th><label class="form-label" for="식대지급증빙서류">식대지급 증빙서류</label></th>
                             <td class="content" colspan="3">
                                 <div class="form-container">
                                     <span class="input-group-text">파일첨부</span>
                                     <div class="input-wrap on">
-                                        <input type="file" name="file1" />
+                                        <input type="file" name="file1"/>
                                     </div>
                                     <p class="text-warning">※ PNG, JPG, GIF, PDF 파일만 등록 가능 (최대 10M)</p>
                                 </div>
                                 <ul class="file-list" th:if="${fileList != null and !#lists.isEmpty(fileList)}">
                                     <li th:each="file : ${fileList}">
-                                        <a th:href="${file.filePath}" th:attr="download=${file.fileNm}" class="link-file">
+                                        <a th:href="${file.filePath}" th:attr="download=${file.fileNm}"
+                                           class="link-file">
                                             <span th:text="${file.fileNm}">image.jpg</span>
                                             <i class="icon-filedown"></i>
                                         </a>
@@ -261,14 +271,16 @@
                         <tbody>
                         <tr>
                             <th><label class="form-label" for="참여신청근로자수">참여신청 근로자수</label></th>
-                            <td colspan="3">
+                            <td>
                                 <div class="form-container">
                                     <div class="input-wrap">
-                                        <input type="text" id="참여신청근로자수" name="ptcpAplWrkrCnt" />
+                                        <input type="text" id="참여신청근로자수" name="ptcpAplWrkrCnt"/>
                                         <span class="unit">명</span>
                                     </div>
                                 </div>
                             </td>
+                            <th></th>
+                            <td></td>
                         </tr>
                         </tbody>
                     </table>
@@ -296,7 +308,7 @@
                             <td>
                                 <div class="form-container">
                                     <div class="input-wrap">
-                                        <input type="text" id="성명" name="mgrNm" placeholder="입력" />
+                                        <input type="text" id="성명" name="mgrNm" placeholder="입력"/>
                                     </div>
                                 </div>
                             </td>
@@ -304,7 +316,7 @@
                             <td>
                                 <div class="form-container">
                                     <div class="input-wrap">
-                                        <input type="text" id="직위" name="pstnNm" placeholder="입력" />
+                                        <input type="text" id="직위" name="pstnNm" placeholder="입력"/>
                                     </div>
                                 </div>
                             </td>
@@ -314,7 +326,7 @@
                             <td>
                                 <div class="form-container">
                                     <div class="input-wrap">
-                                        <input type="text" id="담당전화번호" name="mgrTelno" placeholder="숫자만 입력" />
+                                        <input type="text" id="담당전화번호" name="mgrTelno" placeholder="숫자만 입력"/>
                                     </div>
                                 </div>
                             </td>
@@ -322,7 +334,7 @@
                             <td>
                                 <div class="form-container">
                                     <div class="input-wrap">
-                                        <input type="text" id="휴대폰번호" name="mgrMoblTelno" placeholder="숫자만 입력" />
+                                        <input type="text" id="휴대폰번호" name="mgrMoblTelno" placeholder="숫자만 입력"/>
                                     </div>
                                 </div>
                             </td>
@@ -332,16 +344,19 @@
                             <td colspan="3">
                                 <div class="form-container">
                                     <div class="input-wrap address">
-                                        <input type="text" id="홍보물우편번호" name="prmoZipNo" placeholder="" disabled />
+                                        <input type="text" id="홍보물우편번호" name="prmoZipNo" placeholder="" disabled/>
                                     </div>
-                                    <button type="button" class="btn btn-sub-line rounded" onclick="fn_addrSearch('mgr')">
+                                    <button type="button" class="btn btn-sub-line rounded"
+                                            onclick="fn_addrSearch('mgr')">
                                         <span>우편번호</span>
                                     </button>
                                     <div class="input-wrap">
-                                        <input type="text" id="홍보물기본주소" name="prmoRdnmadr" placeholder="기본주소 자동입력" disabled />
+                                        <input type="text" id="홍보물기본주소" name="prmoRdnmadr" placeholder="기본주소 자동입력"
+                                               disabled/>
                                     </div>
                                     <div class="input-wrap">
-                                        <input type="text" id="홍보물상세주소" name="prmoDtlAddr" placeholder="상세주소 입력" disabled />
+                                        <input type="text" id="홍보물상세주소" name="prmoDtlAddr" placeholder="상세주소 입력"
+                                               disabled/>
                                     </div>
                                 </div>
                             </td>
@@ -370,7 +385,7 @@
 </div><!-- .container -->
 
 <script th:inline="javascript">
-    $(document).ready(function() {
+    $(document).ready(function () {
         fn_pageLoad();
     });
 

@@ -113,15 +113,74 @@ public class ThymeleafLearnController {
     // ============================================================
     @GetMapping("/condition")
     public String condition(Model model) {
+
         // --------------------------------------------------------
-        // Try changing these values to see different results:
-        //   userRole  → "ADMIN" or "USER"
-        //   loginStatus → "ACTIVE", "INACTIVE", "SUSPENDED"
-        //   point     → any number (above/below 1000)
+        // SECTION 1 — th:if / th:unless (basic)
+        // HTML uses: th:if="${userRole == 'ADMIN'}"
+        //            th:unless="${userRole == 'ADMIN'}"
+        //
+        // Try: change to "USER" → the "regular user" line appears instead
         // --------------------------------------------------------
-        model.addAttribute("userRole", "ADMIN");       // controls th:if in HTML
-        model.addAttribute("loginStatus", "ACTIVE");   // controls th:switch in HTML
-        model.addAttribute("point", 1500);             // controls number comparison
+        model.addAttribute("userRole", "ADMIN");
+
+        // --------------------------------------------------------
+        // SECTION 2 — th:switch / th:case
+        // HTML uses: th:switch="${loginStatus}"
+        //            th:case="'ACTIVE'" / th:case="'INACTIVE'" / th:case="*"
+        //
+        // Try: "ACTIVE" / "INACTIVE" / "SUSPENDED" / "DELETED" (hits default)
+        // --------------------------------------------------------
+        model.addAttribute("loginStatus", "ACTIVE");
+
+        // --------------------------------------------------------
+        // SECTION 3 — Number comparison
+        // HTML uses: th:if="${point >= 1000}"  → VIP member
+        //            th:if="${point < 1000}"   → Regular member
+        //
+        // Try: change to 500 → "Regular member" appears
+        // --------------------------------------------------------
+        model.addAttribute("point", 1500);
+
+        // --------------------------------------------------------
+        // PRACTICE A — Login / Logout button
+        // HTML uses: th:if="${isLoggedIn}"     → shows logout button
+        //            th:unless="${isLoggedIn}" → shows login button
+        //
+        // Try: change to false → Login button appears instead
+        // --------------------------------------------------------
+        model.addAttribute("isLoggedIn", true);
+
+        // --------------------------------------------------------
+        // PRACTICE B — Nested conditions (cart inside login check)
+        // HTML uses: outer th:if="${isLoggedIn}"
+        //            inner th:if="${cartCount == 0}" → empty message
+        //            inner th:if="${cartCount > 0}"  → item count
+        //
+        // Try: change to 3 → "Items in cart: 3" appears
+        // Try: change isLoggedIn to false → entire cart block disappears
+        // --------------------------------------------------------
+        model.addAttribute("cartCount", 0);
+
+        // --------------------------------------------------------
+        // PRACTICE C — Grade badge (th:switch)
+        // HTML uses: th:switch="${userGrade}"
+        //            th:case="'VIP'" / th:case="'GOLD'" / th:case="*"
+        //
+        // Try: "VIP" / "GOLD" / "SILVER" / "BRONZE" (hits default → Regular)
+        // --------------------------------------------------------
+        model.addAttribute("userGrade", "GOLD");
+
+        // --------------------------------------------------------
+        // PRACTICE D — AND / OR / NOT operators
+        // HTML uses: th:if="${isLoggedIn and hasNotification}"
+        //            th:if="${userGrade == 'VIP' or userGrade == 'GOLD'}"
+        //            th:if="${not isLoggedIn}"
+        //
+        // Try: change hasNotification to false → notification message disappears
+        // Try: change userGrade to "SILVER" → premium message disappears
+        // --------------------------------------------------------
+        model.addAttribute("hasNotification", true);
+        model.addAttribute("notificationCount", 3);
 
         // → templates/learn/conditions.html
         return "learn/conditions";
@@ -238,4 +297,12 @@ public class ThymeleafLearnController {
         return "learn/attr";
     }
 
+    //    For display data in thymeleaf
+    @GetMapping("/text")
+    public String text(Model model) {
+        model.addAttribute("username", "Hen Heang12345");
+        model.addAttribute("age", 24);
+        model.addAttribute("isActive", true);
+        return "learn/text";
+    }
 }

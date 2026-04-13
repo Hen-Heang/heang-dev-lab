@@ -574,6 +574,9 @@ header .my-menu .button-wrap .btn {
     display: none;
     margin: 10px 0;
 }
+#lnb .menu-list > li.on .sub-menu {
+    display: block;
+}
 #lnb .menu-list li .sub-menu li + li {
     margin-top: 5px;
 }

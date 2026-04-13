@@ -69,22 +69,22 @@
 </header>
 
 <!-- ===== LNB fragment (기업/근로자관리) ===== -->
-<div th:fragment="lnb" id="lnb">
+<div th:fragment="lnb(activeMenu)" id="lnb">
     <div class="group-title"><span>기업/근로자관리</span></div>
     <ul class="menu-list">
-        <li class="on">
+        <li th:classappend="${activeMenu == 'entAplRe' or activeMenu == 'entNewReg'} ? 'on'">
             <a href="#">
                 <span>신청 기업 관리</span>
                 <i class="icon-circle-plus"></i>
             </a>
             <ul class="sub-menu">
-                <li>
+                <li th:classappend="${activeMenu == 'entAplRe'} ? 'on'">
                     <a th:href="@{/egov/entAplRe}">
                         <i class="icon-menu-depth"></i>
                         <span>신청 접수내역</span>
                     </a>
                 </li>
-                <li>
+                <li th:classappend="${activeMenu == 'entNewReg'} ? 'on'">
                     <a th:href="@{/egov/entNewReg}">
                         <i class="icon-menu-depth"></i>
                         <span>대상 기업 신규등록</span>

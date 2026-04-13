@@ -1381,6 +1381,8 @@ tbody.no_search_result td {
 	입력 FORM
 ************************************************/
 table.tbl-form {
+    width: 100%;
+    border-collapse: collapse;
     background-color: #fff;
     color: var(--table-text-color);
     margin-bottom: 0;

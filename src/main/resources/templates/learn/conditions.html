@@ -1,52 +1,378 @@
 <!DOCTYPE html>
-<html xmlns:th="http://www.thymeleaf.org" lang="ko">
+
+<!--
+  DOCTYPE html
+  Always the first line. Tells the browser this is a modern HTML5 page.
+-->
+
+<!--
+  xmlns:th="http://www.thymeleaf.org"
+  This activates Thymeleaf. Without this line, th:if / th:switch / etc. will NOT work.
+  Think of it as importing the Thymeleaf library into your HTML file.
+-->
+<html xmlns:th="http://www.thymeleaf.org" lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>Step 3 - 조건문</title>
+    <title>Step 3 - Conditions</title>
+    <style>
+        body { font-family: sans-serif; max-width: 700px; margin: 40px auto; padding: 0 20px; }
+        .card { background: #f8f9fa; border-left: 4px solid #4A90D9; padding: 16px; margin: 20px 0; border-radius: 4px; }
+        .note { font-size: 13px; color: #555; margin-top: 8px; background: #fff3cd; padding: 8px; border-radius: 4px; }
+        .rule { font-size: 13px; color: #155724; background: #d4edda; padding: 8px; border-radius: 4px; margin-top: 8px; }
+    </style>
 </head>
 <body>
 
-<h1>Step 3: 조건문 (th:if / th:switch)</h1>
+<h1>Step 3 — Conditions (th:if / th:unless / th:switch)</h1>
 
-<h3>[ th:if / th:unless ]</h3>
+<!-- ============================================================
+  SECTION 1: th:if and th:unless — Basic
+  ─────────────────────────────────────
+  th:if="${condition}"
+    → The element is rendered (shown) ONLY when the condition is TRUE.
+    → If the condition is FALSE, the tag is completely REMOVED from the HTML output.
+    → It is NOT display:none — the element does not exist in the page at all.
 
-<!-- th:if → 조건이 true일 때만 보임 -->
-<p th:if="${userRole == 'ADMIN'}">✅ 관리자 메뉴가 보입니다</p>
+  th:unless="${condition}"
+    → The OPPOSITE of th:if.
+    → The element is shown ONLY when the condition is FALSE.
+    → There is no th:else in Thymeleaf. Use th:unless as the "else" branch.
 
-<!-- th:unless → 조건이 false일 때 보임 (if 반대) -->
-<p th:unless="${userRole == 'ADMIN'}">👤 일반 사용자입니다</p>
+  Example:
+    th:if="${userRole == 'ADMIN'}"     → show only if userRole equals "ADMIN"
+    th:unless="${userRole == 'ADMIN'}" → show only if userRole does NOT equal "ADMIN"
+============================================================ -->
 
-<hr>
+<div class="card">
+    <h3>1. th:if / th:unless — Basic</h3>
 
-<h3>[ th:switch / th:case ]</h3>
+    <!--
+      th:if="${userRole == 'ADMIN'}"
+      Checks if the variable "userRole" (sent from Java) equals the string 'ADMIN'.
+      Single quotes inside ${} are required for string values: 'ADMIN' not "ADMIN"
+    -->
+    <p th:if="${userRole == 'ADMIN'}">You are an admin. Admin menu is visible.</p>
 
-<div th:switch="${loginStatus}">
-    <p th:case="'ACTIVE'">🟢 활성 계정</p>
-    <p th:case="'INACTIVE'">🔴 비활성 계정</p>
-    <p th:case="'SUSPENDED'">🚫 정지된 계정</p>
-    <p th:case="*">❓ 알 수 없는 상태</p>  <!-- default -->
+    <!--
+      th:unless="${userRole == 'ADMIN'}"
+      This is the "else" branch — shows when the condition above is FALSE.
+      Only ONE of these two <p> tags will appear on the page at a time.
+    -->
+    <p th:unless="${userRole == 'ADMIN'}">You are a regular user.</p>
+
+    <div class="rule">
+        Rule: th:if = show when TRUE &nbsp;|&nbsp; th:unless = show when FALSE (the else branch)
+    </div>
+    <div class="note">
+        Try: Change userRole to "USER" in the controller → restart → the second line appears instead.
+    </div>
 </div>
 
 <hr>
 
-<h3>[ 숫자 비교 ]</h3>
+<!-- ============================================================
+  SECTION 2: th:switch / th:case
+  ───────────────────────────────
+  th:switch="${variable}"
+    → Placed on a parent element. Thymeleaf checks the value of the variable.
 
-<p th:if="${point >= 1000}">
-    ⭐ VIP 회원입니다 (포인트: <span th:text="${point}">0</span>)
-</p>
-<p th:if="${point < 1000}">일반 회원입니다</p>
+  th:case="'VALUE'"
+    → Placed on each child element. Only the matching case is shown.
+    → All non-matching cases are completely removed from the HTML.
+
+  th:case="*"
+    → The DEFAULT case. Runs when NO other case matched.
+    → Like the "default:" block in a Java switch statement.
+
+  Important: Only ONE case will ever be shown. They are mutually exclusive.
+============================================================ -->
+
+<div class="card">
+    <h3>2. th:switch / th:case — Account status</h3>
+
+    <!--
+      th:switch="${loginStatus}"
+      The parent div holds the switch. It reads the value of loginStatus from Model.
+      Thymeleaf then checks each child's th:case to find the match.
+    -->
+    <div th:switch="${loginStatus}">
+
+        <!-- th:case="'ACTIVE'" → only shown if loginStatus equals "ACTIVE" -->
+        <p th:case="'ACTIVE'">Account is active.</p>
+
+        <!-- th:case="'INACTIVE'" → only shown if loginStatus equals "INACTIVE" -->
+        <p th:case="'INACTIVE'">Account is inactive.</p>
+
+        <!-- th:case="'SUSPENDED'" → only shown if loginStatus equals "SUSPENDED" -->
+        <p th:case="'SUSPENDED'">Account is suspended.</p>
+
+        <!--
+          th:case="*" → DEFAULT. Shown when loginStatus does not match any case above.
+          Example: if loginStatus = "DELETED" → none of the above match → this shows.
+        -->
+        <p th:case="*">Unknown account status.</p>
+    </div>
+
+    <div class="rule">
+        Rule: Only ONE th:case block is ever shown. th:case="*" is the default (catch-all).
+    </div>
+    <div class="note">
+        Try: Change loginStatus to "DELETED" in the controller → restart → the default case appears.
+    </div>
+</div>
 
 <hr>
 
-<p><strong>현재 값 확인:</strong>
-    userRole = <span th:text="${userRole}">-</span> /
-    loginStatus = <span th:text="${loginStatus}">-</span> /
-    point = <span th:text="${point}">0</span>
+<!-- ============================================================
+  SECTION 3: th:if with number comparison
+  ─────────────────────────────────────────
+  You can compare numbers directly inside th:if.
+  Operators: ==  !=  >  <  >=  <=
+
+  Example: th:if="${point >= 1000}"
+    → shows the element only if the variable "point" is 1000 or more.
+
+  Note: In XML/HTML, the < character causes problems inside attributes.
+  Use gt / lt / ge / le as safe alternatives:
+    gt  = greater than     >
+    lt  = less than        <
+    ge  = greater or equal >=
+    le  = less or equal    <=
+============================================================ -->
+
+<div class="card">
+    <h3>3. Number comparison</h3>
+
+    <!--
+      th:if="${point >= 1000}"
+      point is a number sent from Java: model.addAttribute("point", 1500)
+      This checks if point is 1000 or more.
+    -->
+    <p th:if="${point >= 1000}">
+        VIP member! Your points: <span th:text="${point}">0</span>
+    </p>
+
+    <!--
+      th:if="${point < 1000}"
+      This is the "else" — shown only when point is less than 1000.
+      These two <p> tags work as if/else because exactly one condition is true.
+    -->
+    <p th:if="${point < 1000}">Regular member.</p>
+
+    <div class="note">
+        Try: Change point to 500 in the controller → restart → "Regular member" appears.
+    </div>
+</div>
+
+<hr>
+
+<!-- ============================================================
+  PRACTICE A: th:if + th:unless — Login / Logout button
+  ───────────────────────────────────────────────────────
+  Real-world pattern: Show different buttons depending on login status.
+  When logged in  → show the "Welcome" message + Logout button.
+  When logged out → show "Please log in" message + Login button.
+
+  Key point: The outer <div> itself has th:if / th:unless.
+  This means the entire block (including the button) appears or disappears together.
+============================================================ -->
+
+<div class="card">
+    <h3>Practice A — Show different button based on login status</h3>
+
+    <!--
+      th:if="${isLoggedIn}"
+      If isLoggedIn = true → this entire div is shown (message + logout button).
+      If isLoggedIn = false → this entire div is removed from the page.
+    -->
+    <div th:if="${isLoggedIn}">
+        <p>Welcome! You are logged in.</p>
+        <button>Logout</button>
+    </div>
+
+    <!--
+      th:unless="${isLoggedIn}"
+      This is the opposite block. Shown when isLoggedIn = false.
+      Only one of these two divs will exist on the page at any time.
+    -->
+    <div th:unless="${isLoggedIn}">
+        <p>You need to log in.</p>
+        <button>Login</button>
+    </div>
+
+    <div class="rule">
+        Rule: th:if and th:unless on a &lt;div&gt; controls the ENTIRE block inside it.
+    </div>
+    <div class="note">
+        Try: Change isLoggedIn to false in the controller → restart → Login button appears instead.
+    </div>
+</div>
+
+<hr>
+
+<!-- ============================================================
+  PRACTICE B: Nested th:if (condition inside condition)
+  ─────────────────────────────────────────────────────
+  You can put th:if inside another th:if block.
+  First check: is the user logged in?
+  Second check (inside): is the cart empty or has items?
+
+  The inner th:if only runs if the outer th:if is already true.
+  If isLoggedIn = false → the outer div is removed → inner conditions are never checked.
+============================================================ -->
+
+<div class="card">
+    <h3>Practice B — Nested conditions (cart inside login check)</h3>
+
+    <!--
+      Outer condition: only show this div if the user is logged in.
+      Everything inside is hidden for logged-out users.
+    -->
+    <div th:if="${isLoggedIn}">
+        <p>Shopping Cart</p>
+
+        <!--
+          Inner condition 1: show an "empty" message only when cartCount equals 0.
+          cartCount == 0 means the cart has no items.
+        -->
+        <p th:if="${cartCount == 0}">Your cart is empty.</p>
+
+        <!--
+          Inner condition 2: show item count only when cartCount is more than 0.
+          th:text="${cartCount}" displays the actual number from Java.
+        -->
+        <p th:if="${cartCount > 0}">
+            Items in cart: <strong th:text="${cartCount}">0</strong>
+        </p>
+    </div>
+
+    <div class="rule">
+        Rule: Inner th:if only runs after the outer th:if passes. Think of it as a gate.
+    </div>
+    <div class="note">
+        Try: Change cartCount to 3 → restart → "Items in cart: 3" appears.
+        Try: Change isLoggedIn to false → restart → the entire cart section disappears.
+    </div>
+</div>
+
+<hr>
+
+<!-- ============================================================
+  PRACTICE C: th:switch for grade badge
+  ──────────────────────────────────────
+  Using th:switch inside a <span> to show a colored grade label.
+  The th:the switch is on the <span> wrapper.
+  Each th:this case is a <strong> tag with different inline styles.
+
+  Only ONE <strong> will appear. The others are removed from the HTML.
+  th:case="*" catches any value that has no matching case (e.g. "BRONZE").
+============================================================ -->
+
+<div class="card">
+    <h3>Practice C — Grade badge (th:switch)</h3>
+
+    <p>Your grade:
+        <!--
+          th:switch="${userGrade}"
+          Reads userGrade from the Model. Checks each child th:case.
+        -->
+        <span th:switch="${userGrade}">
+            <!-- th:case="'VIP'" → matches only when userGrade equals "VIP" -->
+            <strong th:case="'VIP'"    style="color: gold;">★ VIP</strong>
+
+            <!-- th:case="'GOLD'" → matches only when userGrade equals "GOLD" -->
+            <strong th:case="'GOLD'"   style="color: orange;">● GOLD</strong>
+
+            <!-- th:case="'SILVER'" → matches only when userGrade equals "SILVER" -->
+            <strong th:case="'SILVER'" style="color: gray;">● SILVER</strong>
+
+            <!--
+              th:case="*" → DEFAULT. Runs when userGrade is anything else.
+              Example: "BRONZE", "REGULAR", "" (empty) → all fall here.
+            -->
+            <strong th:case="*"        style="color: black;">○ Regular</strong>
+        </span>
+    </p>
+
+    <div class="note">
+        Try: Change userGrade to "VIP", "SILVER", or "BRONZE" and restart each time.
+        "BRONZE" has no case, so th:case="*" handles it → shows "Regular".
+    </div>
+</div>
+
+<hr>
+
+<!-- ============================================================
+  PRACTICE D: AND / OR / NOT operators inside th:if
+  ──────────────────────────────────────────────────
+  Sometimes one condition is not enough. You need to check two things.
+
+  and  → BOTH conditions must be true   (like Java &&)
+  or   → AT LEAST ONE must be true      (like Java ||)
+  not  → REVERSES the condition         (like Java !)
+
+  Syntax:
+    th:if="${a and b}"          → a AND b
+    th:if="${a or b}"           → a OR b
+    th:if="${not a}"            → NOT a (same effect as th:unless="${a}")
+    th:if="${a and (b or c)}"   → grouping with parentheses
+============================================================ -->
+
+<div class="card">
+    <h3>Practice D — AND / OR / NOT conditions</h3>
+
+    <!--
+      AND: Both conditions must be true.
+      isLoggedIn must be true AND hasNotification must be true.
+      If either one is false → this element is removed.
+    -->
+    <p th:if="${isLoggedIn and hasNotification}">
+        You have <span th:text="${notificationCount}">0</span> notifications.
+    </p>
+
+    <!--
+      OR: At least one condition must be true.
+      Shows the message if userGrade is either "VIP" or "GOLD".
+      A "SILVER" user will NOT see this message.
+    -->
+    <p th:if="${userGrade == 'VIP' or userGrade == 'GOLD'}">
+        Premium member benefits applied.
+    </p>
+
+    <!--
+      NOT: Reverses the condition.
+      th:if="${not isLoggedIn}" = show when isLoggedIn is false.
+      This is exactly the same as writing: th:unless="${isLoggedIn}"
+      Both are correct — use whichever reads more clearly to you.
+    -->
+    <p th:if="${not isLoggedIn}">
+        You are not logged in. (using th:if + not)
+    </p>
+
+    <div class="rule">
+        and = both true &nbsp;|&nbsp; or = one true &nbsp;|&nbsp; not = reverse &nbsp;|&nbsp; th:if="${not x}" = same as th:unless="${x}"
+    </div>
+    <div class="note">
+        Try: Change hasNotification to false → restart → notification message disappears (AND failed).
+        Try: Change userGrade to "SILVER" → restart → premium message disappears (neither VIP nor GOLD).
+    </div>
+</div>
+
+<hr>
+
+<!-- Current values display — useful for debugging while you practice -->
+<p><strong>Current values from controller:</strong><br>
+    userRole = <span th:text="${userRole}">-</span> &nbsp;|&nbsp;
+    loginStatus = <span th:text="${loginStatus}">-</span> &nbsp;|&nbsp;
+    point = <span th:text="${point}">0</span> &nbsp;|&nbsp;
+    isLoggedIn = <span th:text="${isLoggedIn}">-</span> &nbsp;|&nbsp;
+    cartCount = <span th:text="${cartCount}">0</span> &nbsp;|&nbsp;
+    userGrade = <span th:text="${userGrade}">-</span>
 </p>
 
-<a th:href="@{/learn/users}">← Step 2</a>
+<a th:href="@{/learn/users}">← Step 2 (users)</a>
 &nbsp;&nbsp;
-<a th:href="@{/learn/urls}">Step 4 - URL →</a>
+<a th:href="@{/learn/urls}">Step 4 (URLs) →</a>
 
 </body>
 </html>

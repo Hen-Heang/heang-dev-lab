@@ -161,6 +161,8 @@ Level 1 — Basics (DONE)
   1.1  th:text, th:utext, th:class, th:style, th:id          -> /learn/hello
   1.2  th:each, stat (index, count, first, last, size)        -> /learn/users
   1.3  th:if, th:unless, th:switch, th:case                   -> /learn/condition
+       Covers: basic if/unless, number compare, nested conditions,
+               grade badge (switch), AND / OR / NOT operators
   1.4  @{} URL expressions, path variables, query params      -> /learn/urls
   1.5  th:fragment, th:replace (reusable layout)              -> /learn/layout
   1.6  Shared navbar + footer applied to real page            -> /learn/layout-page
