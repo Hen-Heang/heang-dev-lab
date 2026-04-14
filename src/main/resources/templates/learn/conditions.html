@@ -307,9 +307,9 @@
   ──────────────────────────────────────────────────
   Sometimes one condition is not enough. You need to check two things.
 
-  and  → BOTH conditions must be true   (like Java &&)
-  or   → AT LEAST ONE must be true      (like Java ||)
-  not  → REVERSES the condition         (like Java !)
+  and → BOTH conditions must be true (like Java &&),
+  or → AT LEAST ONE must be true (like Java ||)
+  not → REVERSES the condition (like Java !)
 
   Syntax:
     th:if="${a and b}"          → a AND b
@@ -332,11 +332,11 @@
 
     <!--
       OR: At least one condition must be true.
-      Shows the message if userGrade is either "VIP" or "GOLD".
+      Shows the message if the userGrade is either "VIP" or "GOLD".
       A "SILVER" user will NOT see this message.
     -->
     <p th:if="${userGrade == 'VIP' or userGrade == 'GOLD'}">
-        Premium member benefits applied.
+        Premium member benefits are applied.
     </p>
 
     <!--
@@ -353,8 +353,8 @@
         and = both true &nbsp;|&nbsp; or = one true &nbsp;|&nbsp; not = reverse &nbsp;|&nbsp; th:if="${not x}" = same as th:unless="${x}"
     </div>
     <div class="note">
-        Try: Change hasNotification to false → restart → notification message disappears (AND failed).
-        Try: Change userGrade to "SILVER" → restart → premium message disappears (neither VIP nor GOLD).
+        Try: Change hasNotification to false → restart → a notification message disappears (AND failed).
+        Try: Change userGrade to "SILVER" → restart → a premium message disappears (neither VIP nor GOLD).
     </div>
 </div>
 

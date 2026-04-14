@@ -1,0 +1,192 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Level 2.1 - Nested Objects</title>
+    <style>
+        body {
+            font-family: sans-serif;
+            max-width: 700px;
+            margin: 40px auto;
+            padding: 0 20px;
+        }
+
+        .card {
+            background: #f8f9fa;
+            border-left: 4px solid #4A90D9;
+            padding: 16px;
+            margin: 20px 0;
+            border-radius: 4px;
+        }
+
+        .note {
+            font-size: 13px;
+            color: #555;
+            background: #fff3cd;
+            padding: 8px;
+            border-radius: 4px;
+            margin-top: 8px;
+        }
+
+        .rule {
+            font-size: 13px;
+            color: #155724;
+            background: #d4edda;
+            padding: 8px;
+            border-radius: 4px;
+            margin-top: 8px;
+        }
+    </style>
+</head>
+<body>
+
+<h1>Level 2.1 — Nested Objects</h1>
+
+<!-- ============================================================
+  SECTION 1: Basic nested object access
+  ──────────────────────────────────────
+  ${employee.name} → access a direct field
+  ${employee.department.name} → access a field inside a nested object
+  ${employee.address.city} → go two levels deep
+
+  This works because Thymeleaf calls the getter behind the scenes:
+    ${employee.department.name}
+    → Java equivalent: employee.getDepartment().getName()
+============================================================ -->
+<div class="card">
+    <h3>1. Basic nested access</h3>
+
+    <!-- Direct field — one level deep -->
+    <p>Name: <strong th:text="${employee.name}">-</strong></p>
+    <p>Position: <strong th:text="${employee.position}">-</strong></p>
+
+    <!--
+      Two levels deep: employee → department → name
+      Thymeleaf calls: employee.getDepartment().getName()
+    -->
+    <p>Department: <strong th:text="${employee.department.name}">-</strong></p>
+    <p>Office: <strong th:text="${employee.department.location}">-</strong></p>
+
+    <!--
+      Two levels deep: employee → address → city
+    -->
+    <p>City: <strong th:text="${employee.address.city}">-</strong></p>
+    <p>District: <strong th:text="${employee.address.district}">-</strong></p>
+
+    <div class="rule">
+        ${employee.department.name} = employee.getDepartment().getName() in Java
+    </div>
+</div>
+
+<!-- ============================================================
+  SECTION 2: Safe navigation operator ?.
+  ──────────────────────────────────────
+  Problem: if the department is NULL, then ${employee.department.name}
+  will CRASH with a NullPointerException error.
+
+  Solution: use ?. (safe navigation)
+    ${employee.department?.name}
+    → If department is null → returns null (no crash)
+    → If department is not null → returns department.name
+
+  This is the same as Java's null check before accessing a field.
+============================================================ -->
+<div class="card">
+    <h3>2. Safe navigation ?. (null-safe access)</h3>
+
+    <!--
+      newEmployee has department = null
+      Without ?. → crash
+      With ?.    → returns null, Thymeleaf shows nothing (empty)
+    -->
+    <p>New Employee name: <strong th:text="${newEmployee.name}">-</strong></p>
+
+    <!--
+      ${newEmployee.department?.name}
+      department is null → ?. stops here → returns null → shows nothing
+    -->
+    <p>Department: <strong th:text="${newEmployee.department?.name}">-</strong></p>
+
+    <div class="note">
+        newEmployee.department is null. Without ?. this would crash. With ?. it just shows blank.
+    </div>
+    <div class="rule">
+        Always use ?. when a nested object might be null.
+    </div>
+</div>
+
+<!-- ============================================================
+  SECTION 3: Elvis operator ?: (default value when null)
+  ───────────────────────────────────────────────────────
+  Safe navigation ?. returns null when the object is null.
+  But showing nothing (blank) is not always good — you want a fallback text.
+
+  Combine ?. with ?: (Elvis) to show a default value:
+    ${newEmployee.department?.name} ?: 'No department assigned'
+    → if department is null → shows 'No department assigned'
+    → if department is not null → shows department.name
+============================================================ -->
+<div class="card">
+    <h3>3. Elvis operator — ?: (fallback default value)</h3>
+
+    <!--
+      ?. handles the null object
+      ?: provides the fallback text shown when the result is null
+    -->
+    <p>Department:
+        <strong th:text="${newEmployee.department?.name} ?: 'No department assigned'">-</strong>
+    </p>
+
+    <p>City:
+        <strong th:text="${newEmployee.address?.city} ?: 'No address on file'">-</strong>
+    </p>
+
+    <!--
+      Salary is null (Integer, not int).
+      Without ?: → shows blank
+      With ?: → shows fallback text
+    -->
+    <p>Salary:
+        <strong th:text="${newEmployee.salary} ?: 'Not disclosed'">-</strong>
+    </p>
+
+    <div class="rule">
+        Pattern: ${obj?.field} ?: 'default text'
+        Use this whenever a field OR its parent object might be null.
+    </div>
+</div>
+
+<!-- ============================================================
+  SECTION 4: th:if with a nested object
+  ─────────────────────────────────────
+  You can combine conditions with nested object access.
+  Check if a department exists before showing department info.
+============================================================ -->
+<div class="card">
+    <h3>4. th:if with a nested object</h3>
+
+    <!--
+      Check if the department is not null before accessing its fields.
+      employee.department != null → safe to access .name, .location
+    -->
+    <div th:if="${employee.department != null}">
+        <p>Department info is available:</p>
+        <p>Name: <span th:text="${employee.department.name}">-</span></p>
+        <p>Head count: <span th:text="${employee.department.headCount}">-</span></p>
+    </div>
+
+    <!--
+      newEmployee.department is null → this block shows instead
+    -->
+    <div th:if="${newEmployee.department == null}">
+        <p>The new employee has no department yet.</p>
+    </div>
+</div>
+
+<hr>
+<a th:href="@{/learn/condition}">← Step 3 (conditions)</a>
+&nbsp;&nbsp;
+<a th:href="@{/learn/urls}">Step 4 (URLs) →</a>
+
+</body>
+</html>

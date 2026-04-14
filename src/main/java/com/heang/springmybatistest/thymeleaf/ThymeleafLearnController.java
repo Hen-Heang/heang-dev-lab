@@ -1,6 +1,9 @@
 package com.heang.springmybatistest.thymeleaf;
 
 import com.heang.springmybatistest.model.Users;
+import com.heang.springmybatistest.thymeleaf.domain.Address;
+import com.heang.springmybatistest.thymeleaf.domain.Department;
+import com.heang.springmybatistest.thymeleaf.domain.Employee;
 import com.heang.springmybatistest.thymeleaf.domain.User;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -8,7 +11,9 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 
+import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Map;
 
 // ================================================================
 // @Controller
@@ -304,5 +309,128 @@ public class ThymeleafLearnController {
         model.addAttribute("age", 24);
         model.addAttribute("isActive", true);
         return "learn/text";
+    }
+
+    // ============================================================
+    // LEVEL 2.1: Nested Objects
+    // URL: http://localhost:8080/learn/employee
+    // ============================================================
+    @GetMapping("/employee")
+    public String employee(Model model) {
+
+        // --------------------------------------------------------
+        // Build the nested objects from the inside out.
+        // Address and Department are built first,
+        // then passed INTO the Employee object.
+        // --------------------------------------------------------
+
+        // Step 1 — build Address (innermost)
+        Address address = Address.builder()
+                .city("Seoul")
+                .district("Gangnam-gu")
+                .zipCode("06000")
+                .build();
+
+        // Step 2 — build Department (innermost)
+        Department department = Department.builder()
+                .id(1L)
+                .name("Engineering")
+                .location("Seoul HQ")
+                .headCount(12)
+                .build();
+
+        // Step 3 — build Employee, passing department and address into it
+        // Now employee.department and employee.address are NOT null
+        Employee employee = Employee.builder()
+                .id(1L)
+                .name("Hen Heang")
+                .position("Backend Developer")
+                .salary(4500000)
+                .active(true)
+                .department(department)    // nested object
+                .address(address)          // nested object
+                .build();
+
+        // --------------------------------------------------------
+        // Send to HTML.
+        // In HTML: ${employee.name}              → "Hen Heang"
+        //          ${employee.department.name}   → "Engineering"
+        //          ${employee.address.city}      → "Seoul"
+        // --------------------------------------------------------
+        model.addAttribute("employee", employee);
+
+        // Also add a second employee with NULL department — to practice safe navigation
+        Employee newEmployee = Employee.builder()
+                .id(2L)
+                .name("Kim Chulsoo")
+                .position("Intern")
+                .salary(null)
+                .active(false)
+                .department(null)    // intentionally null — to practice ?.
+                .address(null)       // intentionally null — to practice ?:
+                .build();
+
+        model.addAttribute("newEmployee", newEmployee);
+
+        return "learn/employee";
+    }
+
+    // ============================================================
+    // LEVEL 2.2: Maps
+    // URL: http://localhost:8080/learn/map
+    // ============================================================
+    @GetMapping("/map")
+    public String map(Model model) {
+
+        // --------------------------------------------------------
+        // MAP 1 — Simple Map<String, Object>
+        //
+        // Map = a collection of KEY → VALUE pairs.
+        // Key   = always a String (the label)
+        // Value = can be anything: String, Integer, Boolean, etc.
+        //
+        // LinkedHashMap is used instead of HashMap
+        // because LinkedHashMap KEEPS the order you inserted.
+        // HashMap does NOT guarantee order — your rows would appear randomly.
+        // --------------------------------------------------------
+        Map<String, Object> userStats = new LinkedHashMap<>();
+        userStats.put("Total Users",    120);   // String key → Integer value
+        userStats.put("Active",          95);
+        userStats.put("Inactive",        25);
+        userStats.put("Admin",            3);
+        userStats.put("Last Updated", "2026-04-14");  // String key → String value
+
+        model.addAttribute("userStats", userStats);
+
+        // --------------------------------------------------------
+        // MAP 2 — Map<String, String>
+        // A simple label → description map.
+        // Used for showing a "legend" or "info panel" in Korean admin pages.
+        // --------------------------------------------------------
+        Map<String, String> systemInfo = new LinkedHashMap<>();
+        systemInfo.put("Server",      "Railway Cloud");
+        systemInfo.put("Database",    "PostgreSQL 15");
+        systemInfo.put("Framework",   "Spring Boot 4.0");
+        systemInfo.put("View Engine", "Thymeleaf");
+        systemInfo.put("Status",      "Running");
+
+        model.addAttribute("systemInfo", systemInfo);
+
+        // --------------------------------------------------------
+        // MAP 3 — Map<String, Object> with mixed value types
+        // In real Korean projects, a summary card often uses a Map like this.
+        // --------------------------------------------------------
+        Map<String, Object> employeeSummary = new LinkedHashMap<>();
+        employeeSummary.put("Name",          "Hen Heang");
+        employeeSummary.put("Department",    "Engineering");
+        employeeSummary.put("Position",      "Backend Developer");
+        employeeSummary.put("Salary",        4500000);
+        employeeSummary.put("Active",        true);
+        employeeSummary.put("Years",         2);
+
+        model.addAttribute("employeeSummary", employeeSummary);
+
+        // → templates/learn/map.html
+        return "learn/map";
     }
 }

@@ -1,0 +1,246 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Level 2.2 - Maps</title>
+    <style>
+        body { font-family: sans-serif; max-width: 750px; margin: 40px auto; padding: 0 20px; }
+        .card { background: #f8f9fa; border-left: 4px solid #4A90D9; padding: 16px; margin: 20px 0; border-radius: 4px; }
+        .note { font-size: 13px; color: #555; background: #fff3cd; padding: 8px; border-radius: 4px; margin-top: 8px; }
+        .rule { font-size: 13px; color: #155724; background: #d4edda; padding: 8px; border-radius: 4px; margin-top: 8px; }
+        table { width: 100%; border-collapse: collapse; margin-top: 12px; }
+        th, td { border: 1px solid #dee2e6; padding: 8px 12px; text-align: left; }
+        th { background: #e9ecef; font-weight: bold; }
+        tr:nth-child(even) { background: #f8f9fa; }
+    </style>
+</head>
+<body>
+
+<h1>Level 2.2 — Maps</h1>
+
+<!-- ============================================================
+  WHAT IS A MAP?
+  ──────────────
+  A Map is a collection of KEY → VALUE pairs.
+
+  Java:
+    Map<String, Object> stats = new LinkedHashMap<>();
+    stats.put("Total Users", 120);
+    stats.put("Active", 95);
+
+  Think of it like a two-column table:
+    Key (label)    | Value (data)
+    ───────────────┼─────────────
+    Total Users    | 120
+    Active         | 95
+
+  In Thymeleaf, you loop over a Map the same way as a List:
+    th:each="entry : ${mapName}"
+    → each "entry" has two properties:
+        entry.key   → the KEY   (left column)
+        entry.value → the VALUE (right column)
+
+  Why LinkedHashMap and not HashMap?
+    HashMap     → does NOT keep insertion order (rows appear in random order)
+    LinkedHashMap → KEEPS the order you inserted (rows appear as you defined)
+    Always use LinkedHashMap when order matters in a displayed table.
+============================================================ -->
+
+<!-- ============================================================
+  SECTION 1: Basic Map loop
+  ─────────────────────────
+  Loop over Map<String, Object> and display as a table.
+  entry.key   = the String key you put in the map (e.g. "Total Users")
+  entry.value = the value (e.g. 120, "2026-04-14")
+============================================================ -->
+<div class="card">
+    <h3>1. Basic Map loop — User Statistics</h3>
+
+    <!--
+      th:each="entry : ${userStats}"
+      Same syntax as looping over a List, but now each item is a Map.Entry.
+      A Map.Entry = one KEY-VALUE pair from the map.
+
+      entry.key   → the key   (String)  e.g. "Total Users"
+      entry.value → the value (Object)  e.g. 120
+    -->
+    <table>
+        <tr>
+            <!--
+              <th> = table header cell. Bold. Used for column titles.
+              This row is the header row — it does NOT repeat.
+            -->
+            <th>Label</th>
+            <th>Value</th>
+        </tr>
+
+        <!--
+          th:each="entry : ${userStats}"
+          Thymeleaf loops over every key-value pair in the map.
+          For each pair, it creates one <tr> (table row).
+
+          Result:
+            Row 1: Total Users | 120
+            Row 2: Active      | 95
+            Row 3: Inactive    | 25
+            ...
+        -->
+        <tr th:each="entry : ${userStats}">
+
+            <!--
+              entry.key → the String key of this map entry
+              Example: "Total Users", "Active", "Inactive"
+            -->
+            <td th:text="${entry.key}">-</td>
+
+            <!--
+              entry.value → the value of this map entry
+              Example: 120, 95, 25, "2026-04-14"
+              Thymeleaf automatically converts any type to String for display.
+            -->
+            <td th:text="${entry.value}">-</td>
+        </tr>
+    </table>
+
+    <div class="rule">
+        th:each="entry : ${mapName}" → entry.key = left column, entry.value = right column
+    </div>
+    <div class="note">
+        Try: Add a new line in the controller → stats.put("New Label", "New Value") → restart → new row appears.
+    </div>
+</div>
+
+<hr>
+
+<!-- ============================================================
+  SECTION 2: Map<String, String> loop
+  ─────────────────────────────────────
+  Same pattern. This time both key and value are Strings.
+  Common use: system info panels, setting pages, label-description tables.
+============================================================ -->
+<div class="card">
+    <h3>2. Map&lt;String, String&gt; — System Info</h3>
+
+    <!--
+      Same th:each pattern.
+      The only difference from Section 1 is that both entry.key and entry.value
+      are guaranteed to be Strings (no mixed types).
+    -->
+    <table>
+        <tr>
+            <th>Property</th>
+            <th>Value</th>
+        </tr>
+        <tr th:each="entry : ${systemInfo}">
+            <td th:text="${entry.key}">-</td>
+            <td th:text="${entry.value}">-</td>
+        </tr>
+    </table>
+
+    <div class="rule">
+        The loop syntax is identical for Map&lt;String, String&gt; and Map&lt;String, Object&gt;.
+    </div>
+</div>
+
+<hr>
+
+<!-- ============================================================
+  SECTION 3: Map with stat object
+  ─────────────────────────────────
+  You already know the stat object from th:each on Lists (Level 1.2).
+  It works exactly the same with Maps.
+
+  stat.count  → current row number (starts at 1)
+  stat.index  → current row index (starts at 0)
+  stat.first  → true if this is the first entry
+  stat.last   → true if this is the last entry
+  stat.even   → true if count is even (useful for striped rows)
+  stat.odd    → true if count is odd
+============================================================ -->
+<div class="card">
+    <h3>3. Map loop with stat — row numbers</h3>
+
+    <!--
+      th:each="entry, stat : ${employeeSummary}"
+      Adding ", stat" after "entry" gives you access to loop metadata.
+      stat.count = 1, 2, 3, 4... (the row number)
+    -->
+    <table>
+        <tr>
+            <th>#</th>
+            <th>Field</th>
+            <th>Value</th>
+        </tr>
+        <tr th:each="entry, stat : ${employeeSummary}">
+
+            <!--
+              stat.count → the current row number (1-based).
+              Same as when looping over a List.
+            -->
+            <td th:text="${stat.count}">-</td>
+
+            <td th:text="${entry.key}">-</td>
+            <td th:text="${entry.value}">-</td>
+        </tr>
+    </table>
+
+    <div class="rule">
+        stat works the same on a Map as it does on a List. stat.count, stat.first, stat.last all work.
+    </div>
+</div>
+
+<hr>
+
+<!-- ============================================================
+  SECTION 4: Access a specific key directly (without looping)
+  ────────────────────────────────────────────────────────────
+  You do not always need to loop over the entire map.
+  If you know the key, you can access its value directly:
+
+    ${mapName['keyName']}   → bracket notation
+    ${mapName.keyName}      → dot notation (only works if key has no spaces)
+
+  Use bracket notation when the key has spaces: "Total Users"
+  Use dot notation when the key is a simple word: "Status"
+============================================================ -->
+<div class="card">
+    <h3>4. Access a specific map value directly (no loop)</h3>
+
+    <!--
+      ${systemInfo['Server']}
+      Bracket notation — use when the key has spaces or special characters.
+      Reads the value for the key "Server" from the systemInfo map.
+      Result: "Railway Cloud"
+    -->
+    <p>Server: <strong th:text="${systemInfo['Server']}">-</strong></p>
+
+    <!--
+      ${systemInfo.Status}
+      Dot notation — works when the key is a single word with no spaces.
+      Same result as bracket notation for simple keys.
+    -->
+    <p>Status: <strong th:text="${systemInfo.Status}">-</strong></p>
+
+    <!--
+      ${userStats['Total Users']}
+      Must use bracket notation here because the key has a space: "Total Users"
+      Dot notation ${userStats.Total Users} would fail — space is not allowed.
+    -->
+    <p>Total Users: <strong th:text="${userStats['Total Users']}">-</strong></p>
+
+    <div class="rule">
+        ${map['Key With Spaces']} → bracket notation (always safe) |
+        ${map.SimpleKey} → dot notation (only when no spaces in key)
+    </div>
+    <div class="note">
+        Rule of thumb: always use bracket notation [ ] to be safe. Dot notation only if key is one word.
+    </div>
+</div>
+
+<hr>
+<a th:href="@{/learn/employee}">← Level 2.1 (nested objects)</a>
+&nbsp;&nbsp;
+<a th:href="@{/learn/urls}">Step 4 (URLs) →</a>
+
+</body>
+</html>

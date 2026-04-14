@@ -37,7 +37,7 @@
     <!--  This is a translation table between the database and Java.
       The database uses snake_case names like board_title. Java uses camelCase like boardTitle. They don't match automatically, so you need to tell MyBatis how to translate.
     -->
-    <!--      id= vs result=:
+    <!--      id= vs. result=:
       - <id> — use this for the Primary Key column only. MyBatis uses it internally to identify and cache objects correctly.
       - <result> — use this for all other regular columns.
 
