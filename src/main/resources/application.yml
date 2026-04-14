@@ -13,11 +13,6 @@ spring:
       mode: ${SPRING_SQL_INIT_MODE:never}
       schema-locations: ${SPRING_SQL_INIT_SCHEMA_LOCATIONS:classpath:schema.sql}
 
-  mvc:
-    view:
-      prefix: /WEB-INF/views/
-      suffix: .jsp
-
   web:
     cors:
       allowed-origins: "*"

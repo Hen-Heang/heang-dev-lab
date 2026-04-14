@@ -1,4 +1,4 @@
-package com.heang.springmybatistest.controller;
+package com.heang.springmybatistest.controller.practice;
 
 import org.springframework.web.bind.annotation.RestController;
 

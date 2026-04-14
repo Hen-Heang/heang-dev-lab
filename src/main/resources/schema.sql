@@ -8,6 +8,26 @@ DROP TABLE IF EXISTS product;
 DROP TABLE IF EXISTS category;
 DROP TABLE IF EXISTS users;
 DROP TABLE IF EXISTS students;
+DROP TABLE IF EXISTS co_smp_board_m;
+
+-- =====================================================
+-- BOARD (Korean enterprise eGov style table name)
+-- =====================================================
+CREATE TABLE co_smp_board_m (
+    board_sn    SERIAL PRIMARY KEY,
+    board_title VARCHAR(500) NOT NULL,
+    board_cn    TEXT,
+    use_yn      CHAR(1) NOT NULL DEFAULT 'Y',
+    data_reg_dt TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    CONSTRAINT chk_board_use_yn CHECK (use_yn IN ('Y', 'N'))
+);
+
+INSERT INTO co_smp_board_m (board_title, board_cn, use_yn) VALUES
+    ('첫 번째 게시글', '안녕하세요! 첫 번째 게시글입니다.', 'Y'),
+    ('Spring Boot 학습', 'Spring Boot와 MyBatis를 공부하고 있습니다.', 'Y'),
+    ('Thymeleaf 연습', 'JSP 대신 Thymeleaf로 뷰를 구성합니다.', 'Y'),
+    ('삭제된 게시글', '이 게시글은 소프트 삭제 상태입니다.', 'N'),
+    ('PostgreSQL 설정', 'Railway에 PostgreSQL을 연결했습니다.', 'Y');
 
 -- =====================================================
 -- USERS

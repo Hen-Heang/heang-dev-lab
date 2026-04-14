@@ -1,4 +1,4 @@
-package com.heang.springmybatistest.controller;
+package com.heang.springmybatistest.controller.store;
 
 import com.heang.springmybatistest.service.CategoryService;
 import com.heang.springmybatistest.service.ProductService;
@@ -10,8 +10,8 @@ import org.springframework.web.bind.annotation.RequestMapping;
 
 /**
  * Store Admin View Controller (스토어 어드민 뷰 컨트롤러)
- * Controller for rendering JSP pages (JSP 페이지 렌더링)
- * <p>
+ * Controller for rendering Thymeleaf pages (Thymeleaf 페이지 렌더링)
+ *
  * Data is loaded via jQuery AJAX calls to REST API
  * Here we only render the initial page (데이터는 AJAX로 조회)
  */
@@ -29,7 +29,6 @@ public class StoreViewController {
      */
     @GetMapping("/category")
     public String categoryList(Model model) {
-        // Initial data loaded via AJAX after page load (페이지 로드 후 AJAX로 조회)
         model.addAttribute("pageTitle", "Category Management");
         return "category/list";
     }
@@ -40,7 +39,6 @@ public class StoreViewController {
      */
     @GetMapping("/product")
     public String productList(Model model) {
-        // Category list for filter dropdown (필터 드롭다운용 카테고리 목록)
         model.addAttribute("pageTitle", "Product Management");
         model.addAttribute("categories", categoryService.findAll());
         return "product/list";

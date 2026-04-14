@@ -5,7 +5,6 @@ import org.jspecify.annotations.NonNull;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.web.servlet.config.annotation.CorsRegistry;
-import org.springframework.web.servlet.config.annotation.ResourceHandlerRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 
 // @Configuration: 이 클래스가 Spring 설정 클래스임을 알림 — 앱 시작 시 자동으로 로드됨
@@ -41,15 +40,8 @@ public class CorsConfig {
                         .allowCredentials(false);
             }
 
-            // 정적 리소스 경로 매핑 (CORS와 별개)
-            // Static resource mapping (separate from CORS)
-            @Override
-            public void addResourceHandlers(@NonNull ResourceHandlerRegistry registry) {
-                // URL /css/** 요청 → classpath:/css/ 폴더에서 파일 제공
-                // Requests to /css/** → serve files from resources/css/
-                registry.addResourceHandler("/css/**")
-                        .addResourceLocations("classpath:/css/");
-            }
+            // Static resources are served automatically from classpath:/static/ by Spring Boot.
+            // No custom addResourceHandlers needed.
         };
     }
 }

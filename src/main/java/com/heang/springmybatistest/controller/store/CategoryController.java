@@ -1,4 +1,4 @@
-package com.heang.springmybatistest.controller;
+package com.heang.springmybatistest.controller.store;
 
 import com.heang.springmybatistest.common.api.ApiResponse;
 import com.heang.springmybatistest.dto.CategoryRequest;

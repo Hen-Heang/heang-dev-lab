@@ -1,9 +1,8 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org" lang="en">
 <head>
-    <meta>
-    charset="UTF-8">
-    <title>Thymeleaf Practices Index </title>
+    <meta charset="UTF-8">
+    <title>Thymeleaf Practices Index</title>
 
     <style>
         body {
@@ -76,6 +75,7 @@
 </head>
 <body>
 
+<p style="margin-bottom:16px"><a th:href="@{/dashboard}" style="color:#666;text-decoration:none;">← Back to Dashboard</a></p>
 <h1>Thymeleaf Practice Index</h1>
 <p>모든 연습 페이지 목록입니다. 각 링크를 클릭해서 복습하세요.</p>
 
@@ -109,58 +109,63 @@
 
     <div class="card">
         <span class="badge">Step 5</span>
-        <a th:href="@{/learn/layout}">URL Expressions</a>
-        <p>@{}, path variables, query params</p>
+        <a th:href="@{/learn/layout}">Fragments / Layout</a>
+        <p>th:fragment, th:replace, th:insert — shared navbar &amp; footer</p>
     </div>
 
     <div class="card">
-        <span class="badge"> Step 6</span>
+        <span class="badge">Step 6</span>
         <a th:href="@{/learn/layout-page}">Shared Layout Page</a>
-        <p>Real Page Navbar + footer fragments combined</p>
+        <p>Real page using navbar + footer fragments combined</p>
     </div>
 
     <div class="card">
         <span class="badge">Step 7</span>
         <a th:href="@{/learn/profile}">Profile - Object Access</a>
-        <p>Object fields, ?: Elvis, th:if active budge, dynamic link </p>
+        <p>Object fields, ?: Elvis, th:if active badge, dynamic link</p>
     </div>
 
     <div class="card">
-        <span class="badge">Step 8 </span>
-        <a href="@{/learn/inputs">Inputs </a>
+        <span class="badge">Step 8</span>
+        <a th:href="@{/learn/inputs}">Inputs</a>
         <p>th:value, th:placeholder, th:readonly, th:attr</p>
     </div>
 
-    <h2>Level 2 - 오브젝트 (Objects) — 진행 중</h2>
-    <div class="cards">
-        <div class="card">
-            <span class="badge wip">Next </span>
-            <a th:href="@{learn/employee}">Nested Objects</a>
-            <p>employ.department.name, safe navigation ?., Elvis ?: </p>
-        </div>
+</div>
 
-        <div class="card">
-            <span class="badge wip">예정</span>
-            <span style="color: #aaa ; font-weight: bold">Maps</span>
-            <p>Map&lt;String, Object &gt; -> th:each on entries </p>
-        </div>
-
-        <div class="card">
-            <span class="badge wip">예정</span>
-            <span style="color:#aaa; font-weight:bold">Utility Objects</span>
-            <p>#strings, #numbers, #dates utility methods</p>
-        </div>
-
+<h2>Level 2 - 오브젝트 (Objects)</h2>
+<div class="cards">
+    <div class="card">
+        <span class="badge">L2.1</span>
+        <a th:href="@{/learn/employee}">Nested Objects</a>
+        <p>employee.department.name, safe navigation ?., Elvis ?:</p>
     </div>
 
-    <h2>Level 3 — 폼 & 유효성 검사 (Forms)</h2>
-    <div class="cards">
-        <div class="card">
-            <span class="badge wip">예정</span>
-            <span style="color:#aaa; font-weight:bold">Form & Validation</span>
-            <p>th:object, th:field, @Valid, Binding Result, th:errors</p>
-        </div>
+    <div class="card">
+        <span class="badge">L2.2</span>
+        <a th:href="@{/learn/map}">Maps</a>
+        <p>Map&lt;String, Object&gt; → th:each on entries</p>
+    </div>
 
+    <div class="card">
+        <span class="badge">L2.3</span>
+        <a th:href="@{/learn/text}">Text &amp; Attr</a>
+        <p>th:text, th:utext, th:attr, inline expressions</p>
+    </div>
+
+    <div class="card">
+        <span class="badge wip">예정</span>
+        <span style="color:#aaa; font-weight:bold">Utility Objects</span>
+        <p>#strings, #numbers, #dates utility methods</p>
+    </div>
+</div>
+
+<h2>Level 3 — 폼 &amp; 유효성 검사 (Forms)</h2>
+<div class="cards">
+    <div class="card">
+        <span class="badge wip">예정</span>
+        <span style="color:#aaa; font-weight:bold">Form &amp; Validation</span>
+        <p>th:object, th:field, @Valid, BindingResult, th:errors</p>
     </div>
 </div>
 

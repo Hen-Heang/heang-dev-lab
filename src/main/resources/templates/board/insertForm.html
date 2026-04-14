@@ -1,7 +1,10 @@
-<%@ page contentType="text/html;charset=UTF-8" language="java" %>
-<%@ taglib prefix="c" uri="jakarta.tags.core" %>
 <!DOCTYPE html>
-<html lang="ko">
+<!--
+  board/insertForm.html — Thymeleaf version (converted from board/insertForm.jsp)
+  This page has no server data — just a plain HTML form.
+  Only change: th:action="@{/board/insert.do}" instead of action="/board/insert.do"
+-->
+<html xmlns:th="http://www.thymeleaf.org" lang="ko">
 <head>
     <meta charset="UTF-8">
     <title>Write Board (게시글 등록)</title>
@@ -20,8 +23,8 @@
 
 <h2>Write Board (게시글 등록)</h2>
 
-<%-- POST /board/insert.do — @ModelAttribute maps fields → BoardVO --%>
-<form id="insertForm" method="post" action="/board/insert.do">
+<!-- th:action replaces action="/board/insert.do" — context path aware -->
+<form id="insertForm" method="post" th:action="@{/board/insert.do}">
 
     <table>
         <tr>
@@ -49,14 +52,14 @@
         </tr>
     </table>
 
-    <%-- useYn default Y — hidden field --%>
+    <!-- useYn default Y (기본값 Y) -->
     <input type="hidden" name="useYn" value="Y" />
 
     <div>
         <button type="button" class="btn btn-primary" onclick="submitInsert()">
             Save (저장)
         </button>
-        <button type="button" class="btn" onclick="location.href='/board/list.do'">
+        <button type="button" class="btn" th:onclick="|location.href='@{/board/list.do}'|">
             Cancel (취소)
         </button>
     </div>
@@ -66,21 +69,17 @@
 <script>
     function submitInsert() {
         const title = $('#boardTitle').val().trim();
-
         if (title === '') {
             $('#titleError').show();
             $('#boardTitle').focus();
             return;
         }
-
         $('#titleError').hide();
         $('#insertForm').submit();
     }
 
     $('#boardTitle').on('input', function() {
-        if ($(this).val().trim() !== '') {
-            $('#titleError').hide();
-        }
+        if ($(this).val().trim() !== '') $('#titleError').hide();
     });
 </script>
 

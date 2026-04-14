@@ -1,7 +1,10 @@
-<%@ page contentType="text/html;charset=UTF-8" language="java" %>
-<%@ taglib prefix="c" uri="jakarta.tags.core" %>
 <!DOCTYPE html>
-<html lang="ko">
+<!--
+  board/updateForm.html — Thymeleaf version (converted from board/updateForm.jsp)
+  JSP: value="<c:out value='${board.boardTitle}'/>" → th:value="${board.boardTitle}"
+  JSP: <textarea><c:out value="${board.boardCn}"/></textarea> → <textarea th:text="${board.boardCn}">
+-->
+<html xmlns:th="http://www.thymeleaf.org" lang="ko">
 <head>
     <meta charset="UTF-8">
     <title>Edit Board (게시글 수정)</title>
@@ -20,13 +23,13 @@
 
 <h2>Edit Board (게시글 수정)</h2>
 
-<form id="updateForm" method="post" action="/board/update.do">
-    <input type="hidden" name="boardSn" value="${board.boardSn}" />
+<form id="updateForm" method="post" th:action="@{/board/update.do}">
+    <input type="hidden" name="boardSn" th:value="${board.boardSn}" />
 
     <table>
         <tr>
             <th>No (번호)</th>
-            <td>${board.boardSn}</td>
+            <td th:text="${board.boardSn}">-</td>
         </tr>
         <tr>
             <th>Title (제목) *</th>
@@ -34,7 +37,7 @@
                 <input type="text"
                        id="boardTitle"
                        name="boardTitle"
-                       value="<c:out value='${board.boardTitle}'/>"
+                       th:value="${board.boardTitle}"
                        style="width:100%" />
                 <span id="titleError" class="error-msg">
                     Title is required (제목을 입력하세요)
@@ -44,10 +47,12 @@
         <tr>
             <th>Content (내용)</th>
             <td>
+                <!-- th:text on textarea fills the content between tags -->
                 <textarea id="boardCn"
                           name="boardCn"
                           rows="6"
-                          style="width:100%"><c:out value="${board.boardCn}"/></textarea>
+                          style="width:100%"
+                          th:text="${board.boardCn}"></textarea>
             </td>
         </tr>
     </table>
@@ -56,10 +61,12 @@
         <button type="button" class="btn btn-success" onclick="submitUpdate()">
             Save (저장)
         </button>
-        <button type="button" class="btn" onclick="location.href='/board/detail.do?boardSn=${board.boardSn}'">
+        <button type="button" class="btn"
+                th:onclick="|location.href='@{/board/detail.do(boardSn=${board.boardSn})}'|">
             Cancel (취소)
         </button>
-        <button type="button" class="btn" onclick="location.href='/board/list.do'">
+        <button type="button" class="btn"
+                th:onclick="|location.href='@{/board/list.do}'|">
             Back to List (목록)
         </button>
     </div>
@@ -69,21 +76,17 @@
 <script>
     function submitUpdate() {
         const title = $('#boardTitle').val().trim();
-
         if (title === '') {
             $('#titleError').show();
             $('#boardTitle').focus();
             return;
         }
-
         $('#titleError').hide();
         $('#updateForm').submit();
     }
 
     $('#boardTitle').on('input', function() {
-        if ($(this).val().trim() !== '') {
-            $('#titleError').hide();
-        }
+        if ($(this).val().trim() !== '') $('#titleError').hide();
     });
 </script>
 

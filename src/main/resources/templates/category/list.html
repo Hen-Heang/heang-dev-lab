@@ -1,38 +1,41 @@
-<%@ page contentType="text/html;charset=UTF-8" language="java" %>
-<%@ taglib prefix="c" uri="jakarta.tags.core" %>
-<%@ taglib prefix="fmt" uri="jakarta.tags.fmt" %>
 <!DOCTYPE html>
-<html lang="en">
+<!--
+  category/list.html — Thymeleaf version (converted from category/list.jsp)
+  Data is fully loaded via jQuery AJAX — no server-side loops needed here.
+  Main changes: th:href/@{} for links, th:src for scripts, remove JSP taglibs.
+-->
+<html xmlns:th="http://www.thymeleaf.org" lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>${pageTitle} - Store Admin</title>
-    <link rel="stylesheet" href="${pageContext.request.contextPath}/css/admin.css">
+    <!-- th:text="${pageTitle}" sets the <title> content from Model -->
+    <title th:text="${pageTitle} + ' - Store Admin'">Category Management - Store Admin</title>
+    <!-- th:href="@{/css/admin.css}" generates the correct context-path-aware URL -->
+    <link rel="stylesheet" th:href="@{/css/admin.css}">
 </head>
 <body>
 <div class="container">
-    <!-- Header -->
     <header class="header">
         <h1>🏪 Store Admin</h1>
         <nav class="nav">
-            <a href="${pageContext.request.contextPath}/dashboard" class="nav-link">Dashboard</a>
-            <a href="${pageContext.request.contextPath}/store/category" class="nav-link active">Category</a>
-            <a href="${pageContext.request.contextPath}/store/product" class="nav-link">Product</a>
-            <a href="${pageContext.request.contextPath}/" class="nav-link">Users</a>
+            <a th:href="@{/dashboard}" class="nav-link">Dashboard</a>
+            <a th:href="@{/store/category}" class="nav-link active">Category</a>
+            <a th:href="@{/store/product}" class="nav-link">Product</a>
+            <a th:href="@{/}" class="nav-link">Users</a>
         </nav>
     </header>
 
-    <!-- Main Content -->
     <main class="main">
         <div class="page-header">
             <div class="page-title">
-                <h2>${pageTitle}</h2>
+                <!-- th:text renders the pageTitle from the controller Model -->
+                <h2 th:text="${pageTitle}">Category Management</h2>
                 <p class="page-hint">Create and organize categories for your catalog.</p>
             </div>
             <button type="button" id="btnAdd" class="btn btn-primary">+ Add Category</button>
         </div>
 
-        <!-- Category List Table -->
+        <!-- Category List Table — tbody is populated via AJAX (category.js) -->
         <div class="table-container">
             <table class="table">
                 <thead>
@@ -44,7 +47,6 @@
                 </tr>
                 </thead>
                 <tbody id="categoryTableBody">
-                <!-- Data loaded via AJAX -->
                 <tr>
                     <td colspan="4" class="text-center">Loading data...</td>
                 </tr>
@@ -77,6 +79,7 @@
 </div>
 
 <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
-<script src="${pageContext.request.contextPath}/js/category.js"></script>
+<!-- th:src generates the correct URL for the JS file -->
+<script th:src="@{/js/category.js}"></script>
 </body>
 </html>

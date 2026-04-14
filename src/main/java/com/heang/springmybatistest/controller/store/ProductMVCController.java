@@ -1,6 +1,6 @@
-package com.heang.springmybatistest.controller;
+package com.heang.springmybatistest.controller.store;
 
-
+import com.heang.springmybatistest.dto.ProductSearchRequest;
 import com.heang.springmybatistest.model.Product;
 import com.heang.springmybatistest.service.ProductService;
 import lombok.RequiredArgsConstructor;
@@ -15,9 +15,7 @@ import java.util.List;
 @Controller
 @RequestMapping("/products")
 @RequiredArgsConstructor
-
 public class ProductMVCController {
-
 
     private final ProductService productService;
 
@@ -25,20 +23,16 @@ public class ProductMVCController {
     // URL: GET /products/list
     @GetMapping("/list")
     public String list(Model model) {
-        List<Product> products =
-                productService.search(new
-                        com.heang.springmybatistest.dto.ProductSearchRequest());
+        List<Product> products = productService.search(new ProductSearchRequest());
         model.addAttribute("products", products);
         return "products/list";
     }
 
-//    Get Product by id or get product details,
-
+    // GET /products/{id} — product detail
     @GetMapping("/{id}")
-    public String detail(@PathVariable Long id, Model model){
+    public String detail(@PathVariable Long id, Model model) {
         Product product = productService.findById(id);
         model.addAttribute("product", product);
         return "products/detail";
     }
-
 }

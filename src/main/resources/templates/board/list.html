@@ -1,0 +1,145 @@
+<!DOCTYPE html>
+<!--
+  board/list.html — Thymeleaf version (converted from board/list.jsp)
+  JSP 변환: <c:forEach> → th:each, <c:if> → th:if, <c:out> → th:text
+-->
+<html xmlns:th="http://www.thymeleaf.org" lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <title>Board List (게시판 목록)</title>
+    <style>
+        body { font-family: Arial, sans-serif; margin: 20px; }
+        table { width: 100%; border-collapse: collapse; }
+        th, td { border: 1px solid #ddd; padding: 8px; text-align: left; }
+        th { background-color: #f4f4f4; }
+        tr:hover { background-color: #f9f9f9; }
+        .search-form { margin-bottom: 15px; }
+        .btn { padding: 6px 12px; cursor: pointer; }
+        .btn-primary { background: #007bff; color: white; border: none; }
+        .btn-danger  { background: #dc3545; color: white; border: none; }
+        .error-msg   { color: red; font-size: 12px; display: none; }
+    </style>
+</head>
+<body>
+
+<h2>Board List (게시판 목록)</h2>
+<p>Total: <span th:text="${totalCount}">0</span> posts</p>
+
+<!-- ================================================================
+     Search Form (검색 폼)
+     JSP: value="<c:out value='${param.keyword}'/>"
+     Thymeleaf: th:value="${param.keyword}"
+     ================================================================ -->
+<div class="search-form">
+    <form id="searchForm" method="get" th:action="@{/board/list.do}">
+        <label for="keyword"></label>
+        <input type="text"
+               id="keyword"
+               name="keyword"
+               th:value="${param.keyword}"
+               placeholder="Search title... (제목 검색)" />
+        <button type="submit" class="btn btn-primary">Search</button>
+        <button type="button" class="btn" onclick="clearSearch()">Clear</button>
+        <span id="keywordError" class="error-msg">Please enter a keyword</span>
+    </form>
+</div>
+
+<!-- Write + Back buttons -->
+<div style="margin-bottom:10px;">
+    <button class="btn btn-primary" th:onclick="|location.href='@{/board/insertForm.do}'|">
+        Write (등록)
+    </button>
+    <button class="btn" th:onclick="|location.href='@{/dashboard}'|">
+        ← Dashboard
+    </button>
+</div>
+
+<!-- ================================================================
+     Board Table (게시글 목록 테이블)
+     JSP: <c:forEach var="board" items="${boards}" varStatus="status">
+     Thymeleaf: th:each="board, stat : ${boards}"
+     ================================================================ -->
+<table>
+    <thead>
+        <tr>
+            <th>No</th>
+            <th>Title (제목)</th>
+            <th>Status (상태)</th>
+            <th>Date (날짜)</th>
+            <th>Action</th>
+        </tr>
+    </thead>
+    <tbody>
+        <!-- th:each = JSP's c:forEach — stat.count starts from 1 -->
+        <tr th:each="board, stat : ${boards}">
+            <td th:text="${stat.count}">1</td>
+
+            <!-- th:text auto-escapes HTML (like <c:out>) — no XSS risk -->
+            <td>
+                <a th:href="@{/board/detail.do(boardSn=${board.boardSn})}"
+                   th:text="${board.boardTitle}">Title</a>
+            </td>
+
+            <!-- JSP: <c:choose><c:when test="${board.useYn == 'Y'}">
+                 Thymeleaf: th:if / th:unless -->
+            <td>
+                <span th:if="${board.useYn == 'Y'}" style="color:green">Active</span>
+                <span th:unless="${board.useYn == 'Y'}" style="color:red">Inactive</span>
+            </td>
+
+            <!-- JSP: ${fn:substring(board.dataRegDt, 0, 16)}
+                 Thymeleaf: #temporals.format() for LocalDateTime -->
+            <td th:text="${#temporals.format(board.dataRegDt, 'yyyy-MM-dd HH:mm')}">2026-01-01 00:00</td>
+
+            <td>
+                <!-- th:onclick with dynamic value inside th:each loop -->
+                <button class="btn"
+                        th:onclick="|location.href='@{/board/detail.do(boardSn=${board.boardSn})}'|">
+                    View
+                </button>
+                <button class="btn btn-danger"
+                        th:onclick="'deleteBoard(' + ${board.boardSn} + ')'">
+                    Delete
+                </button>
+            </td>
+        </tr>
+
+        <!-- JSP: <c:if test="${empty boards}">
+             Thymeleaf: th:if="${#lists.isEmpty(boards)}" -->
+        <tr th:if="${#lists.isEmpty(boards)}">
+            <td colspan="5" style="text-align:center">
+                No boards found (게시글이 없습니다)
+            </td>
+        </tr>
+    </tbody>
+</table>
+
+<!-- Hidden form for DELETE (HTML forms only support GET and POST) -->
+<form id="deleteForm" method="post" th:action="@{/board/delete.do}">
+    <input type="hidden" id="deleteBoardSn" name="boardSn" value="" />
+</form>
+
+<script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+<script>
+    function deleteBoard(boardSn) {
+        if (!confirm('Delete this board? (삭제하시겠습니까?)')) return;
+        $('#deleteBoardSn').val(boardSn);
+        $('#deleteForm').submit();
+    }
+
+    function clearSearch() {
+        $('#keyword').val('');
+        $('#searchForm').submit();
+    }
+
+    $('#searchForm').on('submit', function() {
+        const keyword = $('#keyword').val().trim();
+        if (keyword === '') {
+            $('#keywordError').show();
+            setTimeout(function() { $('#keywordError').hide(); }, 2000);
+        }
+    });
+</script>
+
+</body>
+</html>
