@@ -19,7 +19,7 @@ import java.time.LocalDateTime;
  * - category_id: Category FK, required (카테고리 FK, 필수)
  * - created_at: Created timestamp, auto (생성일시, 자동)
  * <p>
- * Relationship: Product (N) : Category (1) (관계)
+ * Relationship: Product (N): Category (1) (관계)
  */
 @Data
 @Builder
@@ -36,4 +36,6 @@ public class Product {
 
     // Field for JOIN result (Not a table column!) - JOIN 결과용 필드 (테이블 컬럼 아님!)
     private String categoryName;  // category.name (LEFT JOIN result)
+    private String imageUrl;
+
 }

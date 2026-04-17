@@ -4,6 +4,7 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import org.springframework.web.multipart.MultipartFile;
 
 /**
  * Product 생성/수정 요청 DTO
@@ -14,8 +15,10 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 public class ProductRequest {
 
-    private String name;        // 상품명
-    private Integer price;      // 가격
-    private Integer stock;      // 재고
-    private Long categoryId;    // 카테고리 ID
+    private String name;
+    private Integer price;
+    private Integer stock;
+    private Long categoryId;
+    private MultipartFile imageFile;  // incoming file from the form
+    private String imageUrl;          // saved URL path set by FileUploadService
 }

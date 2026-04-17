@@ -49,49 +49,50 @@
 
     <!-- INSERT -->
     <insert id="insertProduct" parameterType="com.heang.springmybatistest.dto.ProductRequest">
-        INSERT INTO product (name, price, stock, category_id)
-        VALUES (#{name}, #{price}, #{stock}, #{categoryId})
+        INSERT INTO product (name, price, stock, category_id, image_url)
+        VALUES (#{name}, #{price}, #{stock}, #{categoryId}, #{imageUrl})
     </insert>
 
     <!-- SELECT ALL with category JOIN -->
     <select id="selectProductList" resultMap="ProductMap">
-        SELECT
-            p.id,
-            p.name,
-            p.price,
-            p.stock,
-            p.category_id,
-            p.created_at,
-            c.name AS category_name
+        SELECT p.id,
+               p.name,
+               p.price,
+               p.stock,
+               p.category_id,
+               p.created_at,
+               c.name AS category_name
         FROM product p
-        LEFT JOIN category c ON p.category_id = c.id
+                 LEFT JOIN category c ON p.category_id = c.id
         ORDER BY p.id DESC
     </select>
 
-    <select id="searchProducts" parameterType="com.heang.springmybatistest.dto.ProductSearchRequest" resultMap="ProductMap">
+    <select id="searchProducts" parameterType="com.heang.springmybatistest.dto.ProductSearchRequest"
+            resultMap="ProductMap">
         SELECT
-            p.id,
-            p.name,
-            p.price,
-            p.stock,
-            p.category_id,
-            p.created_at,
-            c.name AS category_name
+        p.id,
+        p.name,
+        p.price,
+        p.stock,
+        p.category_id,
+        p.created_at,
+        c.name AS category_name
         FROM product p
         LEFT JOIN category c ON p.category_id = c.id
         <include refid="ProductSearchWhere"/>
         <include refid="ProductSearchOrder"/>
     </select>
 
-    <select id="searchProductsPaged" parameterType="com.heang.springmybatistest.dto.ProductSearchRequest" resultMap="ProductMap">
+    <select id="searchProductsPaged" parameterType="com.heang.springmybatistest.dto.ProductSearchRequest"
+            resultMap="ProductMap">
         SELECT
-            p.id,
-            p.name,
-            p.price,
-            p.stock,
-            p.category_id,
-            p.created_at,
-            c.name AS category_name
+        p.id,
+        p.name,
+        p.price,
+        p.stock,
+        p.category_id,
+        p.created_at,
+        c.name AS category_name
         FROM product p
         LEFT JOIN category c ON p.category_id = c.id
         <include refid="ProductSearchWhere"/>
@@ -107,31 +108,29 @@
 
     <!-- SELECT BY ID -->
     <select id="selectProductById" parameterType="long" resultMap="ProductMap">
-        SELECT
-            p.id,
-            p.name,
-            p.price,
-            p.stock,
-            p.category_id,
-            p.created_at,
-            c.name AS category_name
+        SELECT p.id,
+               p.name,
+               p.price,
+               p.stock,
+               p.category_id,
+               p.created_at,
+               c.name AS category_name
         FROM product p
-        LEFT JOIN category c ON p.category_id = c.id
+                 LEFT JOIN category c ON p.category_id = c.id
         WHERE p.id = #{id}
     </select>
 
     <!-- SELECT BY CATEGORY ID -->
     <select id="selectProductByCategoryId" parameterType="long" resultMap="ProductMap">
-        SELECT
-            p.id,
-            p.name,
-            p.price,
-            p.stock,
-            p.category_id,
-            p.created_at,
-            c.name AS category_name
+        SELECT p.id,
+               p.name,
+               p.price,
+               p.stock,
+               p.category_id,
+               p.created_at,
+               c.name AS category_name
         FROM product p
-        LEFT JOIN category c ON p.category_id = c.id
+                 LEFT JOIN category c ON p.category_id = c.id
         WHERE p.category_id = #{categoryId}
         ORDER BY p.id DESC
     </select>
@@ -139,17 +138,18 @@
     <!-- UPDATE -->
     <update id="updateProduct">
         UPDATE product
-        SET
-            name = #{req.name},
-            price = #{req.price},
-            stock = #{req.stock},
-            category_id = #{req.categoryId}
+        SET name        = #{req.name},
+            price       = #{req.price},
+            stock       = #{req.stock},
+            category_id = #{req.categoryId},
+            image_url   = #{req.imageUrl}
         WHERE id = #{id}
     </update>
 
     <!-- DELETE -->
     <delete id="deleteProduct" parameterType="long">
-        DELETE FROM product
+        DELETE
+        FROM product
         WHERE id = #{id}
     </delete>
 

@@ -59,14 +59,15 @@ public class ProductController {
         return ApiResponse.success(products);
     }
 
-    @PostMapping
-    public ApiResponse<Product> create(@RequestBody ProductRequest request) {
+    // @ModelAttribute instead of @RequestBody because file upload uses multipart/form-data
+    @PostMapping(consumes = {"multipart/form-data", "application/x-www-form-urlencoded", "application/json"})
+    public ApiResponse<Product> create(@ModelAttribute ProductRequest request) {
         Product product = productService.create(request);
         return ApiResponse.success(product);
     }
 
-    @PutMapping("/{id}")
-    public ApiResponse<Product> update(@PathVariable Long id, @RequestBody ProductRequest request) {
+    @PutMapping(value = "/{id}", consumes = {"multipart/form-data", "application/x-www-form-urlencoded", "application/json"})
+    public ApiResponse<Product> update(@PathVariable Long id, @ModelAttribute ProductRequest request) {
         Product product = productService.update(id, request);
         return ApiResponse.success(product);
     }

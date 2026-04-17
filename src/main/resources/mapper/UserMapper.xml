@@ -5,56 +5,65 @@
 <mapper namespace="com.heang.springmybatistest.mapper.UserMapper">
 
     <!-- ===================================
-         Common Result Map (공통 결과 매핑)
+         Common Result Map
          =================================== -->
     <resultMap id="UserMap" type="com.heang.springmybatistest.model.Users">
-        <id     property="id"        column="id"/>
-        <result property="username"  column="username"/>
-        <result property="email"     column="email"/>
-        <result property="password"  column="password"/>
-        <result property="name"      column="name"/>
-        <result property="phone"     column="phone"/>
-        <result property="role"      column="role"/>
-        <result property="status"    column="status"/>
+        <id property="id" column="id"/>
+        <result property="username" column="username"/>
+        <result property="email" column="email"/>
+        <result property="password" column="password"/>
+        <result property="name" column="name"/>
+        <result property="phone" column="phone"/>
+        <result property="role" column="role"/>
+        <result property="status" column="status"/>
         <result property="createdAt" column="created_at"/>
         <result property="updatedAt" column="updated_at"/>
 
     </resultMap>
 
+    <!--
+        [Reusable Column Fragment]
+
+        <sql> defines a reusable SQL snippet in one place.
+        Use it anywhere with: <include refid="UserColumns"/>
+
+        Why use this?
+        - DRY (Don't Repeat Yourself): write the column list only once
+        - Maintenance: add/remove a column here and all queries update automatically
+        - Consistency: every SELECT query fetches the same columns
+    -->
     <sql id="UserColumns">
-        id, username, email, password, name, phone, role, status, created_at, updated_at
+        id
+        , username, email, password, name, phone, role, status, created_at, updated_at
     </sql>
 
     <!-- ===================================
-         기존 CRUD 쿼리
+         CRUD Queries
          =================================== -->
 
-    <!-- INSERT (기존) -->
+    <!-- INSERT -->
     <insert id="insertUser"
             parameterType="com.heang.springmybatistest.dto.UserRequest">
-        INSERT INTO users (
-            username,
-            email,
-            name,
-            phone,
-            password,
-            role,
-            status
-        ) VALUES (
-            #{username},
-            #{email},
-            #{name},
-            #{phone},
-            #{password},
-            COALESCE(#{role}, 'ROLE_USER'),
-            COALESCE(#{status}, 'ACTIVE')
-        )
+        INSERT INTO users (username,
+                           email,
+                           name,
+                           phone,
+                           password,
+                           role,
+                           status)
+        VALUES (#{username},
+                #{email},
+                #{name},
+                #{phone},
+                #{password},
+                COALESCE(#{role}, 'ROLE_USER'),
+                COALESCE(#{status}, 'ACTIVE'))
     </insert>
 
     <!-- SELECT ALL -->
     <select id="selectUserList" resultMap="UserMap">
         SELECT
-            <include refid="UserColumns"/>
+        <include refid="UserColumns"/>
         FROM users
         ORDER BY id DESC
     </select>
@@ -62,7 +71,7 @@
     <!-- SELECT BY ID -->
     <select id="selectUserById" parameterType="long" resultMap="UserMap">
         SELECT
-            <include refid="UserColumns"/>
+        <include refid="UserColumns"/>
         FROM users
         WHERE id = #{id}
     </select>
@@ -70,53 +79,94 @@
     <!-- SEARCH + PAGINATION -->
     <select id="searchUsers" parameterType="com.heang.springmybatistest.dto.UserSearchRequest" resultMap="UserMap">
         SELECT
-            <include refid="UserColumns"/>
+        <include refid="UserColumns"/><!-- reuse column list defined above -->
         FROM users
+
+        <!--
+            <where> : automatically adds WHERE keyword if at least one <if> condition is true.
+                      if no conditions match, WHERE is skipped entirely — prevents invalid SQL.
+        -->
         <where>
+            <!-- only add this condition if username was sent (partial match: LIKE '%value%') -->
             <if test="username != null and username != ''">
                 AND username LIKE CONCAT('%', #{username}, '%')
             </if>
+
+            <!-- only add this condition if email was sent (partial match) -->
             <if test="email != null and email != ''">
                 AND email LIKE CONCAT('%', #{email}, '%')
             </if>
+
+            <!-- only add this condition if status was sent (exact match) -->
             <if test="status != null and status != ''">
                 AND status = #{status}
             </if>
+
+            <!-- keyword searches both username and email at once (OR search) -->
             <if test="keyword != null and keyword != ''">
                 AND (username LIKE CONCAT('%', #{keyword}, '%')
                 OR email LIKE CONCAT('%', #{keyword}, '%'))
             </if>
+
+            <!--
+                if ids list is not empty, generate IN clause
+                e.g. ids=[1,2,3] → AND id IN (1, 2, 3)
+                <foreach> loops over the list and joins items with comma separator
+            -->
             <if test="ids != null and ids.size() > 0">
                 AND id IN
                 <foreach collection="ids" item="id" open="(" close=")" separator=",">
                     #{id}
                 </foreach>
             </if>
+
+            <!--
+                if statuses list is not empty, generate IN clause
+                e.g. statuses=['ACTIVE','INACTIVE'] → AND status IN ('ACTIVE', 'INACTIVE')
+            -->
             <if test="statuses != null and statuses.size() > 0">
                 AND status IN
                 <foreach collection="statuses" item="st" open="(" close=")" separator=",">
                     #{st}
                 </foreach>
             </if>
+
+            <!-- &gt;= is XML-safe way to write >= (greater than or equal) -->
             <if test="startDate != null">
                 AND created_at &gt;= #{startDate}
             </if>
+
+            <!-- &lt;= is XML-safe way to write <= (less than or equal) -->
             <if test="endDate != null">
                 AND created_at &lt;= #{endDate}
             </if>
         </where>
+
+        <!--
+            <choose> works like Java switch/case — picks exactly one option.
+            sortBy value decides which column to sort by.
+            if nothing is sent, <otherwise> is used → default sort by id.
+        -->
         ORDER BY
         <choose>
             <when test="sortBy == 'username'">username</when>
             <when test="sortBy == 'email'">email</when>
             <when test="sortBy == 'createdAt'">created_at</when>
             <when test="sortBy == 'status'">status</when>
-            <otherwise>id</otherwise>
+            <otherwise>id</otherwise><!-- default sort column -->
         </choose>
+
+        <!-- sort direction: ASC = oldest first, DESC = newest first (default) -->
         <choose>
             <when test="sortOrder == 'ASC'">ASC</when>
-            <otherwise>DESC</otherwise>
+            <otherwise>DESC</otherwise><!-- default direction -->
         </choose>
+
+        <!--
+            Pagination: size = rows per page, offset = rows to skip
+            e.g. page 3 with 10 per page → LIMIT 10 OFFSET 20
+            only applied when both size and offset are provided
+        -->
         <if test="size != null and offset != null">
             LIMIT #{size} OFFSET #{offset}
         </if>
@@ -163,74 +213,92 @@
     <!-- UPDATE -->
     <update id="updateUser">
         UPDATE users
-        SET
-            username = #{req.username},
-            email    = #{req.email},
-            status   = COALESCE(#{req.status}, status),
+        SET username   = #{req.username},
+            email      = #{req.email},
+            status     = COALESCE(#{req.status}, status),
             updated_at = CURRENT_TIMESTAMP
         WHERE id = #{id}
     </update>
 
     <!-- DELETE -->
     <delete id="deleteUser" parameterType="long">
-        DELETE FROM users
+        DELETE
+        FROM users
         WHERE id = #{id}
     </delete>
 
     <!-- ===================================
-         Spring Security 관련 쿼리
+         Spring Security Queries
          =================================== -->
 
-    <!-- 사용자명으로 조회 (로그인용) -->
+    <!-- find by username (used for login) -->
     <select id="selectUserByUsername" parameterType="string" resultMap="UserMap">
-        SELECT
-            id, username, email, password, name, phone, role, status, created_at, updated_at
+        SELECT id,
+               username,
+               email,
+               password,
+               name,
+               phone,
+               role,
+               status,
+               created_at,
+               updated_at
         FROM users
         WHERE username = #{username}
     </select>
 
-    <!-- 이메일로 조회 -->
+    <!-- find by email -->
     <select id="selectUserByEmail" parameterType="string" resultMap="UserMap">
-        SELECT
-            id, username, email, password, name, phone, role, status, created_at, updated_at
+        SELECT id,
+               username,
+               email,
+               password,
+               name,
+               phone,
+               role,
+               status,
+               created_at,
+               updated_at
         FROM users
         WHERE email = #{email}
     </select>
 
-    <!-- 사용자명 중복 확인 -->
+    <!-- check if username already exists (duplicate check) -->
     <select id="countByUsername" parameterType="string" resultType="int">
-        SELECT COUNT(*) FROM users WHERE username = #{username}
+        SELECT COUNT(*)
+        FROM users
+        WHERE username = #{username}
     </select>
 
-    <!-- 이메일 중복 확인 -->
+    <!-- check if email already exists (duplicate check) -->
     <select id="countByEmail" parameterType="string" resultType="int">
-        SELECT COUNT(*) FROM users WHERE email = #{email}
+        SELECT COUNT(*)
+        FROM users
+        WHERE email = #{email}
     </select>
 
-    <!-- 회원가입 (비밀번호 포함) -->
+    <!-- register new user (with encoded password) -->
     <insert id="insertUserWithPassword" parameterType="com.heang.springmybatistest.model.Users"
             useGeneratedKeys="true" keyProperty="id">
-        INSERT INTO users (
-            username, email, password, name, phone, role, status
-        ) VALUES (
-            #{username},
-            #{email},
-            #{password},
-            #{name},
-            #{phone},
-            COALESCE(#{role}, 'ROLE_USER'),
-            COALESCE(#{status}, 'ACTIVE')
-        )
+        INSERT INTO users (username, email, password, name, phone, role, status)
+        VALUES (#{username},
+                #{email},
+                #{password},
+                #{name},
+                #{phone},
+                COALESCE(#{role}, 'ROLE_USER'),
+                COALESCE(#{status}, 'ACTIVE'))
     </insert>
 
-    <!-- 비밀번호 변경 -->
+    <!-- update password -->
     <update id="updatePassword">
         UPDATE users
-        SET password = #{password}, updated_at = CURRENT_TIMESTAMP
+        SET password   = #{password},
+            updated_at = CURRENT_TIMESTAMP
         WHERE id = #{id}
     </update>
 
-    <!-- 마지막 로그인 시간 업데이트 -->
+    <!-- update last login time -->
     <update id="updateLastLogin" parameterType="long">
         UPDATE users
         SET updated_at = CURRENT_TIMESTAMP

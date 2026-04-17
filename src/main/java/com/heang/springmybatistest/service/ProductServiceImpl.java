@@ -18,6 +18,7 @@ import java.util.List;
 public class ProductServiceImpl implements ProductService {
 
     private final ProductMapper productMapper;
+    private final FileUploadService fileUploadService;
 
 
     @Override
@@ -53,10 +54,13 @@ public class ProductServiceImpl implements ProductService {
 
     @Override
     public Product create(ProductRequest request) {
+        // Save image file first, then store the returned URL into the request
+        String imageUrl = fileUploadService.save(request.getImageFile());
+        request.setImageUrl(imageUrl);
+
         productMapper.insertProduct(request);
-        // Return the latest product (since we don't have the ID)
         List<Product> products = productMapper.selectProductList();
-        return products.isEmpty() ? null : products.get(0);
+        return products.isEmpty() ? null : products.getFirst();
     }
 
     @Override
@@ -65,6 +69,17 @@ public class ProductServiceImpl implements ProductService {
         if (existing == null) {
             throw new RuntimeException("Product not found with id: " + id);
         }
+
+        // If a new image is uploaded, delete the old one and save the new one
+        if (request.getImageFile() != null && !request.getImageFile().isEmpty()) {
+            fileUploadService.delete(existing.getImageUrl());
+            String imageUrl = fileUploadService.save(request.getImageFile());
+            request.setImageUrl(imageUrl);
+        } else {
+            // No new image uploaded — keep the existing image URL
+            request.setImageUrl(existing.getImageUrl());
+        }
+
         productMapper.updateProduct(id, request);
         return productMapper.selectProductById(id);
     }

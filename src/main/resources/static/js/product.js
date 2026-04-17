@@ -220,36 +220,40 @@ function saveProduct() {
     const stock = $('#productStock').val();
 
     if (!name) {
-        alert('Please enter product name (상품명을 입력해주세요)');
+        alert('Please enter product name');
         $('#productName').focus();
         return;
     }
-
     if (!categoryId) {
-        alert('Please select category (카테고리를 선택해주세요)');
+        alert('Please select category');
         $('#productCategory').focus();
         return;
     }
 
-    const data = {
-        name: name,
-        categoryId: parseInt(categoryId),
-        price: parseInt(price) || 0,
-        stock: parseInt(stock) || 0
-    };
+    // FormData is required to send files — JSON.stringify cannot carry file data
+    const formData = new FormData();
+    formData.append('name', name);
+    formData.append('categoryId', parseInt(categoryId));
+    formData.append('price', parseInt(price) || 0);
+    formData.append('stock', parseInt(stock) || 0);
 
-    // If ID exists = update, else = create (ID 있으면 수정, 없으면 등록)
+    const imageFile = $('#productImage')[0].files[0];
+    if (imageFile) {
+        formData.append('imageFile', imageFile);
+    }
+
     const method = id ? 'PUT' : 'POST';
     const url = id ? `${API_BASE}/${id}` : API_BASE;
 
     $.ajax({
         url: url,
         method: method,
-        contentType: 'application/json',
-        data: JSON.stringify(data),
+        data: formData,
+        processData: false,  // tell jQuery NOT to convert FormData to string
+        contentType: false,  // tell jQuery NOT to set Content-Type (browser sets it with boundary)
         success: function (response) {
             if (response.status && response.status.code === 200) {
-                alert('Saved successfully (저장 완료)');
+                alert('Saved successfully');
                 closeModal();
                 loadProducts();
             } else {
@@ -258,7 +262,7 @@ function saveProduct() {
         },
         error: function (xhr) {
             const response = xhr.responseJSON;
-            alert(response?.status?.message || 'Save failed (저장 실패)');
+            alert(response?.status?.message || 'Save failed');
         }
     });
 }
@@ -299,12 +303,13 @@ function openAddModal() {
     $('#productCategory').val('');
     $('#productPrice').val('');
     $('#productStock').val('');
+    $('#productImage').val('');
+    $('#imagePreviewBox').hide();
     $('#productModal').addClass('show');
     $('#productName').focus();
 }
 
 function openEditModal(id) {
-    // Get product data (상품 데이터 조회)
     $.ajax({
         url: `${API_BASE}/${id}`,
         method: 'GET',
@@ -317,14 +322,24 @@ function openEditModal(id) {
                 $('#productCategory').val(product.categoryId);
                 $('#productPrice').val(product.price);
                 $('#productStock').val(product.stock);
+                $('#productImage').val('');
+
+                // Show current image preview if product has an image
+                if (product.imageUrl) {
+                    $('#imagePreview').attr('src', product.imageUrl);
+                    $('#imagePreviewBox').show();
+                } else {
+                    $('#imagePreviewBox').hide();
+                }
+
                 $('#productModal').addClass('show');
                 $('#productName').focus();
             } else {
-                alert('Failed to load product data (상품 데이터 로드 실패)');
+                alert('Failed to load product data');
             }
         },
-        error: function (xhr) {
-            alert('Failed to load product data (상품 데이터 로드 실패)');
+        error: function () {
+            alert('Failed to load product data');
         }
     });
 }
@@ -332,6 +347,7 @@ function openEditModal(id) {
 function closeModal() {
     $('#productModal').removeClass('show');
     $('#productForm')[0].reset();
+    $('#imagePreviewBox').hide();
 }
 
 // ===================================

@@ -75,6 +75,7 @@ CREATE TABLE product (
     price INTEGER NOT NULL DEFAULT 0,
     stock INTEGER NOT NULL DEFAULT 0,
     category_id INTEGER NOT NULL,
+    image_url VARCHAR(500),                              -- product image path e.g. /uploads/abc.jpg
     created_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
     CONSTRAINT fk_product_category
         FOREIGN KEY (category_id)
@@ -211,3 +212,13 @@ COMMENT ON COLUMN students.created_at IS 'Created timestamp (생성일시)';
 INSERT INTO students (name, email, age, major) VALUES ('Alice Smith', 'alice@example.com', 20, 'Computer Science');
 INSERT INTO students (name, email, age, major) VALUES ('Bob Johnson', 'bob@example.com', 22, 'Mathematics');
 INSERT INTO students (name, email, age, major) VALUES ('Charlie Brown', 'charlie@example.com', 21, 'Physics');
+
+-- =====================================================
+-- MIGRATIONS
+-- Run these only on existing databases (already created).
+-- If you ran schema.sql from scratch, skip this section.
+-- =====================================================
+
+-- [2026-04-17] Add image_url column to the product table
+-- Allows products to store an uploaded image path e.g. /uploads/abc.jpg
+ALTER TABLE product ADD COLUMN IF NOT EXISTS image_url VARCHAR(500);

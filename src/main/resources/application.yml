@@ -13,6 +13,7 @@ spring:
       mode: ${SPRING_SQL_INIT_MODE:never}
       schema-locations: ${SPRING_SQL_INIT_SCHEMA_LOCATIONS:classpath:schema.sql}
 
+  # CORS configuration
   web:
     cors:
       allowed-origins: "*"
@@ -31,14 +32,24 @@ spring:
           starttls:
             enable: true
 
+
+  # Thymeleaf configuration
   thymeleaf:
     prefix: classpath:/templates/
     suffix: .html
     cache: false
 
+  # File upload settings
+  servlet:
+    multipart:
+      max-file-size: 5MB
+      max-request-size: 10MB
+
 server:
   port: ${PORT:8080}
 
+
+#  Mybatis configuration
 mybatis:
   mapper-locations: classpath*:mapper/*.xml
   type-aliases-package: com.heang.springmybatistest.model
@@ -46,12 +57,16 @@ mybatis:
     map-underscore-to-camel-case: true
     log-impl: org.apache.ibatis.logging.stdout.StdOutImpl
 
+
+# Log and debug to show real sql in running processing.
 logging:
   level:
     org.mybatis: DEBUG
     java.sql: DEBUG
     org.springframework.security.config.annotation.authentication.configuration.InitializeUserDetailsBeanManagerConfigurer: ERROR
 
+
+# JWT configuration
 jwt:
   secret: ${JWT_SECRET:change-me-in-production}
   expiration: 86400000

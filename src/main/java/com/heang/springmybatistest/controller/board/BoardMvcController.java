@@ -15,12 +15,12 @@ import java.util.List;
  * Korean enterprise / eGovFrame style with .do URLs
  * 한국 기업 / 전자정부 표준프레임워크 스타일 (.do URL)
  *
- * @Controller          → returns VIEW NAME (JSP) — NOT JSON
- * @RestController      → returns JSON data directly
+ * @Controller → returns VIEW NAME (JSP) — NOT JSON
+ * @RestController → returns JSON data directly
  * <p>
  * PRG Pattern (Post-Redirect-Get):
- *   GET → return "viewName" (forward to JSP)
- *   POST → return "redirect:/board/list.do" (redirect after action)
+ * GET → return "viewName" (forward to JSP)
+ * POST → return "redirect:/board/list.do" (redirect after action)
  */
 @Controller
 @RequestMapping("/board")          // base URL — all methods start with /board
@@ -81,12 +81,12 @@ public class BoardMvcController {
      * Save a new board post (게시글 등록 처리)
      *
      * @ModelAttribute → Spring automatically maps form fields to BoardVO
-     *   form: boardTitle=Hello&boardCn=Content&user=Y
-     *     ↓ auto mapping
-     *   boardVO.boardTitle = "Hello"
-     *   boardVO.boardCn = "Content"
-     *   boardVO.useYn = "Y"
-     *
+     * form: boardTitle=Hello&boardCn=Content&user=Y
+     * ↓ auto mapping
+     * boardVO.boardTitle = "Hello"
+     * boardVO.boardCn = "Content"
+     * boardVO.useYn = "Y"
+     * <p>
      * PRG Pattern: after POST → redirect to GET (prevent duplicate submit)
      */
     @PostMapping("/insert.do")
