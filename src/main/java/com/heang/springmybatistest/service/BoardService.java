@@ -1,6 +1,8 @@
 package com.heang.springmybatistest.service;
 
+import com.heang.springmybatistest.vo.BoardSearchV0;
 import com.heang.springmybatistest.vo.BoardVO;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.util.List;
 
@@ -32,4 +34,10 @@ public interface BoardService {
 
     // Soft delete — set use_yn = 'N' (소프트 삭제)
     int delete(Long boardSn);
+
+    int countBySearch(BoardSearchV0 searchV0);
+    List<BoardVO> findBySearch(BoardSearchV0 searchV0);
+
+    // Insert board + save files atomically (게시글+첨부파일 트랜잭션 등록)
+    void insertWithFiles(BoardVO boardVO, List<MultipartFile> files);
 }

@@ -222,3 +222,35 @@ INSERT INTO students (name, email, age, major) VALUES ('Charlie Brown', 'charlie
 -- [2026-04-17] Add image_url column to the product table
 -- Allows products to store an uploaded image path e.g. /uploads/abc.jpg
 ALTER TABLE product ADD COLUMN IF NOT EXISTS image_url VARCHAR(500);
+
+-- [2026-04-19] Common code table (공통코드 테이블)
+CREATE TABLE IF NOT EXISTS common_code (
+    code_group  VARCHAR(30)  NOT NULL,
+    code_value  VARCHAR(30)  NOT NULL,
+    code_name   VARCHAR(100) NOT NULL,
+    sort_order  INT          NOT NULL DEFAULT 0,
+    use_yn      CHAR(1)      NOT NULL DEFAULT 'Y',
+    created_at  TIMESTAMP    NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    PRIMARY KEY (code_group, code_value)
+);
+INSERT INTO common_code (code_group, code_value, code_name, sort_order) VALUES
+('USER_STATUS', 'ACTIVE', '활성', 1), ('USER_STATUS', 'INACTIVE', '비활성', 2),
+('USER_STATUS', 'SUSPENDED', '정지', 3), ('USER_STATUS', 'PENDING', '대기', 4),
+('BOARD_TYPE', '01', '공지사항', 1), ('BOARD_TYPE', '02', '자유게시판', 2), ('BOARD_TYPE', '03', 'FAQ', 3),
+('PRODUCT_STATUS', 'SALE', '판매중', 1), ('PRODUCT_STATUS', 'SOLDOUT', '품절', 2), ('PRODUCT_STATUS', 'HIDDEN', '숨김', 3),
+('USER_ROLE', 'ROLE_ADMIN', '관리자', 1), ('USER_ROLE', 'ROLE_MANAGER', '매니저', 2), ('USER_ROLE', 'ROLE_USER', '일반', 3)
+ON CONFLICT DO NOTHING;
+
+-- [2026-04-19] Board file attachments (게시판 첨부파일 테이블)
+CREATE TABLE IF NOT EXISTS board_file (
+    file_sn    SERIAL PRIMARY KEY,
+    board_sn   INTEGER      NOT NULL,
+    orig_name  VARCHAR(500) NOT NULL,   -- original filename shown to user (원본 파일명)
+    saved_name VARCHAR(500) NOT NULL,   -- UUID filename stored on disk (저장 파일명)
+    file_size  BIGINT       NOT NULL DEFAULT 0,
+    created_at TIMESTAMP    NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    CONSTRAINT fk_board_file_board
+        FOREIGN KEY (board_sn)
+        REFERENCES co_smp_board_m(board_sn)
+        ON DELETE CASCADE    -- delete files when board post is deleted (게시글 삭제 시 파일도 삭제)
+);

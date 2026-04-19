@@ -43,4 +43,17 @@ public class StoreViewController {
         model.addAttribute("categories", categoryService.findAll());
         return "product/list";
     }
+
+    /**
+     * GET /store/category-tree
+     * Shows categories with their products using <collection> JOIN (1:N JOIN 결과 페이지)
+     *
+     * ONE query → MyBatis groups flat rows into nested objects:
+     *   List<CategoryWithProductsVO>, each with List<Product> inside
+     */
+    @GetMapping("/category-tree")
+    public String categoryTree(Model model) {
+        model.addAttribute("categories", categoryService.findAllWithProducts());
+        return "store/category-tree";
+    }
 }

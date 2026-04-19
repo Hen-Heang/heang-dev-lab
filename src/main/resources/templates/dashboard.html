@@ -3,121 +3,545 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Dashboard - Store Admin</title>
+    <title>Dashboard — Store Admin</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
     <style>
-        * { margin: 0; padding: 0; box-sizing: border-box; }
-        body { font-family: Arial, sans-serif; background: #f5f5f5; }
-        .container { max-width: 1200px; margin: 0 auto; padding: 20px; }
-        .header {
-            background: #fff; padding: 20px; border-radius: 8px;
-            margin-bottom: 20px; display: flex;
-            justify-content: space-between; align-items: center;
+        *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+
+        :root {
+            --sidebar-w: 240px;
+            --bg: #f0f2f7;
+            --sidebar-bg: #1a1d2e;
+            --sidebar-hover: #252840;
+            --sidebar-active: #3b5bdb;
+            --text-primary: #1e2a3a;
+            --text-muted: #7b8fb5;
+            --white: #ffffff;
+            --radius: 14px;
+            --shadow-sm: 0 2px 8px rgba(0,0,0,0.06);
+            --shadow-md: 0 8px 24px rgba(0,0,0,0.10);
+            --shadow-lg: 0 16px 40px rgba(0,0,0,0.14);
         }
-        .header h1 { font-size: 24px; color: #2c3e50; }
-        .nav { display: flex; gap: 15px; align-items: center; }
-        .nav-link {
-            text-decoration: none; color: #666;
-            padding: 8px 16px; border-radius: 4px;
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background: var(--bg);
+            color: var(--text-primary);
+            display: flex;
+            min-height: 100vh;
         }
-        .nav-link:hover, .nav-link.active { background: #3498db; color: #fff; }
-        .dashboard-cards {
+
+        /* ── Sidebar ── */
+        .sidebar {
+            width: var(--sidebar-w);
+            background: var(--sidebar-bg);
+            display: flex;
+            flex-direction: column;
+            position: fixed;
+            top: 0; left: 0;
+            height: 100vh;
+            z-index: 100;
+            padding: 0 0 24px;
+        }
+
+        .sidebar-logo {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            padding: 28px 24px 24px;
+            border-bottom: 1px solid rgba(255,255,255,0.07);
+        }
+
+        .sidebar-logo-icon {
+            width: 36px; height: 36px;
+            background: linear-gradient(135deg, #3b5bdb, #7048e8);
+            border-radius: 10px;
+            display: flex; align-items: center; justify-content: center;
+            font-size: 18px;
+        }
+
+        .sidebar-logo-text {
+            font-size: 15px;
+            font-weight: 700;
+            color: #fff;
+            letter-spacing: -0.3px;
+        }
+
+        .sidebar-logo-text span {
+            display: block;
+            font-size: 11px;
+            font-weight: 400;
+            color: var(--text-muted);
+            letter-spacing: 0;
+        }
+
+        .sidebar-section {
+            padding: 20px 16px 8px;
+            font-size: 10px;
+            font-weight: 600;
+            color: #475070;
+            letter-spacing: 1px;
+            text-transform: uppercase;
+        }
+
+        .sidebar-nav { flex: 1; }
+
+        .nav-item {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 11px 16px;
+            margin: 2px 8px;
+            border-radius: 10px;
+            text-decoration: none;
+            color: #8892b5;
+            font-size: 14px;
+            font-weight: 500;
+            transition: background 0.18s, color 0.18s;
+        }
+
+        .nav-item:hover { background: var(--sidebar-hover); color: #c5cce8; }
+
+        .nav-item.active {
+            background: var(--sidebar-active);
+            color: #fff;
+        }
+
+        .nav-item .nav-icon {
+            font-size: 17px;
+            width: 22px;
+            text-align: center;
+        }
+
+        .nav-item .nav-badge {
+            margin-left: auto;
+            background: rgba(255,255,255,0.12);
+            color: #a0aec0;
+            font-size: 11px;
+            padding: 1px 7px;
+            border-radius: 20px;
+        }
+
+        .nav-item.active .nav-badge { background: rgba(255,255,255,0.2); color: #fff; }
+
+        .sidebar-footer {
+            padding: 16px 16px 0;
+            border-top: 1px solid rgba(255,255,255,0.07);
+        }
+
+        .sidebar-footer .nav-item { margin: 2px 0; }
+
+        /* ── Main layout ── */
+        .main {
+            margin-left: var(--sidebar-w);
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            min-height: 100vh;
+        }
+
+        /* ── Topbar ── */
+        .topbar {
+            background: var(--white);
+            padding: 0 32px;
+            height: 68px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            border-bottom: 1px solid #e8ecf4;
+            position: sticky;
+            top: 0;
+            z-index: 50;
+        }
+
+        .topbar-left { display: flex; align-items: center; gap: 12px; }
+
+        .topbar-breadcrumb {
+            display: flex; align-items: center; gap: 6px;
+            font-size: 14px; color: var(--text-muted);
+        }
+
+        .topbar-breadcrumb strong { color: var(--text-primary); font-weight: 600; }
+
+        .topbar-right { display: flex; align-items: center; gap: 12px; }
+
+        .topbar-btn {
+            width: 36px; height: 36px;
+            border: 1.5px solid #e8ecf4;
+            border-radius: 10px;
+            background: var(--white);
+            display: flex; align-items: center; justify-content: center;
+            font-size: 16px;
+            cursor: pointer;
+            transition: background 0.15s;
+            text-decoration: none;
+        }
+
+        .topbar-btn:hover { background: #f0f2f7; }
+
+        .avatar {
+            width: 36px; height: 36px;
+            background: linear-gradient(135deg, #3b5bdb, #7048e8);
+            border-radius: 50%;
+            display: flex; align-items: center; justify-content: center;
+            color: #fff; font-size: 14px; font-weight: 600;
+        }
+
+        /* ── Page content ── */
+        .page-content { padding: 32px; flex: 1; }
+
+        .page-header { margin-bottom: 28px; }
+
+        .page-header h1 {
+            font-size: 22px;
+            font-weight: 700;
+            color: var(--text-primary);
+            letter-spacing: -0.4px;
+        }
+
+        .page-header p {
+            margin-top: 4px;
+            font-size: 14px;
+            color: var(--text-muted);
+        }
+
+        /* ── Stat cards ── */
+        .stat-grid {
             display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
-            gap: 20px; margin-top: 20px;
+            grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+            gap: 20px;
+            margin-bottom: 32px;
         }
-        .dashboard-card {
-            background: #fff; border-radius: 8px; padding: 25px;
-            text-decoration: none; color: inherit;
-            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+
+        .stat-card {
+            background: var(--white);
+            border-radius: var(--radius);
+            padding: 24px;
+            box-shadow: var(--shadow-sm);
+            display: flex;
+            align-items: flex-start;
+            gap: 18px;
             transition: transform 0.2s, box-shadow 0.2s;
         }
-        .dashboard-card:hover { transform: translateY(-5px); box-shadow: 0 8px 16px rgba(0,0,0,0.15); }
-        .dashboard-card-icon { font-size: 48px; margin-bottom: 15px; display: flex; justify-content: center; }
-        .dashboard-card-title { font-size: 24px; font-weight: bold; margin-bottom: 10px; color: #2c3e50; display: flex; justify-content: center; }
-        .dashboard-card-count { font-size: 36px; font-weight: bold; margin-bottom: 10px; color: #3498db; display: flex; justify-content: center; }
-        .dashboard-card-desc { color: #666; display: flex; justify-content: center; }
+
+        .stat-card:hover { transform: translateY(-3px); box-shadow: var(--shadow-md); }
+
+        .stat-icon {
+            width: 48px; height: 48px;
+            border-radius: 12px;
+            display: flex; align-items: center; justify-content: center;
+            font-size: 22px;
+            flex-shrink: 0;
+        }
+
+        .stat-icon.blue   { background: #e8f0fe; }
+        .stat-icon.purple { background: #f3e8ff; }
+        .stat-icon.green  { background: #e6f9f0; }
+        .stat-icon.orange { background: #fff3e0; }
+
+        .stat-body { flex: 1; min-width: 0; }
+
+        .stat-label {
+            font-size: 12px;
+            font-weight: 600;
+            color: var(--text-muted);
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            margin-bottom: 4px;
+        }
+
+        .stat-value {
+            font-size: 28px;
+            font-weight: 700;
+            color: var(--text-primary);
+            line-height: 1;
+            margin-bottom: 6px;
+        }
+
+        .stat-sub {
+            font-size: 12px;
+            color: var(--text-muted);
+        }
+
+        /* ── Quick-access cards ── */
+        .section-title {
+            font-size: 16px;
+            font-weight: 700;
+            color: var(--text-primary);
+            margin-bottom: 16px;
+        }
+
+        .quick-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+            gap: 20px;
+        }
+
+        .quick-card {
+            background: var(--white);
+            border-radius: var(--radius);
+            padding: 22px 24px;
+            text-decoration: none;
+            color: inherit;
+            box-shadow: var(--shadow-sm);
+            display: flex;
+            align-items: center;
+            gap: 18px;
+            border-left: 4px solid transparent;
+            transition: transform 0.2s, box-shadow 0.2s, border-color 0.2s;
+        }
+
+        .quick-card:hover { transform: translateY(-3px); box-shadow: var(--shadow-md); }
+
+        .quick-card.c-blue   { border-color: #3b5bdb; }
+        .quick-card.c-purple { border-color: #7048e8; }
+        .quick-card.c-green  { border-color: #12b886; }
+        .quick-card.c-orange { border-color: #f76707; }
+        .quick-card.c-teal   { border-color: #0ca678; }
+
+        .quick-card-icon {
+            width: 50px; height: 50px;
+            border-radius: 12px;
+            display: flex; align-items: center; justify-content: center;
+            font-size: 24px;
+            flex-shrink: 0;
+        }
+
+        .quick-card.c-blue   .quick-card-icon { background: #e8f0fe; }
+        .quick-card.c-purple .quick-card-icon { background: #f3e8ff; }
+        .quick-card.c-green  .quick-card-icon { background: #e6f9f0; }
+        .quick-card.c-orange .quick-card-icon { background: #fff3e0; }
+        .quick-card.c-teal   .quick-card-icon { background: #e0faf4; }
+
+        .quick-card-body { flex: 1; }
+
+        .quick-card-title {
+            font-size: 15px;
+            font-weight: 600;
+            color: var(--text-primary);
+            margin-bottom: 3px;
+        }
+
+        .quick-card-desc {
+            font-size: 12px;
+            color: var(--text-muted);
+        }
+
+        .quick-card-arrow {
+            font-size: 18px;
+            color: #c5cce8;
+            flex-shrink: 0;
+        }
+
+        /* ── Loading pulse ── */
+        @keyframes pulse {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.4; }
+        }
+        .loading { animation: pulse 1.2s infinite; }
     </style>
 </head>
 <body>
-<div class="container">
-    <header class="header">
-        <h1>🏪 Store Admin Dashboard</h1>
-        <nav class="nav">
-            <a th:href="@{/dashboard}" class="nav-link active">Dashboard</a>
-            <a th:href="@{/store/category}" class="nav-link">Category</a>
-            <a th:href="@{/store/product}" class="nav-link">Product</a>
-            <a th:href="@{/}" class="nav-link">Users</a>
-            <a th:href="@{/board/list.do}" class="nav-link">Board</a>
-            <!-- Thymeleaf 학습 섹션으로 이동 (Go to Thymeleaf learning section) -->
-            <a th:href="@{/learn}" class="nav-link" style="background:#e8f5e9;color:#388e3c;">📚 Thymeleaf Lab</a>
-        </nav>
+
+<!-- ── Sidebar ── -->
+<aside class="sidebar">
+    <div class="sidebar-logo">
+        <div class="sidebar-logo-icon">🏪</div>
+        <div class="sidebar-logo-text">
+            Store Admin
+            <span>Management Panel</span>
+        </div>
+    </div>
+
+    <nav class="sidebar-nav">
+        <div class="sidebar-section">Main Menu</div>
+        <a th:href="@{/dashboard}" class="nav-item active">
+            <span class="nav-icon">📊</span> Dashboard
+        </a>
+        <a th:href="@{/store/product}" class="nav-item">
+            <span class="nav-icon">📦</span> Products
+        </a>
+        <a th:href="@{/store/category}" class="nav-item">
+            <span class="nav-icon">📁</span> Categories
+        </a>
+        <a th:href="@{/}" class="nav-item">
+            <span class="nav-icon">👥</span> Users
+        </a>
+        <a th:href="@{/board/list.do}" class="nav-item">
+            <span class="nav-icon">📝</span> Board
+        </a>
+
+        <a th:href="@{/common-code}" class="nav-item">
+            <span class="nav-icon">🗂️</span> Common Codes
+        </a>
+        <a th:href="@{/store/category-tree}" class="nav-item">
+            <span class="nav-icon">🌿</span> Category Tree
+        </a>
+
+        <div class="sidebar-section">Dev Tools</div>
+        <a th:href="@{/learn}" class="nav-item">
+            <span class="nav-icon">📚</span> Thymeleaf Lab
+            <span class="nav-badge">Lab</span>
+        </a>
+        <a th:href="@{/swagger-ui.html}" class="nav-item">
+            <span class="nav-icon">🔌</span> Swagger API
+        </a>
+    </nav>
+
+    <div class="sidebar-footer">
+        <a href="#" class="nav-item">
+            <span class="nav-icon">⚙️</span> Settings
+        </a>
+        <!--
+            Logout — POST /logout required by Spring Security CSRF protection
+            th:action adds the CSRF token automatically
+        -->
+        <form th:action="@{/logout}" method="post" style="margin: 2px 0;">
+            <button type="submit" class="nav-item"
+                    style="width:100%; background:none; border:none; cursor:pointer; text-align:left;">
+                <span class="nav-icon">🚪</span> Logout (로그아웃)
+            </button>
+        </form>
+    </div>
+</aside>
+
+<!-- ── Main ── -->
+<div class="main">
+
+    <!-- Topbar -->
+    <header class="topbar">
+        <div class="topbar-left">
+            <div class="topbar-breadcrumb">
+                Home <span>›</span> <strong>Dashboard</strong>
+            </div>
+        </div>
+        <div class="topbar-right">
+            <a th:href="@{/swagger-ui.html}" class="topbar-btn" title="API Docs">🔌</a>
+            <div class="avatar">A</div>
+        </div>
     </header>
 
-    <main>
-        <div style="margin-bottom: 16px;">
-            <h2>Welcome to Store Admin</h2>
-            <p style="color:#666; margin-top: 4px;">Quick access to products, categories, and users.</p>
+    <!-- Page Content -->
+    <div class="page-content">
+
+        <div class="page-header">
+            <h1>Good morning 👋</h1>
+            <p>Here's what's happening in your store today.</p>
         </div>
 
-        <div class="dashboard-cards">
-            <a th:href="@{/store/category}" class="dashboard-card">
-                <div class="dashboard-card-icon">📁</div>
-                <div class="dashboard-card-title">Categories</div>
-                <div class="dashboard-card-count" id="categoryCount">-</div>
-                <div class="dashboard-card-desc">Manage product categories</div>
-            </a>
+        <!-- Stat Cards -->
+        <div class="stat-grid">
+            <div class="stat-card">
+                <div class="stat-icon blue">👥</div>
+                <div class="stat-body">
+                    <div class="stat-label">Total Users</div>
+                    <div class="stat-value loading" id="userCount">—</div>
+                    <div class="stat-sub">Registered accounts</div>
+                </div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-icon purple">📦</div>
+                <div class="stat-body">
+                    <div class="stat-label">Products</div>
+                    <div class="stat-value loading" id="productCount">—</div>
+                    <div class="stat-sub">In catalog</div>
+                </div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-icon green">📁</div>
+                <div class="stat-body">
+                    <div class="stat-label">Categories</div>
+                    <div class="stat-value loading" id="categoryCount">—</div>
+                    <div class="stat-sub">Product groups</div>
+                </div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-icon orange">📝</div>
+                <div class="stat-body">
+                    <div class="stat-label">Board Posts</div>
+                    <div class="stat-value loading" id="boardCount">—</div>
+                    <div class="stat-sub">Published entries</div>
+                </div>
+            </div>
+        </div>
 
-            <a th:href="@{/store/product}" class="dashboard-card">
-                <div class="dashboard-card-icon">📦</div>
-                <div class="dashboard-card-title">Products</div>
-                <div class="dashboard-card-count" id="productCount">-</div>
-                <div class="dashboard-card-desc">Manage store products</div>
+        <!-- Quick Access -->
+        <div class="section-title">Quick Access</div>
+        <div class="quick-grid">
+            <a th:href="@{/store/product}" class="quick-card c-purple">
+                <div class="quick-card-icon">📦</div>
+                <div class="quick-card-body">
+                    <div class="quick-card-title">Products</div>
+                    <div class="quick-card-desc">Add, edit or remove products</div>
+                </div>
+                <span class="quick-card-arrow">›</span>
             </a>
-
-            <a th:href="@{/}" class="dashboard-card">
-                <div class="dashboard-card-icon">👥</div>
-                <div class="dashboard-card-title">Users</div>
-                <div class="dashboard-card-count" id="userCount">-</div>
-                <div class="dashboard-card-desc">Manage users</div>
+            <a th:href="@{/store/category}" class="quick-card c-green">
+                <div class="quick-card-icon">📁</div>
+                <div class="quick-card-body">
+                    <div class="quick-card-title">Categories</div>
+                    <div class="quick-card-desc">Organize product categories</div>
+                </div>
+                <span class="quick-card-arrow">›</span>
             </a>
-
-            <a th:href="@{/board/list.do}" class="dashboard-card">
-                <div class="dashboard-card-icon">📝</div>
-                <div class="dashboard-card-title">Board</div>
-                <div class="dashboard-card-count" id="boardCount">-</div>
-                <div class="dashboard-card-desc">Korean MVC .do style board</div>
+            <a th:href="@{/}" class="quick-card c-blue">
+                <div class="quick-card-icon">👥</div>
+                <div class="quick-card-body">
+                    <div class="quick-card-title">Users</div>
+                    <div class="quick-card-desc">Manage user accounts</div>
+                </div>
+                <span class="quick-card-arrow">›</span>
+            </a>
+            <a th:href="@{/board/list.do}" class="quick-card c-orange">
+                <div class="quick-card-icon">📝</div>
+                <div class="quick-card-body">
+                    <div class="quick-card-title">Board</div>
+                    <div class="quick-card-desc">Korean MVC .do style board</div>
+                </div>
+                <span class="quick-card-arrow">›</span>
+            </a>
+            <a th:href="@{/learn}" class="quick-card c-teal">
+                <div class="quick-card-icon">📚</div>
+                <div class="quick-card-body">
+                    <div class="quick-card-title">Thymeleaf Lab</div>
+                    <div class="quick-card-desc">Learning exercises &amp; practice</div>
+                </div>
+                <span class="quick-card-arrow">›</span>
             </a>
         </div>
-    </main>
-</div>
+
+    </div><!-- /page-content -->
+</div><!-- /main -->
 
 <script>
-    function setCount(elementId, data) {
+    function setCount(id, data) {
+        const el = document.getElementById(id);
         const list = Array.isArray(data)
             ? data
             : (data && Array.isArray(data.users)) ? data.users : [];
-        document.getElementById(elementId).textContent = list.length;
+        el.classList.remove('loading');
+        el.textContent = list.length;
     }
 
     fetch('/api/categories')
         .then(r => r.json())
-        .then(response => setCount('categoryCount', response.data || response))
-        .catch(() => document.getElementById('categoryCount').textContent = '0');
+        .then(res => setCount('categoryCount', res.data || res))
+        .catch(() => { document.getElementById('categoryCount').textContent = '0'; document.getElementById('categoryCount').classList.remove('loading'); });
 
     fetch('/api/products')
         .then(r => r.json())
-        .then(response => setCount('productCount', response.data || response))
-        .catch(() => document.getElementById('productCount').textContent = '0');
+        .then(res => setCount('productCount', res.data || res))
+        .catch(() => { document.getElementById('productCount').textContent = '0'; document.getElementById('productCount').classList.remove('loading'); });
 
     fetch('/users')
         .then(r => r.json())
-        .then(response => setCount('userCount', response.data || response))
-        .catch(() => document.getElementById('userCount').textContent = '0');
+        .then(res => setCount('userCount', res.data || res))
+        .catch(() => { document.getElementById('userCount').textContent = '0'; document.getElementById('userCount').classList.remove('loading'); });
 
     fetch('/api/board')
         .then(r => r.json())
-        .then(response => setCount('boardCount', response.data || response))
-        .catch(() => document.getElementById('boardCount').textContent = '0');
+        .then(res => setCount('boardCount', res.data || res))
+        .catch(() => { document.getElementById('boardCount').textContent = '0'; document.getElementById('boardCount').classList.remove('loading'); });
 </script>
 </body>
 </html>

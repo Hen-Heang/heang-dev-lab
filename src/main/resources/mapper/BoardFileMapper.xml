@@ -1,0 +1,63 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<!--
+    namespace must exactly match the Java interface full path
+    namespace는 Java 인터페이스 전체 경로와 반드시 일치
+-->
+<mapper namespace="com.heang.springmybatistest.mapper.BoardFileMapper">
+
+    <!--
+        INSERT one file record (첨부파일 등록)
+        useGeneratedKeys="true" → get auto-generated fileSn back
+        keyProperty="fileSn"    → puts the generated PK into boardFile.fileSn
+    -->
+    <insert id="insert"
+            parameterType="com.heang.springmybatistest.vo.BoardFileVO"
+            useGeneratedKeys="true"
+            keyProperty="fileSn">
+        INSERT INTO board_file (board_sn, orig_name, saved_name, file_size)
+        VALUES (#{boardSn}, #{origName}, #{savedName}, #{fileSize})
+    </insert>
+
+    <!--
+        SELECT files by board PK (게시글 첨부파일 목록)
+        map-underscore-to-camel-case=true handles:
+          orig_name  → origName
+          saved_name → savedName
+          file_size  → fileSize
+          created_at → createdAt
+    -->
+    <select id="findByBoardSn"
+            parameterType="Long"
+            resultType="com.heang.springmybatistest.vo.BoardFileVO">
+        SELECT file_sn,
+               board_sn,
+               orig_name,
+               saved_name,
+               file_size,
+               created_at
+        FROM board_file
+        WHERE board_sn = #{boardSn}
+        ORDER BY file_sn ASC
+    </select>
+
+    <!--
+        SELECT one file by PK — for download (다운로드용 단건 조회)
+    -->
+    <select id="findById"
+            parameterType="Long"
+            resultType="com.heang.springmybatistest.vo.BoardFileVO">
+        SELECT file_sn,
+               board_sn,
+               orig_name,
+               saved_name,
+               file_size,
+               created_at
+        FROM board_file
+        WHERE file_sn = #{fileSn}
+    </select>
+
+</mapper>

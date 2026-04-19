@@ -14,11 +14,11 @@
         DB 컬럼(snake_case) → Java 필드(camelCase) 매핑
     -->
     <resultMap id="BoardResultMap" type="com.heang.springmybatistest.vo.BoardVO">
-        <id     column="board_sn"    property="boardSn"    />  <!-- PK -->
-        <result column="board_title" property="boardTitle"  />
-        <result column="board_cn"    property="boardCn"     />
-        <result column="use_yn"      property="useYn"       />
-        <result column="data_reg_dt" property="dataRegDt"   />
+        <id column="board_sn" property="boardSn"/>  <!-- PK -->
+        <result column="board_title" property="boardTitle"/>
+        <result column="board_cn" property="boardCn"/>
+        <result column="use_yn" property="useYn"/>
+        <result column="data_reg_dt" property="dataRegDt"/>
     </resultMap>
 
     <!--
@@ -29,12 +29,11 @@
         id="findAll" must match: List<Board> findAll() in BoardMapper.java
     -->
     <select id="findAll" resultMap="BoardResultMap">
-        SELECT
-            board_sn,
-            board_title,
-            board_cn,
-            use_yn,
-            data_reg_dt
+        SELECT board_sn,
+               board_title,
+               board_cn,
+               use_yn,
+               data_reg_dt
         FROM co_smp_board_m
         WHERE use_yn = 'Y'
         ORDER BY board_sn DESC
@@ -50,15 +49,14 @@
         id="findById" must match: Board findById(Long boardSn) in BoardMapper.java
     -->
     <select id="findById" parameterType="Long" resultMap="BoardResultMap">
-        SELECT
-            board_sn,
-            board_title,
-            board_cn,
-            use_yn,
-            data_reg_dt
+        SELECT board_sn,
+               board_title,
+               board_cn,
+               use_yn,
+               data_reg_dt
         FROM co_smp_board_m
         WHERE board_sn = #{boardSn}
-          AND use_yn   = 'Y'
+          AND use_yn = 'Y'
     </select>
 
     <!--
@@ -70,12 +68,11 @@
         id="findByTitle" must match: List<Board> findByTitle(String keyword) in BoardMapper.java
     -->
     <select id="findByTitle" parameterType="String" resultMap="BoardResultMap">
-        SELECT
-            board_sn,
-            board_title,
-            board_cn,
-            use_yn,
-            data_reg_dt
+        SELECT board_sn,
+               board_title,
+               board_cn,
+               use_yn,
+               data_reg_dt
         FROM co_smp_board_m
         WHERE board_title LIKE CONCAT('%', #{keyword}, '%')
           AND use_yn = 'Y'
@@ -93,16 +90,12 @@
     -->
     <insert id="insert" parameterType="com.heang.springmybatistest.vo.BoardVO"
             useGeneratedKeys="true" keyProperty="boardSn">
-        INSERT INTO co_smp_board_m (
-            board_title,
-            board_cn,
-            use_yn
-        )
-        VALUES (
-            #{boardTitle},
-            #{boardCn},
-            #{useYn}
-        )
+        INSERT INTO co_smp_board_m (board_title,
+                                    board_cn,
+                                    use_yn)
+        VALUES (#{boardTitle},
+                #{boardCn},
+                #{useYn})
     </insert>
 
     <!--
@@ -116,11 +109,10 @@
     -->
     <update id="update" parameterType="com.heang.springmybatistest.vo.BoardVO">
         UPDATE co_smp_board_m
-        SET
-            board_title = #{boardTitle},
+        SET board_title = #{boardTitle},
             board_cn    = #{boardCn}
         WHERE board_sn = #{boardSn}
-          AND use_yn   = 'Y'
+          AND use_yn = 'Y'
     </update>
 
     <!--
@@ -141,5 +133,36 @@
         SET use_yn = 'N'
         WHERE board_sn = #{boardSn}
     </update>
+
+    <select id="findBySearch" resultMap="BoardResultMap">
+        SELECT * FROM co_smp_board_m
+        <where>
+            AND use_yn = 'Y'
+            <if test="keyword != null and keyword != ''">
+                <choose>
+                    <when test="searchType == 'content'">
+                        AND board_cn LIKE '%' || #{keyword} || '%'
+                    </when>
+                    <otherwise>
+                        AND board_title LIKE '%' || #{keyword} || '%'
+                    </otherwise>
+                </choose>
+            </if>
+        </where>
+        ORDER BY board_sn DESC
+        LIMIT #{pageSize} OFFSET #{offset}
+    </select>
+
+    <select id="countBySearch" resultType="int">
+        SELECT COUNT(*) FROM co_smp_board_m
+        <where>
+            AND use_yn = 'Y'
+
+            <if test="keyword != null and keyword != '' ">
+                AND board_title LIKE '%' || #{keyword} || '%'
+            </if>
+        </where>
+
+    </select>
 
 </mapper>

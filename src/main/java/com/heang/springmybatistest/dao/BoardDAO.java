@@ -1,5 +1,6 @@
 package com.heang.springmybatistest.dao;
 
+import com.heang.springmybatistest.vo.BoardSearchV0;
 import com.heang.springmybatistest.vo.BoardVO;
 import lombok.RequiredArgsConstructor;
 import org.mybatis.spring.SqlSessionTemplate;
@@ -92,5 +93,13 @@ public class BoardDAO {
      */
     public int delete(Long boardSn) {
         return sqlSession.update(NS + "delete", boardSn);
+    }
+
+    public List<BoardVO> findBySearch(BoardSearchV0 searchV0) {
+        return sqlSession.selectList(NS + "findBySearch", searchV0);
+    }
+
+    public int countBySearch(BoardSearchV0 searchV0) {
+        return sqlSession.selectOne(NS + "countBySearch", searchV0);
     }
 }

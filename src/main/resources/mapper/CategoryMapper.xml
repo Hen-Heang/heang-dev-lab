@@ -57,4 +57,82 @@
         FROM category
     </select>
 
+    <!--
+        ================================================================
+        <collection> JOIN — 1:N result mapping (1:N 결과 매핑)
+        ================================================================
+
+        PROBLEM without <collection>:
+          A JOIN produces flat rows. For 5 categories with 16 products,
+          you get 16 rows — all category fields repeated on every row.
+          Without <collection>, MyBatis returns 16 Category objects.
+
+        SOLUTION with <collection>:
+          MyBatis groups rows by the <id> column (cat_id).
+          Rows with the same cat_id → their product columns go into List<Product>.
+          Result: 5 CategoryWithProductsVO objects, each with a products list.
+          ONE query. No N+1.
+
+        Column aliasing is required because both tables have columns
+        with the same name (id, name, created_at).
+        Aliases (cat_id, prod_id etc.) let MyBatis tell them apart.
+    -->
+    <resultMap id="CategoryWithProductsMap"
+               type="com.heang.springmybatistest.vo.CategoryWithProductsVO">
+
+        <!-- Category fields — <id> is the grouping key (그룹핑 기준 PK) -->
+        <id     property="categoryId"        column="cat_id"/>
+        <result property="categoryName"      column="cat_name"/>
+        <result property="categoryCreatedAt" column="cat_created_at"/>
+
+        <!--
+            <collection> — maps the N side of the 1:N relationship (N쪽 매핑)
+
+            property="products"  → fills CategoryWithProductsVO.products list
+            ofType="..."         → each element in the list is a Product object
+            <id> inside          → prod_id identifies unique products
+                                   (also prevents duplicate products when multiple JOINs)
+
+            If a category has NO products (LEFT JOIN returns NULL for product columns),
+            MyBatis detects that prod_id IS NULL → adds nothing to the list.
+            Result: empty list [], not null.
+        -->
+        <collection property="products"
+                    ofType="com.heang.springmybatistest.model.Product">
+            <id     property="id"         column="prod_id"/>
+            <result property="name"       column="prod_name"/>
+            <result property="price"      column="prod_price"/>
+            <result property="stock"      column="prod_stock"/>
+            <result property="imageUrl"   column="prod_image_url"/>
+            <result property="categoryId" column="cat_id"/>
+            <result property="createdAt"  column="prod_created_at"/>
+        </collection>
+    </resultMap>
+
+    <!--
+        id="selectAllWithProducts" must match CategoryMapper.java method name
+
+        LEFT JOIN — keeps categories that have 0 products (빈 카테고리도 포함)
+        INNER JOIN — would exclude empty categories
+
+        Column aliases prevent name collision between c.* and p.*
+        ORDER BY c.id, p.id — grouping by <id> requires consistent ordering
+    -->
+    <select id="selectAllWithProducts"
+            resultMap="CategoryWithProductsMap">
+        SELECT
+            c.id         AS cat_id,
+            c.name       AS cat_name,
+            c.created_at AS cat_created_at,
+            p.id         AS prod_id,
+            p.name       AS prod_name,
+            p.price      AS prod_price,
+            p.stock      AS prod_stock,
+            p.image_url  AS prod_image_url,
+            p.created_at AS prod_created_at
+        FROM category c
+        LEFT JOIN product p ON p.category_id = c.id
+        ORDER BY c.id ASC, p.id ASC
+    </select>
+
 </mapper>

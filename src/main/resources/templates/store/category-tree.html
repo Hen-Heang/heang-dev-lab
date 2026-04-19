@@ -1,0 +1,215 @@
+<!DOCTYPE html>
+<!--
+  store/category-tree.html — MyBatis <collection> 1:N JOIN 결과 페이지
+  Category with Products — 1:N JOIN result
+
+  KEY LEARNING on this page:
+  The controller ran ONE SQL query.
+  MyBatis grouped the flat rows into nested Java objects.
+  Thymeleaf renders the nested structure with two th:each loops.
+-->
+<html xmlns:th="http://www.thymeleaf.org" lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <title>Category Tree (카테고리별 상품)</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+        body { font-family: 'Inter', sans-serif; background: #f0f2f7; color: #1e2a3a; }
+
+        .page-wrap { max-width: 1000px; margin: 40px auto; padding: 0 24px; }
+
+        .top-bar {
+            display: flex; align-items: center; justify-content: space-between;
+            margin-bottom: 24px;
+        }
+        .top-bar h2 { font-size: 20px; font-weight: 700; }
+        .back-btn {
+            text-decoration: none; color: #555; font-size: 14px;
+            padding: 7px 14px; border: 2px solid #d0d5e0;
+            border-radius: 8px; transition: background .15s;
+        }
+        .back-btn:hover { background: #e8ecf4; }
+
+        /* ── Explanation box ── */
+        .explain-box {
+            background: #e8f0fe; border-left: 4px solid #3b5bdb;
+            border-radius: 0 10px 10px 0; padding: 16px 20px;
+            margin-bottom: 28px; font-size: 13px; line-height: 1.7;
+            color: #2c3e6b;
+        }
+        .explain-box strong { color: #3b5bdb; }
+        .explain-box code {
+            background: #d0e0fc; padding: 1px 6px; border-radius: 4px;
+            font-family: monospace; font-size: 12px;
+        }
+
+        /* ── Category card ── */
+        .category-card {
+            background: #fff; border-radius: 12px;
+            box-shadow: 0 2px 8px rgba(0,0,0,.06);
+            margin-bottom: 20px; overflow: hidden;
+        }
+
+        .category-header {
+            display: flex; align-items: center; justify-content: space-between;
+            padding: 16px 20px;
+            background: linear-gradient(135deg, #3b5bdb 0%, #7048e8 100%);
+            color: #fff;
+        }
+        .category-header-left { display: flex; align-items: center; gap: 12px; }
+        .category-icon {
+            width: 38px; height: 38px; background: rgba(255,255,255,.2);
+            border-radius: 10px; display: flex; align-items: center;
+            justify-content: center; font-size: 18px;
+        }
+        .category-name { font-size: 16px; font-weight: 700; }
+        .category-id { font-size: 12px; opacity: .7; margin-top: 2px; }
+        .category-stats { display: flex; gap: 16px; text-align: right; }
+        .stat-item { font-size: 12px; opacity: .85; }
+        .stat-value { font-size: 18px; font-weight: 700; display: block; }
+
+        /* ── Products table ── */
+        .products-table { width: 100%; border-collapse: collapse; }
+        .products-table th {
+            background: #f7f8fc; padding: 10px 16px;
+            font-size: 11px; font-weight: 700; color: #7b8fb5;
+            text-transform: uppercase; letter-spacing: .5px;
+            border-bottom: 1.5px solid #e8ecf4; text-align: left;
+        }
+        .products-table td {
+            padding: 11px 16px; font-size: 14px;
+            border-bottom: 1px solid #f0f2f7;
+        }
+        .products-table tr:last-child td { border-bottom: none; }
+        .products-table tr:hover td { background: #f7f8fc; }
+
+        .price-cell { font-weight: 600; color: #3b5bdb; }
+        .stock-cell { font-weight: 500; }
+        .stock-low  { color: #e03131; }
+        .stock-ok   { color: #2f9e44; }
+
+        .empty-products {
+            padding: 24px; text-align: center;
+            color: #aaa; font-size: 14px;
+        }
+
+        /* ── Summary bar ── */
+        .summary-bar {
+            display: flex; gap: 20px; flex-wrap: wrap;
+            background: #fff; border-radius: 12px; padding: 18px 24px;
+            box-shadow: 0 2px 8px rgba(0,0,0,.06); margin-bottom: 24px;
+        }
+        .summary-item { font-size: 14px; color: #555; }
+        .summary-item strong { color: #3b5bdb; font-size: 18px; }
+    </style>
+</head>
+<body>
+<div class="page-wrap">
+
+    <div class="top-bar">
+        <h2>Category Tree (카테고리별 상품 목록)</h2>
+        <a th:href="@{/dashboard}" class="back-btn">← Dashboard</a>
+    </div>
+
+    <!-- Learning explanation (학습 설명) -->
+    <div class="explain-box">
+        <strong>MyBatis &lt;collection&gt; — 1:N JOIN pattern</strong><br>
+        One SQL query (<code>LEFT JOIN product ON product.category_id = c.id</code>) returns flat rows.<br>
+        MyBatis groups rows by <code>&lt;id column="cat_id"&gt;</code> and fills each category's
+        <code>List&lt;Product&gt; products</code> automatically.<br>
+        Result: <strong th:text="${#lists.size(categories)}">0</strong> category objects,
+        each with its own products list — <strong>no N+1 queries</strong>.
+    </div>
+
+    <!-- Summary (요약) -->
+    <div class="summary-bar">
+        <div class="summary-item">
+            Categories: <strong th:text="${#lists.size(categories)}">0</strong>
+        </div>
+        <div class="summary-item">
+            Total Products:
+            <strong th:text="${categories.stream().mapToInt(c -> c.productCount).sum()}">0</strong>
+        </div>
+        <div class="summary-item">
+            Total Stock:
+            <strong th:text="${categories.stream().mapToInt(c -> c.totalStock).sum()}">0</strong>
+        </div>
+    </div>
+
+    <!--
+        OUTER th:each — iterates List<CategoryWithProductsVO>
+        Each "category" object has:
+          category.categoryId, category.categoryName
+          category.products     ← List<Product> filled by <collection>
+          category.productCount ← computed in VO (products.size())
+          category.totalStock   ← computed in VO (sum of stock)
+    -->
+    <div th:each="category : ${categories}" class="category-card">
+
+        <!-- Category header -->
+        <div class="category-header">
+            <div class="category-header-left">
+                <div class="category-icon">📁</div>
+                <div>
+                    <div class="category-name" th:text="${category.categoryName}">Category</div>
+                    <div class="category-id">ID: <span th:text="${category.categoryId}">1</span></div>
+                </div>
+            </div>
+            <div class="category-stats">
+                <div class="stat-item">
+                    <span class="stat-value" th:text="${category.productCount}">0</span>
+                    Products
+                </div>
+                <div class="stat-item">
+                    <span class="stat-value" th:text="${category.totalStock}">0</span>
+                    Total Stock
+                </div>
+            </div>
+        </div>
+
+        <!--
+            INNER th:each — iterates List<Product> inside this category
+            This is th:each inside another th:each (nested loop)
+            category.products was filled by MyBatis <collection>
+        -->
+        <table class="products-table" th:if="${not #lists.isEmpty(category.products)}">
+            <thead>
+                <tr>
+                    <th>#</th>
+                    <th>Product Name (상품명)</th>
+                    <th>Price (가격)</th>
+                    <th>Stock (재고)</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr th:each="product, stat : ${category.products}">
+                    <td style="color:#aaa; width:40px;" th:text="${stat.count}">1</td>
+                    <td th:text="${product.name}">Product</td>
+                    <td class="price-cell"
+                        th:text="${#numbers.formatInteger(product.price, 1, 'COMMA') + ' ₩'}">
+                        0 ₩
+                    </td>
+                    <!--
+                        Stock warning — low stock (재고 부족 경고)
+                        th:classappend adds 'stock-low' class when stock < 10
+                    -->
+                    <td class="stock-cell"
+                        th:classappend="${product.stock < 10} ? 'stock-low' : 'stock-ok'"
+                        th:text="${product.stock + (product.stock < 10 ? ' ⚠ Low' : '')}">
+                        0
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+
+        <!-- Empty category (상품 없는 카테고리) -->
+        <div th:if="${#lists.isEmpty(category.products)}" class="empty-products">
+            No products in this category (이 카테고리에 상품이 없습니다)
+        </div>
+
+    </div><!-- /category-card -->
+
+</div>
+</body>
+</html>

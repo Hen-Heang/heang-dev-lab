@@ -1,13 +1,23 @@
 package com.heang.springmybatistest.controller.board;
 
+import com.heang.springmybatistest.service.BoardFileService;
 import com.heang.springmybatistest.service.BoardService;
+import com.heang.springmybatistest.vo.BoardFileVO;
+import com.heang.springmybatistest.vo.BoardSearchV0;
 import com.heang.springmybatistest.vo.BoardVO;
+import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.ModelMap;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.List;
+
 
 /**
  * BoardMVCController — Traditional MVC Controller (게시판 MVC 컨트롤러)
@@ -27,7 +37,11 @@ import java.util.List;
 @RequiredArgsConstructor
 public class BoardMvcController {
 
-    private final BoardService boardService; // ← interface, not Impl
+    private final BoardService     boardService;
+    private final BoardFileService boardFileService;
+
+    // Must match UPLOAD_DIR in BoardFileServiceImpl (업로드 경로 일치)
+    private static final String UPLOAD_DIR = "src/main/resources/static/uploads/";
 
     /**
      * GET /board/list.do
@@ -36,16 +50,6 @@ public class BoardMvcController {
      * ModelMap — like a bag to pass data to JSP
      * model.addAttribute("key", value) → available as ${key} in JSP
      */
-    @GetMapping("/list.do")
-    public String list(ModelMap model) {
-        List<BoardVO> boards = boardService.findAll();
-
-        // Put data into ModelMap — JSP accesses via ${boards}
-        model.addAttribute("boards", boards);
-        model.addAttribute("totalCount", boards.size());
-
-        return "board/list";  // → /WEB-INF/views/board/list.jsp
-    }
 
     /**
      * GET /board/detail.do?boardSn=1
@@ -60,11 +64,43 @@ public class BoardMvcController {
             ModelMap model
     ) {
         BoardVO board = boardService.findById(boardSn);
-
-        // Put a single board into ModelMap — JSP accesses via ${board}
         model.addAttribute("board", board);
 
-        return "board/detail"; // → /WEB-INF/views/board/detail.jsp
+        // Load attached files for this board (첨부파일 목록 조회)
+        List<BoardFileVO> files = boardFileService.findByBoardSn(boardSn);
+        model.addAttribute("files", files);
+
+        return "board/detail";
+    }
+
+    /**
+     * GET /board/download.do?fileSn=1
+     * Stream file from disk to browser as a download (파일 다운로드)
+     *
+     * Content-Disposition: attachment → forces browser to download, not display
+     * Content-Type: application/octet-stream → generic binary stream
+     */
+    @GetMapping("/download.do")
+    public void download(
+            @RequestParam Long fileSn,
+            HttpServletResponse response
+    ) throws IOException {
+        BoardFileVO file = boardFileService.findById(fileSn);
+
+        Path filePath = Paths.get(UPLOAD_DIR).resolve(file.getSavedName());
+        if (!Files.exists(filePath)) {
+            response.sendError(HttpServletResponse.SC_NOT_FOUND, "File not found on disk");
+            return;
+        }
+
+        // Tell browser to download with the original filename (원본 파일명으로 다운로드)
+        response.setContentType("application/octet-stream");
+        response.setHeader("Content-Disposition",
+                "attachment; filename=\"" + file.getOrigName() + "\"");
+        response.setContentLengthLong(file.getFileSize());
+
+        Files.copy(filePath, response.getOutputStream());
+        response.getOutputStream().flush();
     }
 
     /**
@@ -89,10 +125,20 @@ public class BoardMvcController {
      * <p>
      * PRG Pattern: after POST → redirect to GET (prevent duplicate submit)
      */
+    /**
+     * POST /board/insert.do
+     * Insert board + files in one transaction (게시글+첨부파일 트랜잭션 등록)
+     *
+     * enctype="multipart/form-data" on the form is required for file upload.
+     * @RequestParam(required=false) — still works if user submits with no files.
+     */
     @PostMapping("/insert.do")
-    public String insert(@ModelAttribute BoardVO boardVO) {
-        boardService.insert(boardVO);
-        return "redirect:/board/list.do"; // PRG: redirect after POST ✅
+    public String insert(
+            @ModelAttribute BoardVO boardVO,
+            @RequestParam(value = "files", required = false) List<MultipartFile> files
+    ) {
+        boardService.insertWithFiles(boardVO, files); // @Transactional inside
+        return "redirect:/board/list.do";
     }
 
     /**
@@ -141,5 +187,17 @@ public class BoardMvcController {
     public String delete(@RequestParam Long boardSn) {
         boardService.delete(boardSn);
         return "redirect:/board/list.do"; // PRG: redirect after POST ✅
+    }
+
+    @GetMapping("/list.do")
+    public String list(BoardSearchV0 searchV0, ModelMap model) {
+        int total = boardService.countBySearch(searchV0);
+        int totalPages = (int) Math.ceil((double) total / searchV0.getPageSize());
+        model.addAttribute("boards", boardService.findBySearch(searchV0));
+        model.addAttribute("search", searchV0);
+        model.addAttribute("totalCount", total);
+        model.addAttribute("totalPages", totalPages);
+
+        return "board/list";
     }
 }

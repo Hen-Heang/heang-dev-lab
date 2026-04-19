@@ -2,9 +2,12 @@ package com.heang.springmybatistest.service;
 
 import com.heang.springmybatistest.dao.BoardDAO;
 import com.heang.springmybatistest.exception.NotFoundException;
+import com.heang.springmybatistest.vo.BoardSearchV0;
 import com.heang.springmybatistest.vo.BoardVO;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.util.List;
 
@@ -20,7 +23,8 @@ import java.util.List;
 @RequiredArgsConstructor
 public class BoardServiceImpl implements BoardService {
 
-    private final BoardDAO boardDAO; // Spring injects this automatically
+    private final BoardDAO         boardDAO;
+    private final BoardFileService boardFileService;
 
     /**
      * SELECT ALL
@@ -102,5 +106,40 @@ public class BoardServiceImpl implements BoardService {
         }
 
         return rows;
+    }
+
+    @Override
+    public int countBySearch(BoardSearchV0 searchV0) {
+        return boardDAO.countBySearch(searchV0);
+    }
+
+    @Override
+    public List<BoardVO> findBySearch(BoardSearchV0 searchV0) {
+        return boardDAO.findBySearch(searchV0);
+    }
+
+    /**
+     * INSERT board + files in ONE transaction (게시글+첨부파일 트랜잭션 등록)
+     *
+     * @Transactional means:
+     *   - If boardDAO.insert() succeeds but boardFileService.saveFiles() throws
+     *     → the board INSERT is rolled back automatically
+     *   - Either BOTH succeed or NOTHING is saved
+     *
+     * This is the most important pattern to understand before working in Korea.
+     * Every write operation that touches 2+ tables must be @Transactional.
+     */
+    @Override
+    @Transactional
+    public void insertWithFiles(BoardVO boardVO, List<MultipartFile> files) {
+        // Step 1: Insert board → boardVO.boardSn is filled by useGeneratedKeys
+        if (boardVO.getUseYn() == null) {
+            boardVO.setUseYn("Y");
+        }
+        boardDAO.insert(boardVO); // after this, boardVO.getBoardSn() has the new PK
+
+        // Step 2: Save files to disk + insert DB records
+        // If this throws → Step 1 is rolled back automatically
+        boardFileService.saveFiles(boardVO.getBoardSn(), files);
     }
 }

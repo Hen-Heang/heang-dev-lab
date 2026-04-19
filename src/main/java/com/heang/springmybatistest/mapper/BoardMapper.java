@@ -1,5 +1,6 @@
 package com.heang.springmybatistest.mapper;
 
+import com.heang.springmybatistest.vo.BoardSearchV0;
 import com.heang.springmybatistest.vo.BoardVO;
 import org.apache.ibatis.annotations.Mapper;
 
@@ -31,4 +32,7 @@ public interface BoardMapper {
 
     // SOFT DELETE — set use_yn = 'N' (소프트 삭제)
     int delete(Long boardSn);
+
+    List<BoardVO> findBySearch(BoardSearchV0 searchV0);
+    int countBySearch(BoardSearchV0 searchV0);
 }

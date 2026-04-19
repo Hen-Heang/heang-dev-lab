@@ -1,72 +1,173 @@
 <!DOCTYPE html>
 <!--
-  board/insertForm.html — Thymeleaf version (converted from board/insertForm.jsp)
-  This page has no server data — just a plain HTML form.
-  Only change: th:action="@{/board/insert.do}" instead of action="/board/insert.do"
+  board/insertForm.html — Write new board post with file attachments
+  게시글 등록 폼 (첨부파일 포함)
+
+  Key change from Step 1:
+    enctype="multipart/form-data" → required for file upload
+    Without this the file bytes are NOT sent to the server
 -->
 <html xmlns:th="http://www.thymeleaf.org" lang="ko">
 <head>
     <meta charset="UTF-8">
     <title>Write Board (게시글 등록)</title>
     <style>
-        body  { font-family: Arial, sans-serif; margin: 20px; }
-        table { width: 100%; border-collapse: collapse; margin-bottom: 15px; }
-        th, td { border: 1px solid #ddd; padding: 10px; }
-        th    { background: #f4f4f4; width: 150px; }
-        .btn  { padding: 6px 12px; cursor: pointer; margin-right: 5px; }
-        .btn-primary { background: #007bff; color: white; border: none; }
-        .btn-danger  { background: #dc3545; color: white; border: none; }
-        .error-msg   { color: red; font-size: 12px; display: none; }
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+        body { font-family: 'Segoe UI', Arial, sans-serif; background: #f0f2f7; color: #1e2a3a; }
+
+        .page-wrap { max-width: 700px; margin: 40px auto; padding: 0 20px; }
+
+        .top-bar {
+            display: flex; align-items: center; justify-content: space-between;
+            margin-bottom: 20px;
+        }
+        .top-bar h2 { font-size: 20px; font-weight: 700; }
+        .back-btn {
+            text-decoration: none; color: #555; font-size: 14px;
+            padding: 7px 14px; border: 2px solid #d0d5e0;
+            border-radius: 8px; transition: background .15s;
+        }
+        .back-btn:hover { background: #e8ecf4; }
+
+        .card {
+            background: #fff; border-radius: 12px; padding: 28px;
+            box-shadow: 0 2px 8px rgba(0,0,0,.06);
+        }
+
+        .form-group { margin-bottom: 20px; }
+        .form-group label {
+            display: block; font-size: 13px; font-weight: 600;
+            color: #555; margin-bottom: 6px;
+        }
+        .form-group input[type=text],
+        .form-group textarea {
+            width: 100%; padding: 10px 12px;
+            border: 2px solid #e0e4ef; border-radius: 8px;
+            font-size: 14px; font-family: inherit; outline: none;
+            transition: border-color .15s;
+        }
+        .form-group input[type=text]:focus,
+        .form-group textarea:focus { border-color: #3b5bdb; }
+
+        /* ── File input ──────────────────────────────────────────────── */
+        .file-label {
+            display: flex; align-items: center; gap: 10px;
+            padding: 10px 14px;
+            border: 2px dashed #c5cce8; border-radius: 8px;
+            cursor: pointer; transition: border-color .15s, background .15s;
+        }
+        .file-label:hover { border-color: #3b5bdb; background: #f0f4ff; }
+        .file-label input[type=file] { display: none; } /* hidden, label acts as button */
+        .file-label .file-icon { font-size: 22px; }
+        .file-label .file-text { font-size: 14px; color: #666; }
+        .file-hint { font-size: 12px; color: #aaa; margin-top: 6px; }
+        .file-list { margin-top: 10px; display: flex; flex-direction: column; gap: 6px; }
+        .file-item {
+            display: flex; align-items: center; justify-content: space-between;
+            padding: 7px 12px; background: #f7f8fc;
+            border-radius: 6px; font-size: 13px;
+        }
+        .file-item .remove-btn {
+            background: none; border: none; color: #e03131;
+            cursor: pointer; font-size: 16px; line-height: 1;
+        }
+        /* ────────────────────────────────────────────────────────────── */
+
+        .error-msg { color: #e03131; font-size: 12px; margin-top: 4px; display: none; }
+
+        .btn-row { display: flex; gap: 10px; margin-top: 24px; }
+        .btn {
+            padding: 10px 22px; border-radius: 8px; border: none;
+            font-size: 14px; font-weight: 600; cursor: pointer;
+            transition: opacity .15s;
+        }
+        .btn:hover { opacity: .85; }
+        .btn-primary   { background: #3b5bdb; color: #fff; }
+        .btn-secondary { background: #e8ecf4; color: #444; }
     </style>
 </head>
 <body>
+<div class="page-wrap">
 
-<h2>Write Board (게시글 등록)</h2>
-
-<!-- th:action replaces action="/board/insert.do" — context path aware -->
-<form id="insertForm" method="post" th:action="@{/board/insert.do}">
-
-    <table>
-        <tr>
-            <th>Title (제목) *</th>
-            <td>
-                <input type="text"
-                       id="boardTitle"
-                       name="boardTitle"
-                       placeholder="Enter title (제목 입력)"
-                       style="width:100%" />
-                <span id="titleError" class="error-msg">
-                    Title is required (제목을 입력하세요)
-                </span>
-            </td>
-        </tr>
-        <tr>
-            <th>Content (내용)</th>
-            <td>
-                <textarea id="boardCn"
-                          name="boardCn"
-                          rows="6"
-                          placeholder="Enter content (내용 입력)"
-                          style="width:100%"></textarea>
-            </td>
-        </tr>
-    </table>
-
-    <!-- useYn default Y (기본값 Y) -->
-    <input type="hidden" name="useYn" value="Y" />
-
-    <div>
-        <button type="button" class="btn btn-primary" onclick="submitInsert()">
-            Save (저장)
-        </button>
-        <button type="button" class="btn" th:onclick="|location.href='@{/board/list.do}'|">
-            Cancel (취소)
-        </button>
+    <div class="top-bar">
+        <h2>Write Post (게시글 등록)</h2>
+        <a th:href="@{/board/list.do}" class="back-btn">← Back</a>
     </div>
-</form>
+
+    <div class="card">
+        <!--
+            enctype="multipart/form-data" is REQUIRED for file upload.
+            Without it the browser sends only text fields — files are lost.
+            (파일 업로드를 위해 반드시 필요한 enctype)
+        -->
+        <form id="insertForm" method="post"
+              th:action="@{/board/insert.do}"
+              enctype="multipart/form-data">
+
+            <!-- Title -->
+            <div class="form-group">
+                <label for="boardTitle">Title (제목) *</label>
+                <input type="text" id="boardTitle" name="boardTitle"
+                       placeholder="Enter title (제목 입력)" />
+                <p id="titleError" class="error-msg">Title is required (제목을 입력하세요)</p>
+            </div>
+
+            <!-- Content -->
+            <div class="form-group">
+                <label for="boardCn">Content (내용)</label>
+                <textarea id="boardCn" name="boardCn" rows="6"
+                          placeholder="Enter content (내용 입력)"></textarea>
+            </div>
+
+            <!--
+                File attachment (첨부파일)
+                name="files" → matches @RequestParam("files") in controller
+                multiple     → allows selecting multiple files at once
+            -->
+            <div class="form-group">
+                <label>Attachments (첨부파일)</label>
+                <label class="file-label">
+                    <input type="file" id="fileInput" name="files" multiple />
+                    <span class="file-icon">📎</span>
+                    <span class="file-text">Click to attach files (파일 선택)</span>
+                </label>
+                <p class="file-hint">Max 5MB per file. Multiple files allowed.</p>
+                <!-- JS will render selected file names here -->
+                <div class="file-list" id="fileList"></div>
+            </div>
+
+            <input type="hidden" name="useYn" value="Y" />
+
+            <div class="btn-row">
+                <button type="button" class="btn btn-primary" onclick="submitInsert()">
+                    Save (저장)
+                </button>
+                <button type="button" class="btn btn-secondary"
+                        th:onclick="|location.href='@{/board/list.do}'|">
+                    Cancel (취소)
+                </button>
+            </div>
+        </form>
+    </div>
+
+</div>
 
 <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
 <script>
+    // Show selected filenames in the list (선택한 파일명 미리 보여주기)
+    $('#fileInput').on('change', function () {
+        const $list = $('#fileList').empty();
+        const files = this.files;
+        for (let i = 0; i < files.length; i++) {
+            const sizeKb = (files[i].size / 1024).toFixed(1);
+            $list.append(
+                `<div class="file-item">
+                    <span>📄 ${files[i].name} <span style="color:#aaa">(${sizeKb} KB)</span></span>
+                </div>`
+            );
+        }
+    });
+
     function submitInsert() {
         const title = $('#boardTitle').val().trim();
         if (title === '') {
@@ -78,10 +179,9 @@
         $('#insertForm').submit();
     }
 
-    $('#boardTitle').on('input', function() {
+    $('#boardTitle').on('input', function () {
         if ($(this).val().trim() !== '') $('#titleError').hide();
     });
 </script>
-
 </body>
 </html>

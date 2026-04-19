@@ -1,0 +1,106 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.heang.springmybatistest.mapper.CommonCodeMapper">
+
+    <!--
+        findByGroup — load dropdown options for one group (그룹별 코드 목록)
+        Called from every controller that renders a <select> dropdown.
+
+        Only returns use_yn='Y' so hidden codes never appear in dropdowns.
+        Sorted by sort_order so dropdown order is controlled from DB.
+    -->
+    <select id="findByGroup"
+            parameterType="String"
+            resultType="com.heang.springmybatistest.model.CommonCode">
+        SELECT code_group,
+               code_value,
+               code_name,
+               sort_order,
+               use_yn,
+               created_at
+        FROM common_code
+        WHERE code_group = #{codeGroup}
+          AND use_yn = 'Y'
+        ORDER BY sort_order ASC, code_value ASC
+    </select>
+
+    <!--
+        findAllGroups — distinct group list for management page filter (그룹 목록)
+    -->
+    <select id="findAllGroups" resultType="String">
+        SELECT DISTINCT code_group
+        FROM common_code
+        ORDER BY code_group ASC
+    </select>
+
+    <!--
+        findAll — management page list, optionally filtered by group (전체 조회)
+        @Param("codeGroup") can be null → show all groups
+        <if> skips the filter when codeGroup is empty (동적 SQL)
+    -->
+    <select id="findAll"
+            resultType="com.heang.springmybatistest.model.CommonCode">
+        SELECT code_group,
+               code_value,
+               code_name,
+               sort_order,
+               use_yn,
+               created_at
+        FROM common_code
+        <where>
+            <if test="codeGroup != null and codeGroup != ''">
+                AND code_group = #{codeGroup}
+            </if>
+        </where>
+        ORDER BY code_group ASC, sort_order ASC, code_value ASC
+    </select>
+
+    <!--
+        INSERT — register new code (코드 등록)
+        Composite PK (code_group + code_value) — DB rejects duplicates
+    -->
+    <insert id="insert" parameterType="com.heang.springmybatistest.model.CommonCode">
+        INSERT INTO common_code (code_group, code_value, code_name, sort_order, use_yn)
+        VALUES (#{codeGroup}, #{codeValue}, #{codeName},
+                #{sortOrder},
+                COALESCE(#{useYn}, 'Y'))
+    </insert>
+
+    <!--
+        UPDATE — change display name / sort order / use_yn (코드 수정)
+        Cannot change code_group or code_value (they are PK)
+    -->
+    <update id="update" parameterType="com.heang.springmybatistest.model.CommonCode">
+        UPDATE common_code
+        SET code_name  = #{codeName},
+            sort_order = #{sortOrder},
+            use_yn     = #{useYn}
+        WHERE code_group = #{codeGroup}
+          AND code_value = #{codeValue}
+    </update>
+
+    <!--
+        DELETE — remove by composite PK (코드 삭제)
+        @Param needed because method has 2 parameters (파라미터 2개 → @Param 필수)
+    -->
+    <delete id="delete">
+        DELETE FROM common_code
+        WHERE code_group = #{codeGroup}
+          AND code_value = #{codeValue}
+    </delete>
+
+    <!--
+        countByGroupAndValue — duplicate check before INSERT (중복 확인)
+        Returns 0 = not exists, 1 = already exists
+    -->
+    <select id="countByGroupAndValue" resultType="int">
+        SELECT COUNT(*)
+        FROM common_code
+        WHERE code_group = #{codeGroup}
+          AND code_value = #{codeValue}
+    </select>
+
+</mapper>

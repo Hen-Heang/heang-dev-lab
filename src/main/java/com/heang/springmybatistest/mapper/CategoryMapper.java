@@ -2,6 +2,7 @@ package com.heang.springmybatistest.mapper;
 
 import com.heang.springmybatistest.dto.CategoryRequest;
 import com.heang.springmybatistest.model.Category;
+import com.heang.springmybatistest.vo.CategoryWithProductsVO;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
 
@@ -28,4 +29,12 @@ public interface CategoryMapper {
     void deleteCategory(Long id);
 
     int countCategory();
+
+    /**
+     * SELECT all categories with their products using LEFT JOIN (카테고리+상품 JOIN 조회)
+     *
+     * Returns flat rows → MyBatis <collection> groups them into
+     * List<CategoryWithProductsVO>, each with List<Product> inside.
+     */
+    List<CategoryWithProductsVO> selectAllWithProducts();
 }

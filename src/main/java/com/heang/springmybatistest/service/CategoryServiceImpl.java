@@ -3,6 +3,7 @@ package com.heang.springmybatistest.service;
 import com.heang.springmybatistest.dto.CategoryRequest;
 import com.heang.springmybatistest.mapper.CategoryMapper;
 import com.heang.springmybatistest.model.Category;
+import com.heang.springmybatistest.vo.CategoryWithProductsVO;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -60,5 +61,10 @@ public class CategoryServiceImpl implements CategoryService {
     @Override
     public int count() {
         return categoryMapper.countCategory();
+    }
+
+    @Override
+    public List<CategoryWithProductsVO> findAllWithProducts() {
+        return categoryMapper.selectAllWithProducts();
     }
 }

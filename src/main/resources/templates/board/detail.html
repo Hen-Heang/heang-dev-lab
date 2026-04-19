@@ -57,6 +57,36 @@
 </table>
 
 <!-- ================================================================
+     Attached Files (첨부파일 목록)
+     th:if="${not #lists.isEmpty(files)}" — only show section if files exist
+     th:href downloads through /board/download.do?fileSn=N  (streams from disk)
+     ================================================================ -->
+<div th:if="${not #lists.isEmpty(files)}" style="margin-bottom:20px;">
+    <h3 style="margin-bottom:10px;">Attachments (첨부파일)</h3>
+    <table>
+        <thead>
+            <tr>
+                <th>File Name (파일명)</th>
+                <th>Size (크기)</th>
+                <th>Download</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr th:each="file : ${files}">
+                <td th:text="${file.origName}">report.pdf</td>
+                <td th:text="${#numbers.formatDecimal(file.fileSize / 1024.0, 1, 1)} + ' KB'">0 KB</td>
+                <td>
+                    <a th:href="@{/board/download.do(fileSn=${file.fileSn})}"
+                       class="btn btn-primary">
+                        ⬇ Download
+                    </a>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+</div>
+
+<!-- ================================================================
      Edit Form (수정 폼)
      JSP: value="<c:out value='${board.boardTitle}'/>"
      Thymeleaf: th:value="${board.boardTitle}"
