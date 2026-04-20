@@ -11,8 +11,8 @@ public class ViewController {
      * GET /login — show login page
      * Spring Security handles POST /login automatically (no controller method needed)
      *
-     * @param error   → ?error   param set by Security on bad credentials
-     * @param logout  → ?logout  param set by Security after logout
+     * @param error   → ?error param set by Security on bad credentials
+     * @param logout  → ?logout param set by Security after logout
      */
     @GetMapping("/login")
     public String login(

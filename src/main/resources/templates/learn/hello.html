@@ -3,97 +3,14 @@
 <head>
     <meta charset="UTF-8">
     <title th:text="${pageTitle}">Learn Thymeleaf</title>
-    <style>
-        body {
-            font-family: sans-serif;
-            max-width: 800px;
-            margin: 40px auto;
-            padding: 0 20px;
-        }
-
-        .card {
-            background: #f8f9fa;
-            border-left: 4px solid #4A90D9;
-            padding: 16px;
-            margin: 20px 0;
-            border-radius: 4px;
-        }
-
-        .label {
-            font-size: 12px;
-            color: #888;
-            text-transform: uppercase;
-            letter-spacing: 1px;
-            margin-bottom: 4px;
-        }
-
-        .syntax {
-            background: #272822;
-            color: #f8f8f2;
-            padding: 10px 14px;
-            border-radius: 4px;
-            font-family: monospace;
-            font-size: 14px;
-            margin: 8px 0;
-        }
-
-        .result {
-            background: #e8f5e9;
-            padding: 10px 14px;
-            border-radius: 4px;
-            margin: 4px 0;
-        }
-
-        .note {
-            font-size: 13px;
-            color: #555;
-            margin-top: 6px;
-        }
-
-        .admin-box {
-            background: #fff3cd;
-            border: 2px solid #f0ad4e;
-            padding: 8px;
-            border-radius: 4px;
-        }
-
-        .user-box {
-            background: #d1ecf1;
-            border: 2px solid #17a2b8;
-            padding: 8px;
-            border-radius: 4px;
-        }
-
-        .box {
-            padding: 8px;
-            border: 1px solid gray;
-            border-radius: 4px;
-        }
-
-        .error {
-            border-color: red !important;
-            background: #fff0f0;
-        }
-
-        h2 {
-            color: #333;
-            border-bottom: 2px solid #4A90D9;
-            padding-bottom: 6px;
-            margin-top: 40px;
-        }
-
-        nav {
-            margin-bottom: 30px;
-        }
-
-        nav a {
-            margin-right: 16px;
-            color: #4A90D9;
-            text-decoration: none;
-        }
-    </style>
+    <link rel="stylesheet" th:href="@{/css/base.css}">
+    <link rel="stylesheet" th:href="@{/css/learn.css}">
 </head>
 <body>
+<div class="learn-wrap">
+<div class="learn-nav">
+    <a th:href="@{/learn}" class="learn-back">← Back to Index</a>
+</div>
 
 <!--This is link to other functions-->
 <nav>
@@ -292,5 +209,6 @@
 <hr style="margin-top: 40px;">
 <a th:href="@{/learn/users}">Step 2 - 반복문 (th:each) →</a>
 
+</div>
 </body>
 </html>

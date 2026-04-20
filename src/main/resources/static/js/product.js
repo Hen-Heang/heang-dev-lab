@@ -73,6 +73,7 @@ function bindEvents() {
     $(document).on('keydown', function (e) {
         if (e.key === 'Escape') {
             closeModal();
+            closeDetailModal();
         }
     });
 }
@@ -172,7 +173,7 @@ function renderProductTable(products) {
     if (!products || products.length === 0) {
         tbody.append(`
             <tr>
-                <td colspan="7" class="text-center empty-state">
+                <td colspan="8" class="text-center empty-state">
                     No products found (등록된 상품 없음)
                 </td>
             </tr>
@@ -181,28 +182,35 @@ function renderProductTable(products) {
     }
 
     products.forEach(function (product) {
-        // Format date (날짜 포맷팅)
         const createdAt = formatDateTime(product.createdAt);
-        // Format price (가격 포맷팅)
         const priceFormatted = formatNumber(product.price);
+
+        const imageCell = product.imageUrl
+            ? `<img src="${product.imageUrl}" alt="${escapeHtml(product.name)}" class="product-thumb">`
+            : `<div class="product-thumb-placeholder">📦</div>`;
+
+        const stockBadge = product.stock === 0
+            ? `<span class="badge badge-danger">Out</span>`
+            : product.stock < 10
+                ? `<span class="badge badge-warning">${product.stock}</span>`
+                : `<span class="badge badge-success">${product.stock}</span>`;
 
         tbody.append(`
             <tr>
-                <td>${product.id}</td>
-                <td>${escapeHtml(product.name)}</td>
-                <td>${escapeHtml(product.categoryName || '-')}</td>
-                <td>${priceFormatted}</td>
-                <td>${product.stock}</td>
-                <td>${createdAt}</td>
-                <td>
+                <td style="color:var(--muted);font-size:12px;">#${product.id}</td>
+                <td>${imageCell}</td>
+                <td style="font-weight:500;">${escapeHtml(product.name)}</td>
+                <td><span class="category-pill">${escapeHtml(product.categoryName || '-')}</span></td>
+                <td class="price">₩${priceFormatted}</td>
+                <td>${stockBadge}</td>
+                <td style="color:var(--muted);font-size:12px;">${createdAt}</td>
+                <td style="white-space:nowrap;">
                     <button type="button" class="btn btn-sm btn-secondary"
-                            onclick="openEditModal(${product.id})">
-                        Edit
-                    </button>
+                            onclick="openDetailModal(${product.id})">View</button>
+                    <button type="button" class="btn btn-sm btn-secondary"
+                            onclick="openEditModal(${product.id})">Edit</button>
                     <button type="button" class="btn btn-sm btn-danger"
-                            onclick="deleteProduct(${product.id}, '${escapeHtml(product.name)}')">
-                        Delete
-                    </button>
+                            onclick="deleteProduct(${product.id}, '${escapeHtml(product.name)}')">Delete</button>
                 </td>
             </tr>
         `);
@@ -342,6 +350,47 @@ function openEditModal(id) {
             alert('Failed to load product data');
         }
     });
+}
+
+function openDetailModal(id) {
+    $.ajax({
+        url: `${API_BASE}/${id}`,
+        method: 'GET',
+        success: function (response) {
+            if (response.status && response.status.code === 200) {
+                const p = response.data;
+                $('#detailId').text('#' + p.id);
+                $('#detailName').text(p.name || '-');
+                $('#detailCategory').text(p.categoryName || '-');
+                $('#detailPrice').text('₩' + formatNumber(p.price));
+                $('#detailStock').text(p.stock);
+                const stockBadge = p.stock === 0
+                    ? `<span class="badge badge-danger">Out of stock</span>`
+                    : p.stock < 10
+                        ? `<span class="badge badge-warning">Low (${p.stock})</span>`
+                        : `<span class="badge badge-success">In stock (${p.stock})</span>`;
+                $('#detailStock').html(stockBadge);
+                $('#detailCreatedAt').text(formatDateTime(p.createdAt) || '-');
+                if (p.imageUrl) {
+                    $('#detailImage').attr('src', p.imageUrl).show();
+                    $('#detailImagePlaceholder').hide();
+                } else {
+                    $('#detailImage').hide();
+                    $('#detailImagePlaceholder').show();
+                }
+                $('#productDetailModal').addClass('show');
+            } else {
+                alert('Failed to load product');
+            }
+        },
+        error: function () {
+            alert('Failed to load product');
+        }
+    });
+}
+
+function closeDetailModal() {
+    $('#productDetailModal').removeClass('show');
 }
 
 function closeModal() {

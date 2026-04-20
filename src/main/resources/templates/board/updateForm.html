@@ -1,76 +1,107 @@
 <!DOCTYPE html>
-<!--
-  board/updateForm.html — Thymeleaf version (converted from board/updateForm.jsp)
-  JSP: value="<c:out value='${board.boardTitle}'/>" → th:value="${board.boardTitle}"
-  JSP: <textarea><c:out value="${board.boardCn}"/></textarea> → <textarea th:text="${board.boardCn}">
--->
 <html xmlns:th="http://www.thymeleaf.org" lang="ko">
 <head>
     <meta charset="UTF-8">
-    <title>Edit Board (게시글 수정)</title>
-    <style>
-        body  { font-family: Arial, sans-serif; margin: 20px; }
-        table { width: 100%; border-collapse: collapse; margin-bottom: 15px; }
-        th, td { border: 1px solid #ddd; padding: 10px; }
-        th    { background: #f4f4f4; width: 150px; }
-        .btn  { padding: 6px 12px; cursor: pointer; margin-right: 5px; }
-        .btn-success { background: #28a745; color: white; border: none; }
-        .btn-danger  { background: #dc3545; color: white; border: none; }
-        .error-msg   { color: red; font-size: 12px; display: none; }
-    </style>
+    <title>Edit Board - Store Admin</title>
+    <link rel="stylesheet" th:href="@{/css/base.css}">
+    <link rel="stylesheet" th:href="@{/css/layout.css}">
+    <link rel="stylesheet" th:href="@{/css/components.css}">
 </head>
-<body>
+<body class="sidebar-layout">
 
-<h2>Edit Board (게시글 수정)</h2>
-
-<form id="updateForm" method="post" th:action="@{/board/update.do}">
-    <input type="hidden" name="boardSn" th:value="${board.boardSn}" />
-
-    <table>
-        <tr>
-            <th>No (번호)</th>
-            <td th:text="${board.boardSn}">-</td>
-        </tr>
-        <tr>
-            <th>Title (제목) *</th>
-            <td>
-                <input type="text"
-                       id="boardTitle"
-                       name="boardTitle"
-                       th:value="${board.boardTitle}"
-                       style="width:100%" />
-                <span id="titleError" class="error-msg">
-                    Title is required (제목을 입력하세요)
-                </span>
-            </td>
-        </tr>
-        <tr>
-            <th>Content (내용)</th>
-            <td>
-                <!-- th:text on textarea fills the content between tags -->
-                <textarea id="boardCn"
-                          name="boardCn"
-                          rows="6"
-                          style="width:100%"
-                          th:text="${board.boardCn}"></textarea>
-            </td>
-        </tr>
-    </table>
-
-    <div>
-        <button type="button" class="btn btn-success" onclick="submitUpdate()">
-            Save (저장)
-        </button>
-        <button type="button" class="btn"
-                th:onclick="|location.href='@{/board/detail.do(boardSn=${board.boardSn})}'|">
-            Cancel (취소)
-        </button>
-        <button type="button" class="btn"
-                th:onclick="|location.href='@{/board/list.do}'|">
-            Back to List (목록)
-        </button>
+<!-- ── Sidebar ── -->
+<aside class="sidebar">
+    <div class="sidebar-logo">
+        <div class="sidebar-logo-icon">🏪</div>
+        <div class="sidebar-logo-text">
+            Store Admin
+            <span>Management Panel</span>
+        </div>
     </div>
-</form>
+    <nav class="sidebar-nav">
+        <div class="sidebar-section">Main Menu</div>
+        <a th:href="@{/dashboard}" class="nav-item"><span class="nav-icon">📊</span> Dashboard</a>
+        <a th:href="@{/store/product}" class="nav-item"><span class="nav-icon">📦</span> Products</a>
+        <a th:href="@{/store/category}" class="nav-item"><span class="nav-icon">📁</span> Categories</a>
+        <a th:href="@{/}" class="nav-item"><span class="nav-icon">👥</span> Users</a>
+        <a th:href="@{/board/list.do}" class="nav-item active"><span class="nav-icon">📝</span> Board</a>
+        <a th:href="@{/common-code}" class="nav-item"><span class="nav-icon">🗂️</span> Common Codes</a>
+        <div class="sidebar-section">Dev Tools</div>
+        <a th:href="@{/learn}" class="nav-item"><span class="nav-icon">📚</span> Thymeleaf Lab <span class="nav-badge">Lab</span></a>
+        <a th:href="@{/swagger-ui.html}" class="nav-item"><span class="nav-icon">🔌</span> Swagger API</a>
+    </nav>
+    <div class="sidebar-footer">
+        <a href="#" class="nav-item"><span class="nav-icon">⚙️</span> Settings</a>
+        <form th:action="@{/logout}" method="post" style="margin: 2px 0;">
+            <button type="submit" class="nav-item"
+                    style="width:100%; background:none; border:none; cursor:pointer; text-align:left;">
+                <span class="nav-icon">🚪</span> Logout
+            </button>
+        </form>
+    </div>
+</aside>
+
+<!-- ── Main Content ── -->
+<div class="main-content">
+    <header class="topbar">
+        <div class="topbar-left">
+            <div class="topbar-breadcrumb">
+                Home <span>›</span>
+                <a th:href="@{/board/list.do}" style="color:var(--muted);text-decoration:none;">Board</a>
+                <span>›</span> <strong>Edit Post</strong>
+            </div>
+        </div>
+        <div class="topbar-right">
+            <a th:href="@{/swagger-ui.html}" class="topbar-btn" title="API Docs">🔌</a>
+            <div class="avatar">A</div>
+        </div>
+    </header>
+
+    <div class="page-content">
+
+        <div class="page-header">
+            <div class="page-title">
+                <h1>Edit Post <span style="font-size:14px;color:var(--muted);font-weight:400;">(게시글 수정)</span></h1>
+            </div>
+            <a th:href="@{/board/list.do}" class="btn btn-secondary">← Back to List</a>
+        </div>
+
+        <div class="card" style="max-width:720px;">
+            <div style="padding:22px;">
+                <form id="updateForm" method="post" th:action="@{/board/update.do}">
+                    <input type="hidden" name="boardSn" th:value="${board.boardSn}"/>
+
+                    <div class="form-group">
+                        <label>No (번호)</label>
+                        <input type="text" class="form-control" th:value="${board.boardSn}" readonly
+                               style="background:var(--bg);color:var(--muted);cursor:default;">
+                    </div>
+                    <div class="form-group">
+                        <label for="boardTitle">Title (제목) *</label>
+                        <input type="text" id="boardTitle" name="boardTitle" class="form-control"
+                               th:value="${board.boardTitle}"/>
+                        <span id="titleError" style="color:var(--danger);font-size:12px;display:none;">
+                            Title is required (제목을 입력하세요)
+                        </span>
+                    </div>
+                    <div class="form-group">
+                        <label for="boardCn">Content (내용)</label>
+                        <textarea id="boardCn" name="boardCn" rows="8" class="form-control"
+                                  th:text="${board.boardCn}"></textarea>
+                    </div>
+                    <div style="display:flex;gap:10px;margin-top:8px;">
+                        <button type="button" class="btn btn-success" onclick="submitUpdate()">Save (저장)</button>
+                        <button type="button" class="btn btn-secondary"
+                                th:onclick="|location.href='@{/board/detail.do(boardSn=${board.boardSn})}'|">Cancel (취소)</button>
+                        <button type="button" class="btn btn-secondary"
+                                th:onclick="|location.href='@{/board/list.do}'|">Back to List (목록)</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+
+    </div><!-- /page-content -->
+</div><!-- /main-content -->
 
 <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
 <script>
@@ -85,10 +116,9 @@
         $('#updateForm').submit();
     }
 
-    $('#boardTitle').on('input', function() {
+    $('#boardTitle').on('input', function () {
         if ($(this).val().trim() !== '') $('#titleError').hide();
     });
 </script>
-
 </body>
 </html>

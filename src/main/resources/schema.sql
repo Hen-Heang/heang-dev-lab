@@ -91,7 +91,7 @@ CREATE INDEX idx_product_price ON product(price);
 
 -- =====================================================
 -- SAMPLE DATA
--- Password for seeded users: password123
+-- Password for seeded users: password
 -- =====================================================
 
 INSERT INTO users (username, email, password, name, phone, role, status) VALUES
@@ -233,6 +233,7 @@ CREATE TABLE IF NOT EXISTS common_code (
     created_at  TIMESTAMP    NOT NULL DEFAULT CURRENT_TIMESTAMP,
     PRIMARY KEY (code_group, code_value)
 );
+
 INSERT INTO common_code (code_group, code_value, code_name, sort_order) VALUES
 ('USER_STATUS', 'ACTIVE', '활성', 1), ('USER_STATUS', 'INACTIVE', '비활성', 2),
 ('USER_STATUS', 'SUSPENDED', '정지', 3), ('USER_STATUS', 'PENDING', '대기', 4),
@@ -240,6 +241,7 @@ INSERT INTO common_code (code_group, code_value, code_name, sort_order) VALUES
 ('PRODUCT_STATUS', 'SALE', '판매중', 1), ('PRODUCT_STATUS', 'SOLDOUT', '품절', 2), ('PRODUCT_STATUS', 'HIDDEN', '숨김', 3),
 ('USER_ROLE', 'ROLE_ADMIN', '관리자', 1), ('USER_ROLE', 'ROLE_MANAGER', '매니저', 2), ('USER_ROLE', 'ROLE_USER', '일반', 3)
 ON CONFLICT DO NOTHING;
+
 
 -- [2026-04-19] Board file attachments (게시판 첨부파일 테이블)
 CREATE TABLE IF NOT EXISTS board_file (

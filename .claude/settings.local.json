@@ -5,7 +5,8 @@
       "Read(//c/Users/user/.m2/repository/org/apache/tomcat/embed/tomcat-embed-jasper/10.1.34//**)",
       "Read(//Applications/Postgres.app/Contents/Versions/latest/bin/**)",
       "Read(//usr/local/bin/**)",
-      "Read(//opt/homebrew/bin/**)"
+      "Read(//opt/homebrew/bin/**)",
+      "Bash(cmd.exe /c \"mvnw.cmd test -Dtest=HashVerifyTest 2>&1\")"
     ]
   }
 }

@@ -45,48 +45,8 @@
           페이지 본문에는 보이지 않고 탭에만 표시됩니다.
     -->
     <title>Step 1.A - Input Attributes</title>
-
-    <!--
-      <style>
-      EN: Where you write CSS rules to control how elements look.
-          CSS written here applies only to this HTML file.
-      KO: CSS 규칙을 작성하는 곳입니다. 요소들의 모양을 제어합니다.
-          여기에 작성한 CSS는 이 HTML 파일에만 적용됩니다.
-    -->
-    <style>
-        /* body = the entire visible page area */
-        body {
-            font-family: sans-serif;   /* clean modern font */
-            max-width: 600px;          /* limit width so it doesn't stretch too wide */
-            margin: 40px auto;         /* center the page horizontally, 40px top space */
-            padding: 0 20px;
-        }
-
-        /* applies to ALL <input> tags on this page */
-        input {
-            display: block;            /* each input goes on its own line */
-            margin: 8px 0 20px;        /* spacing: 8px top, 0 sides, 20px bottom */
-            padding: 8px;              /* inner spacing inside the input box */
-            width: 100%;               /* stretch to full width of container */
-            box-sizing: border-box;    /* include padding in the width calculation */
-        }
-
-        /* .card = custom class for the blue-left-border boxes */
-        .card {
-            background: #f8f9fa;
-            border-left: 4px solid #4A90D9;
-            padding: 16px;
-            margin: 20px 0;
-            border-radius: 4px;
-        }
-
-        /* .note = small gray explanation text */
-        .note {
-            font-size: 13px;
-            color: #555;
-            margin-top: 6px;
-        }
-    </style>
+    <link rel="stylesheet" th:href="@{/css/base.css}">
+    <link rel="stylesheet" th:href="@{/css/learn.css}">
 
 </head>
 
@@ -98,6 +58,10 @@
       실제 콘텐츠는 모두 여기에 작성합니다.
 -->
 <body>
+<div class="learn-wrap">
+<div class="learn-nav">
+    <a th:href="@{/learn}" class="learn-back">← Back to Index</a>
+</div>
 
 <!--
   <h1>
@@ -286,5 +250,6 @@
 &nbsp;&nbsp;
 <a href="/learn/users">Step 2 (users) →</a>
 
+</div>
 </body>
 </html>

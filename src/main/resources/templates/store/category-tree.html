@@ -129,11 +129,11 @@
         </div>
         <div class="summary-item">
             Total Products:
-            <strong th:text="${categories.stream().mapToInt(c -> c.productCount).sum()}">0</strong>
+            <strong th:text="${#aggregates.sum(categories.![productCount])}">0</strong>
         </div>
         <div class="summary-item">
             Total Stock:
-            <strong th:text="${categories.stream().mapToInt(c -> c.totalStock).sum()}">0</strong>
+            <strong th:text="${#aggregates.sum(categories.![totalStock])}">0</strong>
         </div>
     </div>
 

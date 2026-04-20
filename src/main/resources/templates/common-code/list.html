@@ -13,134 +13,300 @@
 <head>
     <meta charset="UTF-8">
     <title>Common Code (공통코드 관리)</title>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" th:href="@{/css/base.css}">
+    <link rel="stylesheet" th:href="@{/css/layout.css}">
+    <link rel="stylesheet" th:href="@{/css/components.css}">
     <style>
-        *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
-        body { font-family: 'Inter', sans-serif; background: #f0f2f7; color: #1e2a3a; }
+        body {
+            font-family: 'Inter', sans-serif;
+            background: #f0f2f7;
+            color: #1e2a3a;
+        }
 
-        .page-wrap { max-width: 1100px; margin: 40px auto; padding: 0 24px; }
+        .page-wrap {
+            max-width: 1100px;
+            margin: 40px auto;
+            padding: 0 24px;
+        }
 
         .top-bar {
-            display: flex; align-items: center; justify-content: space-between;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
             margin-bottom: 24px;
         }
-        .top-bar h2 { font-size: 20px; font-weight: 700; }
-        .back-btn {
-            text-decoration: none; color: #555; font-size: 14px;
-            padding: 7px 14px; border: 2px solid #d0d5e0;
-            border-radius: 8px; transition: background .15s;
+
+        .top-bar h2 {
+            font-size: 20px;
+            font-weight: 700;
         }
-        .back-btn:hover { background: #e8ecf4; }
+
+        .back-btn {
+            text-decoration: none;
+            color: #555;
+            font-size: 14px;
+            padding: 7px 14px;
+            border: 2px solid #d0d5e0;
+            border-radius: 8px;
+            transition: background .15s;
+        }
+
+        .back-btn:hover {
+            background: #e8ecf4;
+        }
 
         /* ── Alert ── */
         .alert {
-            padding: 12px 16px; border-radius: 10px;
-            font-size: 14px; margin-bottom: 20px;
-            display: flex; align-items: center; gap: 8px;
+            padding: 12px 16px;
+            border-radius: 10px;
+            font-size: 14px;
+            margin-bottom: 20px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
         }
-        .alert-success { background: #e6f9f0; color: #087f5b; border: 1px solid #8ce99a; }
-        .alert-error   { background: #fff0f0; color: #c92a2a; border: 1px solid #ffc9c9; }
+
+        .alert-success {
+            background: #e6f9f0;
+            color: #087f5b;
+            border: 1px solid #8ce99a;
+        }
+
+        .alert-error {
+            background: #fff0f0;
+            color: #c92a2a;
+            border: 1px solid #ffc9c9;
+        }
 
         /* ── Cards ── */
         .card {
-            background: #fff; border-radius: 12px; padding: 24px;
-            box-shadow: 0 2px 8px rgba(0,0,0,.06); margin-bottom: 24px;
+            background: #fff;
+            border-radius: 12px;
+            padding: 24px;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, .06);
+            margin-bottom: 24px;
         }
+
         .card-title {
-            font-size: 15px; font-weight: 700; margin-bottom: 16px;
-            color: #1e2a3a; display: flex; align-items: center; gap: 8px;
+            font-size: 15px;
+            font-weight: 700;
+            margin-bottom: 16px;
+            color: #1e2a3a;
+            display: flex;
+            align-items: center;
+            gap: 8px;
         }
 
         /* ── Filter bar ── */
         .filter-bar {
-            display: flex; gap: 10px; align-items: center; margin-bottom: 16px; flex-wrap: wrap;
+            display: flex;
+            gap: 10px;
+            align-items: center;
+            margin-bottom: 16px;
+            flex-wrap: wrap;
         }
-        .filter-bar label { font-size: 13px; font-weight: 600; color: #555; }
+
+        .filter-bar label {
+            font-size: 13px;
+            font-weight: 600;
+            color: #555;
+        }
+
         select, input[type=text], input[type=number] {
-            border: 2px solid #e0e4ef; border-radius: 8px;
-            padding: 8px 12px; font-size: 14px; font-family: inherit;
-            outline: none; transition: border-color .15s;
+            border: 2px solid #e0e4ef;
+            border-radius: 8px;
+            padding: 8px 12px;
+            font-size: 14px;
+            font-family: inherit;
+            outline: none;
+            transition: border-color .15s;
             background: #fff;
         }
-        select:focus, input:focus { border-color: #3b5bdb; }
+
+        select:focus, input:focus {
+            border-color: #3b5bdb;
+        }
 
         /* ── Table ── */
-        .table-wrap { overflow-x: auto; }
-        table { width: 100%; border-collapse: collapse; min-width: 700px; }
+        .table-wrap {
+            overflow-x: auto;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            min-width: 700px;
+        }
+
         thead th {
-            background: #f7f8fc; padding: 11px 14px;
-            font-size: 11px; font-weight: 700; color: #7b8fb5;
-            text-transform: uppercase; letter-spacing: .5px;
-            border-bottom: 2px solid #e8ecf4; text-align: left;
+            background: #f7f8fc;
+            padding: 11px 14px;
+            font-size: 11px;
+            font-weight: 700;
+            color: #7b8fb5;
+            text-transform: uppercase;
+            letter-spacing: .5px;
+            border-bottom: 2px solid #e8ecf4;
+            text-align: left;
         }
+
         tbody td {
-            padding: 12px 14px; font-size: 14px;
-            border-bottom: 1px solid #f0f2f7; vertical-align: middle;
+            padding: 12px 14px;
+            font-size: 14px;
+            border-bottom: 1px solid #f0f2f7;
+            vertical-align: middle;
         }
-        tbody tr:last-child td { border-bottom: none; }
-        tbody tr:hover td { background: #f7f8fc; }
+
+        tbody tr:last-child td {
+            border-bottom: none;
+        }
+
+        tbody tr:hover td {
+            background: #f7f8fc;
+        }
 
         .badge {
-            display: inline-block; padding: 2px 10px; border-radius: 20px;
-            font-size: 11px; font-weight: 700; letter-spacing: .3px;
+            display: inline-block;
+            padding: 2px 10px;
+            border-radius: 20px;
+            font-size: 11px;
+            font-weight: 700;
+            letter-spacing: .3px;
         }
-        .badge-y { background: #e6f9f0; color: #0ca678; }
-        .badge-n { background: #f8f9fa; color: #aaa; }
+
+        .badge-y {
+            background: #e6f9f0;
+            color: #0ca678;
+        }
+
+        .badge-n {
+            background: #f8f9fa;
+            color: #aaa;
+        }
 
         .group-tag {
-            display: inline-block; padding: 3px 10px; border-radius: 6px;
-            font-size: 12px; font-weight: 600;
-            background: #e8f0fe; color: #3b5bdb;
+            display: inline-block;
+            padding: 3px 10px;
+            border-radius: 6px;
+            font-size: 12px;
+            font-weight: 600;
+            background: #e8f0fe;
+            color: #3b5bdb;
         }
 
         /* ── Buttons ── */
         .btn {
-            padding: 7px 14px; border-radius: 8px; border: none;
-            font-size: 13px; font-weight: 500; cursor: pointer;
-            font-family: inherit; text-decoration: none;
-            display: inline-flex; align-items: center; gap: 5px;
+            padding: 7px 14px;
+            border-radius: 8px;
+            border: none;
+            font-size: 13px;
+            font-weight: 500;
+            cursor: pointer;
+            font-family: inherit;
+            text-decoration: none;
+            display: inline-flex;
+            align-items: center;
+            gap: 5px;
             transition: opacity .15s;
         }
-        .btn:hover { opacity: .85; }
-        .btn-primary { background: #3b5bdb; color: #fff; }
-        .btn-success { background: #2f9e44; color: #fff; }
-        .btn-danger  { background: #e03131; color: #fff; }
-        .btn-ghost   { background: #e8ecf4; color: #444; border: none; }
-        .btn-sm { padding: 5px 10px; font-size: 12px; }
+
+        .btn:hover {
+            opacity: .85;
+        }
+
+        .btn-primary {
+            background: #3b5bdb;
+            color: #fff;
+        }
+
+        .btn-success {
+            background: #2f9e44;
+            color: #fff;
+        }
+
+        .btn-danger {
+            background: #e03131;
+            color: #fff;
+        }
+
+        .btn-ghost {
+            background: #e8ecf4;
+            color: #444;
+            border: none;
+        }
+
+        .btn-sm {
+            padding: 5px 10px;
+            font-size: 12px;
+        }
 
         /* ── Insert form ── */
         .insert-grid {
             display: grid;
             grid-template-columns: 1fr 1fr 2fr 80px 80px auto;
-            gap: 10px; align-items: end;
+            gap: 10px;
+            align-items: end;
         }
+
         .form-field label {
-            display: block; font-size: 12px; font-weight: 600;
-            color: #7b8fb5; margin-bottom: 5px; text-transform: uppercase; letter-spacing: .4px;
+            display: block;
+            font-size: 12px;
+            font-weight: 600;
+            color: #7b8fb5;
+            margin-bottom: 5px;
+            text-transform: uppercase;
+            letter-spacing: .4px;
         }
-        .form-field input, .form-field select { width: 100%; }
+
+        .form-field input, .form-field select {
+            width: 100%;
+        }
 
         /* ── Inline edit form ── */
         .edit-input {
-            width: 100%; padding: 5px 8px;
-            border: 2px solid #3b5bdb; border-radius: 6px;
-            font-size: 13px; font-family: inherit;
+            width: 100%;
+            padding: 5px 8px;
+            border: 2px solid #3b5bdb;
+            border-radius: 6px;
+            font-size: 13px;
+            font-family: inherit;
         }
+
         .edit-select {
-            padding: 5px 8px; border: 2px solid #3b5bdb;
-            border-radius: 6px; font-size: 13px; font-family: inherit;
+            padding: 5px 8px;
+            border: 2px solid #3b5bdb;
+            border-radius: 6px;
+            font-size: 13px;
+            font-family: inherit;
         }
 
         /* ── Integration example box ── */
         .example-box {
-            background: #f7f8fc; border: 2px dashed #c5cce8;
-            border-radius: 10px; padding: 20px;
+            background: #f7f8fc;
+            border: 2px dashed #c5cce8;
+            border-radius: 10px;
+            padding: 20px;
         }
-        .example-box h4 { font-size: 13px; color: #7b8fb5; margin-bottom: 14px; }
-        .example-row { display: flex; gap: 16px; flex-wrap: wrap; align-items: flex-end; }
+
+        .example-box h4 {
+            font-size: 13px;
+            color: #7b8fb5;
+            margin-bottom: 14px;
+        }
+
+        .example-row {
+            display: flex;
+            gap: 16px;
+            flex-wrap: wrap;
+            align-items: flex-end;
+        }
+
         .example-field label {
-            display: block; font-size: 12px; font-weight: 600;
-            color: #555; margin-bottom: 5px;
+            display: block;
+            font-size: 12px;
+            font-weight: 600;
+            color: #555;
+            margin-bottom: 5px;
         }
     </style>
 </head>
@@ -198,76 +364,81 @@
         <div class="table-wrap">
             <table>
                 <thead>
-                    <tr>
-                        <th>Group (그룹)</th>
-                        <th>Value (코드값)</th>
-                        <th>Name (코드명)</th>
-                        <th>Order (순서)</th>
-                        <th>Use (사용)</th>
-                        <th>Action</th>
-                    </tr>
+                <tr>
+                    <th>Group (그룹)</th>
+                    <th>Value (코드값)</th>
+                    <th>Name (코드명)</th>
+                    <th>Order (순서)</th>
+                    <th>Use (사용)</th>
+                    <th>Action</th>
+                </tr>
                 </thead>
                 <tbody>
+                <!--
+                    th:each iterates the code list
+                    Each row has an inline edit form (인라인 수정 폼)
+                    The form posts to /common-code/update with all fields
+                -->
+                <tr th:each="code : ${codes}">
+                    <td><span class="group-tag" th:text="${code.codeGroup}">GROUP</span></td>
+                    <td style="font-weight:600; color:#555;" th:text="${code.codeValue}">VALUE</td>
+
                     <!--
-                        th:each iterates the codes list
-                        Each row has an inline edit form (인라인 수정 폼)
-                        The form posts to /common-code/update with all fields
+                        Inline edit: input fields inside the row itself
+                        POST /common-code/update on save
                     -->
-                    <tr th:each="code : ${codes}">
-                        <td><span class="group-tag" th:text="${code.codeGroup}">GROUP</span></td>
-                        <td style="font-weight:600; color:#555;" th:text="${code.codeValue}">VALUE</td>
+                    <form th:action="@{/common-code/update}" method="post"
+                          style="display:contents;">
+                        <input type="hidden" name="codeGroup" th:value="${code.codeGroup}"/>
+                        <input type="hidden" name="codeValue" th:value="${code.codeValue}"/>
 
-                        <!--
-                            Inline edit: input fields inside the row itself
-                            POST /common-code/update on save
-                        -->
-                        <form th:action="@{/common-code/update}" method="post"
-                              style="display:contents;">
-                            <input type="hidden" name="codeGroup" th:value="${code.codeGroup}"/>
-                            <input type="hidden" name="codeValue" th:value="${code.codeValue}"/>
-
-                            <td>
+                        <td>
+                            <label>
                                 <input type="text" class="edit-input"
                                        name="codeName"
                                        th:value="${code.codeName}"
                                        style="min-width:100px;"/>
-                            </td>
-                            <td>
+                            </label>
+                        </td>
+                        <td>
+                            <label>
                                 <input type="number" class="edit-input"
                                        name="sortOrder"
                                        th:value="${code.sortOrder}"
                                        style="width:60px;"/>
-                            </td>
-                            <td>
-                                <!--
-                                    use_yn dropdown — 'Y' or 'N'
-                                    th:selected picks the current value
-                                -->
+                            </label>
+                        </td>
+                        <td>
+                            <!--
+                                use_yn dropdown — 'Y' or 'N'
+                                th:selected picks the current value
+                            -->
+                            <label>
                                 <select name="useYn" class="edit-select">
                                     <option value="Y" th:selected="${code.useYn == 'Y'}">Y (활성)</option>
                                     <option value="N" th:selected="${code.useYn == 'N'}">N (숨김)</option>
                                 </select>
-                            </td>
-                            <td style="display:flex; gap:6px; flex-wrap:wrap;">
-                                <button type="submit" class="btn btn-primary btn-sm">Save</button>
-                        </form>
-
-                        <!-- Delete is a separate form (삭제는 별도 폼) -->
-                        <form th:action="@{/common-code/delete}" method="post"
-                              style="display:inline;"
-                              onsubmit="return confirm('Delete this code? (삭제하시겠습니까?)')">
-                            <input type="hidden" name="codeGroup" th:value="${code.codeGroup}"/>
-                            <input type="hidden" name="codeValue" th:value="${code.codeValue}"/>
-                            <button type="submit" class="btn btn-danger btn-sm">Del</button>
-                        </form>
+                            </label>
                         </td>
-                    </tr>
+                        <td style="display:flex; gap:6px; flex-wrap:wrap;">
+                            <button type="submit" class="btn btn-primary btn-sm">Save</button>
+                    </form>
 
-                    <tr th:if="${#lists.isEmpty(codes)}">
-                        <td colspan="6" style="text-align:center; padding:30px; color:#aaa;">
-                            No codes found (코드가 없습니다)
-                        </td>
-                    </tr>
+                    <!-- Delete is a separate form (삭제는 별도 폼) -->
+                    <form th:action="@{/common-code/delete}" method="post"
+                          style="display:inline;"
+                          onsubmit="return confirm('Delete this code? (삭제하시겠습니까?)')">
+                        <input type="hidden" name="codeGroup" th:value="${code.codeGroup}"/>
+                        <input type="hidden" name="codeValue" th:value="${code.codeValue}"/>
+                        <button type="submit" class="btn btn-danger btn-sm">Del</button>
+                    </form>
+                </tr>
+
+                <tr th:if="${#lists.isEmpty(codes)}">
+                    <td colspan="6" style="text-align:center; padding:30px; color:#aaa;">
+                        No codes found (코드가 없습니다)
+                    </td>
+                </tr>
                 </tbody>
             </table>
         </div>
@@ -281,19 +452,22 @@
 
         <!--
             @ModelAttribute CommonCode maps all fields automatically:
-              codeGroup  ← name="codeGroup"
-              codeValue  ← name="codeValue"
-              codeName   ← name="codeName"
-              sortOrder  ← name="sortOrder"
-              useYn      ← name="useYn"
+              codeGroup ← name="codeGroup"
+              codeValue ← name="codeValue"
+              codeName ← name="codeName"
+              sortOrder ← name="sortOrder"
+              useYn ← name="useYn"
         -->
+
         <form th:action="@{/common-code/insert}" method="post">
             <div class="insert-grid">
                 <div class="form-field">
                     <label>Group (그룹) *</label>
-                    <input type="text" name="codeGroup"
-                           placeholder="USER_STATUS"
-                           list="groupSuggestions"/>
+                    <label>
+                        <input type="text" name="codeGroup"
+                               placeholder="USER_STATUS"
+                               list="groupSuggestions"/>
+                    </label>
                     <!-- datalist gives autocomplete from existing groups (자동완성) -->
                     <datalist id="groupSuggestions">
                         <option th:each="g : ${groups}" th:value="${g}"></option>
@@ -301,22 +475,30 @@
                 </div>
                 <div class="form-field">
                     <label>Value (코드값) *</label>
-                    <input type="text" name="codeValue" placeholder="ACTIVE"/>
+                    <label>
+                        <input type="text" name="codeValue" placeholder="ACTIVE"/>
+                    </label>
                 </div>
                 <div class="form-field">
                     <label>Name (코드명) *</label>
-                    <input type="text" name="codeName" placeholder="활성"/>
+                    <label>
+                        <input type="text" name="codeName" placeholder="활성"/>
+                    </label>
                 </div>
                 <div class="form-field">
                     <label>Order (순서)</label>
-                    <input type="number" name="sortOrder" value="0" min="0"/>
+                    <label>
+                        <input type="number" name="sortOrder" value="0" min="0"/>
+                    </label>
                 </div>
                 <div class="form-field">
                     <label>Use (사용)</label>
-                    <select name="useYn">
-                        <option value="Y">Y</option>
-                        <option value="N">N</option>
-                    </select>
+                    <label>
+                        <select name="useYn">
+                            <option value="Y">Y</option>
+                            <option value="N">N</option>
+                        </select>
+                    </label>
                 </div>
                 <div class="form-field">
                     <label>&nbsp;</label>
@@ -333,7 +515,7 @@
     <div class="card">
         <div class="card-title">💡 Integration Example (드롭다운 연동 예시)</div>
         <p style="font-size:13px; color:#7b8fb5; margin-bottom:16px;">
-            These dropdowns are loaded from common_code table — not hard-coded.
+            These dropdowns are loaded from the common_code table — not hard-coded.
             Change a code_name in the table above → the dropdown label updates instantly.
             (위 테이블에서 코드명을 변경하면 아래 드롭다운도 즉시 변경됩니다)
         </p>
@@ -348,45 +530,52 @@
 
                     th:each loops the list
                     th:value → the actual stored value e.g. "ACTIVE"
-                    th:text  → the display label    e.g. "활성"
+                    th:text → the display label e.g. "활성"
                 -->
+
                 <div class="example-field">
                     <label>User Status (사용자 상태)</label>
-                    <select>
-                        <option value="">-- select --</option>
-                        <option th:each="code : ${#strings.isEmpty(codeGroup) ? @commonCodeService.findByGroup('USER_STATUS') : {}}"
-                                th:value="${code.codeValue}"
-                                th:text="${code.codeName}">
-                        </option>
-                        <!-- Fallback static options when filtered -->
-                        <option th:if="${not #strings.isEmpty(codeGroup)}" value="ACTIVE">활성</option>
-                        <option th:if="${not #strings.isEmpty(codeGroup)}" value="INACTIVE">비활성</option>
-                    </select>
+                    <label>
+                        <select>
+                            <option value="">-- select --</option>
+                            <option th:each="code : ${#strings.isEmpty(codeGroup) ? @commonCodeService.findByGroup('USER_STATUS') : {}}"
+                                    th:value="${code.codeValue}"
+                                    th:text="${code.codeName}">
+                            </option>
+                            <!-- Fallback static options when filtered -->
+                            <option th:if="${not #strings.isEmpty(codeGroup)}" value="ACTIVE">활성</option>
+                            <option th:if="${not #strings.isEmpty(codeGroup)}" value="INACTIVE">비활성</option>
+                        </select>
+                    </label>
                 </div>
 
                 <div class="example-field">
                     <label>Board Type (게시판 유형)</label>
-                    <select>
-                        <option value="">-- select --</option>
-                        <option th:each="code : ${#strings.isEmpty(codeGroup) ? @commonCodeService.findByGroup('BOARD_TYPE') : {}}"
-                                th:value="${code.codeValue}"
-                                th:text="${code.codeName}">
-                        </option>
-                        <option th:if="${not #strings.isEmpty(codeGroup)}" value="01">공지사항</option>
-                        <option th:if="${not #strings.isEmpty(codeGroup)}" value="02">자유게시판</option>
-                    </select>
+                    <label>
+                        <select>
+                            <option value="">-- select --</option>
+                            <option th:each="code : ${#strings.isEmpty(codeGroup) ? @commonCodeService.findByGroup('BOARD_TYPE') :{} }"
+                                    th:value="${code.codeValue}"
+                                    th:text="${code.codeName}">
+                            </option>
+                            <option th:if="${not #strings.isEmpty(codeGroup)}" value="01">공지사항</option>
+                            <option th:if="${not #strings.isEmpty(codeGroup)}" value="02">자유게시판</option>
+                        </select>
+                    </label>
                 </div>
 
                 <div class="example-field">
                     <label>User Role (권한)</label>
-                    <select>
-                        <option value="">-- select --</option>
-                        <option th:each="code : ${#strings.isEmpty(codeGroup) ? @commonCodeService.findByGroup('USER_ROLE') : {}}"
-                                th:value="${code.codeValue}"
-                                th:text="${code.codeName}">
-                        </option>
-                        <option th:if="${not #strings.isEmpty(codeGroup)}" value="ROLE_ADMIN">관리자</option>
-                    </select>
+                    <label>
+                        <select>
+                            <option value="">-- select --</option>
+                            <option th:each="code : ${#strings.isEmpty(codeGroup) ? @commonCodeService.findByGroup('USER_ROLE') : {}}"
+                                    th:value="${code.codeValue}"
+                                    th:text="${code.codeName}">
+                            </option>
+                            <option th:if="${not #strings.isEmpty(codeGroup)}" value="ROLE_ADMIN">관리자</option>
+                        </select>
+                    </label>
                 </div>
             </div>
 

@@ -1,36 +1,90 @@
 <!DOCTYPE html>
-<!--
-  category/list.html — Thymeleaf version (converted from category/list.jsp)
-  Data is fully loaded via jQuery AJAX — no server-side loops needed here.
-  Main changes: th:href/@{} for links, th:src for scripts, remove JSP taglibs.
--->
 <html xmlns:th="http://www.thymeleaf.org" lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <!-- th:text="${pageTitle}" sets the <title> content from Model -->
     <title th:text="${pageTitle} + ' - Store Admin'">Category Management - Store Admin</title>
-    <!-- th:href="@{/css/admin.css}" generates the correct context-path-aware URL -->
-    <link rel="stylesheet" th:href="@{/css/admin.css}">
+    <link rel="stylesheet" th:href="@{/css/base.css}">
+    <link rel="stylesheet" th:href="@{/css/layout.css}">
+    <link rel="stylesheet" th:href="@{/css/components.css}">
 </head>
-<body>
-<div class="container">
-    <header class="header">
-        <h1>🏪 Store Admin</h1>
-        <nav class="nav">
-            <a th:href="@{/dashboard}" class="nav-link">Dashboard</a>
-            <a th:href="@{/store/category}" class="nav-link active">Category</a>
-            <a th:href="@{/store/product}" class="nav-link">Product</a>
-            <a th:href="@{/}" class="nav-link">Users</a>
-        </nav>
+<body class="sidebar-layout">
+
+<!-- ── Sidebar ── -->
+<aside class="sidebar">
+    <div class="sidebar-logo">
+        <div class="sidebar-logo-icon">🏪</div>
+        <div class="sidebar-logo-text">
+            Store Admin
+            <span>Management Panel</span>
+        </div>
+    </div>
+
+    <nav class="sidebar-nav">
+        <div class="sidebar-section">Main Menu</div>
+        <a th:href="@{/dashboard}" class="nav-item">
+            <span class="nav-icon">📊</span> Dashboard
+        </a>
+        <a th:href="@{/store/product}" class="nav-item">
+            <span class="nav-icon">📦</span> Products
+        </a>
+        <a th:href="@{/store/category}" class="nav-item active">
+            <span class="nav-icon">📁</span> Categories
+        </a>
+        <a th:href="@{/}" class="nav-item">
+            <span class="nav-icon">👥</span> Users
+        </a>
+        <a th:href="@{/board/list.do}" class="nav-item">
+            <span class="nav-icon">📝</span> Board
+        </a>
+        <a th:href="@{/common-code}" class="nav-item">
+            <span class="nav-icon">🗂️</span> Common Codes
+        </a>
+
+        <div class="sidebar-section">Dev Tools</div>
+        <a th:href="@{/learn}" class="nav-item">
+            <span class="nav-icon">📚</span> Thymeleaf Lab
+            <span class="nav-badge">Lab</span>
+        </a>
+        <a th:href="@{/swagger-ui.html}" class="nav-item">
+            <span class="nav-icon">🔌</span> Swagger API
+        </a>
+    </nav>
+
+    <div class="sidebar-footer">
+        <a href="#" class="nav-item">
+            <span class="nav-icon">⚙️</span> Settings
+        </a>
+        <form th:action="@{/logout}" method="post" style="margin: 2px 0;">
+            <button type="submit" class="nav-item"
+                    style="width:100%; background:none; border:none; cursor:pointer; text-align:left;">
+                <span class="nav-icon">🚪</span> Logout
+            </button>
+        </form>
+    </div>
+</aside>
+
+<!-- ── Main Content ── -->
+<div class="main-content">
+
+    <header class="topbar">
+        <div class="topbar-left">
+            <div class="topbar-breadcrumb">
+                Home <span>›</span> <strong th:text="${pageTitle}">Category Management</strong>
+            </div>
+        </div>
+        <div class="topbar-right">
+            <a th:href="@{/swagger-ui.html}" class="topbar-btn" title="API Docs">🔌</a>
+            <div class="avatar">A</div>
+        </div>
     </header>
 
-    <main class="main">
+    <div class="page-content">
+
         <div class="page-header">
             <div class="page-title">
-                <!-- th:text renders the pageTitle from the controller Model -->
-                <h2 th:text="${pageTitle}">Category Management</h2>
-                <p class="page-hint">Create and organize categories for your catalog.</p>
+                <h1 th:text="${pageTitle}">Category Management</h1>
+                <p>Create and organize categories for your catalog.</p>
             </div>
             <button type="button" id="btnAdd" class="btn btn-primary">+ Add Category</button>
         </div>
@@ -53,8 +107,9 @@
                 </tbody>
             </table>
         </div>
-    </main>
-</div>
+
+    </div><!-- /page-content -->
+</div><!-- /main-content -->
 
 <!-- Category Create/Edit Modal -->
 <div id="categoryModal" class="modal">
@@ -79,7 +134,6 @@
 </div>
 
 <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
-<!-- th:src generates the correct URL for the JS file -->
 <script th:src="@{/js/category.js}"></script>
 </body>
 </html>

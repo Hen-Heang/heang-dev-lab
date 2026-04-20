@@ -3,18 +3,14 @@
 <head>
     <meta charset="UTF-8">
     <title>Level 2.2 - Maps</title>
-    <style>
-        body { font-family: sans-serif; max-width: 750px; margin: 40px auto; padding: 0 20px; }
-        .card { background: #f8f9fa; border-left: 4px solid #4A90D9; padding: 16px; margin: 20px 0; border-radius: 4px; }
-        .note { font-size: 13px; color: #555; background: #fff3cd; padding: 8px; border-radius: 4px; margin-top: 8px; }
-        .rule { font-size: 13px; color: #155724; background: #d4edda; padding: 8px; border-radius: 4px; margin-top: 8px; }
-        table { width: 100%; border-collapse: collapse; margin-top: 12px; }
-        th, td { border: 1px solid #dee2e6; padding: 8px 12px; text-align: left; }
-        th { background: #e9ecef; font-weight: bold; }
-        tr:nth-child(even) { background: #f8f9fa; }
-    </style>
+    <link rel="stylesheet" th:href="@{/css/base.css}">
+    <link rel="stylesheet" th:href="@{/css/learn.css}">
 </head>
 <body>
+<div class="learn-wrap">
+<div class="learn-nav">
+    <a th:href="@{/learn}" class="learn-back">← Back to Index</a>
+</div>
 
 <h1>Level 2.2 — Maps</h1>
 
@@ -242,5 +238,6 @@
 &nbsp;&nbsp;
 <a th:href="@{/learn/urls}">Step 4 (URLs) →</a>
 
+</div>
 </body>
 </html>

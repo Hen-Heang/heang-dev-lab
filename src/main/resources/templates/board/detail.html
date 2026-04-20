@@ -1,151 +1,169 @@
 <!DOCTYPE html>
-<!--
-  board/detail.html — Thymeleaf version (converted from board/detail.jsp)
-  JSP 변환:
-    value="<c:out value='${board.boardTitle}'/>" → th:value="${board.boardTitle}"
-    <textarea><c:out value="${board.boardCn}"/></textarea> → <textarea th:text="${board.boardCn}">
--->
 <html xmlns:th="http://www.thymeleaf.org" lang="ko">
 <head>
     <meta charset="UTF-8">
-    <title>Board Detail (게시글 상세)</title>
-    <style>
-        body  { font-family: Arial, sans-serif; margin: 20px; }
-        table { width: 100%; border-collapse: collapse; margin-bottom: 15px; }
-        th, td { border: 1px solid #ddd; padding: 10px; }
-        th    { background: #f4f4f4; width: 150px; }
-        .btn  { padding: 6px 12px; cursor: pointer; margin-right: 5px; }
-        .btn-primary { background: #007bff; color: white; border: none; }
-        .btn-success { background: #28a745; color: white; border: none; }
-        .btn-danger  { background: #dc3545; color: white; border: none; }
-        .error-msg   { color: red; font-size: 12px; display: none; }
-    </style>
+    <title>Board Detail - Store Admin</title>
+    <link rel="stylesheet" th:href="@{/css/base.css}">
+    <link rel="stylesheet" th:href="@{/css/layout.css}">
+    <link rel="stylesheet" th:href="@{/css/components.css}">
 </head>
-<body>
+<body class="sidebar-layout">
 
-<h2>Board Detail (게시글 상세)</h2>
-
-<!-- ================================================================
-     Detail View (상세 보기)
-     th:text auto-escapes — safe output like <c:out>
-     ================================================================ -->
-<table>
-    <tr>
-        <th>No (번호)</th>
-        <td th:text="${board.boardSn}">-</td>
-    </tr>
-    <tr>
-        <th>Title (제목)</th>
-        <td th:text="${board.boardTitle}">-</td>
-    </tr>
-    <tr>
-        <th>Content (내용)</th>
-        <td th:text="${board.boardCn}">-</td>
-    </tr>
-    <tr>
-        <th>Status (상태)</th>
-        <td>
-            <span th:if="${board.useYn == 'Y'}" style="color:green">Active (활성)</span>
-            <span th:unless="${board.useYn == 'Y'}" style="color:red">Inactive (비활성)</span>
-        </td>
-    </tr>
-    <tr>
-        <th>Date (등록일시)</th>
-        <!-- #temporals.format() replaces JSP's fn:substring() for LocalDateTime -->
-        <td th:text="${#temporals.format(board.dataRegDt, 'yyyy-MM-dd HH:mm:ss')}">-</td>
-    </tr>
-</table>
-
-<!-- ================================================================
-     Attached Files (첨부파일 목록)
-     th:if="${not #lists.isEmpty(files)}" — only show section if files exist
-     th:href downloads through /board/download.do?fileSn=N  (streams from disk)
-     ================================================================ -->
-<div th:if="${not #lists.isEmpty(files)}" style="margin-bottom:20px;">
-    <h3 style="margin-bottom:10px;">Attachments (첨부파일)</h3>
-    <table>
-        <thead>
-            <tr>
-                <th>File Name (파일명)</th>
-                <th>Size (크기)</th>
-                <th>Download</th>
-            </tr>
-        </thead>
-        <tbody>
-            <tr th:each="file : ${files}">
-                <td th:text="${file.origName}">report.pdf</td>
-                <td th:text="${#numbers.formatDecimal(file.fileSize / 1024.0, 1, 1)} + ' KB'">0 KB</td>
-                <td>
-                    <a th:href="@{/board/download.do(fileSn=${file.fileSn})}"
-                       class="btn btn-primary">
-                        ⬇ Download
-                    </a>
-                </td>
-            </tr>
-        </tbody>
-    </table>
-</div>
-
-<!-- ================================================================
-     Edit Form (수정 폼)
-     JSP: value="<c:out value='${board.boardTitle}'/>"
-     Thymeleaf: th:value="${board.boardTitle}"
-
-     JSP: <textarea><c:out value="${board.boardCn}"/></textarea>
-     Thymeleaf: <textarea th:text="${board.boardCn}"></textarea>
-     ================================================================ -->
-<h3>Edit (수정)</h3>
-
-<form id="updateForm" method="post" th:action="@{/board/update.do}">
-    <!-- Hidden field: boardSn을 반드시 전송해야 어느 레코드를 수정할지 알 수 있음 -->
-    <input type="hidden" name="boardSn" th:value="${board.boardSn}" />
-
-    <table>
-        <tr>
-            <th>Title (제목) *</th>
-            <td>
-                <!-- th:value pre-fills input with existing data -->
-                <input type="text"
-                       id="boardTitle"
-                       name="boardTitle"
-                       th:value="${board.boardTitle}"
-                       style="width:100%" />
-                <span id="titleError" class="error-msg">
-                    Title is required (제목을 입력하세요)
-                </span>
-            </td>
-        </tr>
-        <tr>
-            <th>Content (내용)</th>
-            <td>
-                <!-- For textarea: th:text sets the content between the tags -->
-                <textarea id="boardCn"
-                          name="boardCn"
-                          rows="5"
-                          style="width:100%"
-                          th:text="${board.boardCn}"></textarea>
-            </td>
-        </tr>
-    </table>
-
-    <div style="margin-top:10px;">
-        <button type="button" class="btn btn-success" onclick="submitUpdate()">
-            Save (저장)
-        </button>
-        <button type="button" class="btn btn-danger"
-                th:onclick="'deleteBoard(' + ${board.boardSn} + ')'">
-            Delete (삭제)
-        </button>
-        <button type="button" class="btn"
-                th:onclick="|location.href='@{/board/list.do}'|">
-            Back (목록)
-        </button>
+<!-- ── Sidebar ── -->
+<aside class="sidebar">
+    <div class="sidebar-logo">
+        <div class="sidebar-logo-icon">🏪</div>
+        <div class="sidebar-logo-text">
+            Store Admin
+            <span>Management Panel</span>
+        </div>
     </div>
-</form>
+    <nav class="sidebar-nav">
+        <div class="sidebar-section">Main Menu</div>
+        <a th:href="@{/dashboard}" class="nav-item"><span class="nav-icon">📊</span> Dashboard</a>
+        <a th:href="@{/store/product}" class="nav-item"><span class="nav-icon">📦</span> Products</a>
+        <a th:href="@{/store/category}" class="nav-item"><span class="nav-icon">📁</span> Categories</a>
+        <a th:href="@{/}" class="nav-item"><span class="nav-icon">👥</span> Users</a>
+        <a th:href="@{/board/list.do}" class="nav-item active"><span class="nav-icon">📝</span> Board</a>
+        <a th:href="@{/common-code}" class="nav-item"><span class="nav-icon">🗂️</span> Common Codes</a>
+        <div class="sidebar-section">Dev Tools</div>
+        <a th:href="@{/learn}" class="nav-item"><span class="nav-icon">📚</span> Thymeleaf Lab <span class="nav-badge">Lab</span></a>
+        <a th:href="@{/swagger-ui.html}" class="nav-item"><span class="nav-icon">🔌</span> Swagger API</a>
+    </nav>
+    <div class="sidebar-footer">
+        <a href="#" class="nav-item"><span class="nav-icon">⚙️</span> Settings</a>
+        <form th:action="@{/logout}" method="post" style="margin: 2px 0;">
+            <button type="submit" class="nav-item"
+                    style="width:100%; background:none; border:none; cursor:pointer; text-align:left;">
+                <span class="nav-icon">🚪</span> Logout
+            </button>
+        </form>
+    </div>
+</aside>
+
+<!-- ── Main Content ── -->
+<div class="main-content">
+    <header class="topbar">
+        <div class="topbar-left">
+            <div class="topbar-breadcrumb">
+                Home <span>›</span>
+                <a th:href="@{/board/list.do}" style="color:var(--muted);text-decoration:none;">Board</a>
+                <span>›</span> <strong>Detail</strong>
+            </div>
+        </div>
+        <div class="topbar-right">
+            <a th:href="@{/swagger-ui.html}" class="topbar-btn" title="API Docs">🔌</a>
+            <div class="avatar">A</div>
+        </div>
+    </header>
+
+    <div class="page-content">
+
+        <div class="page-header">
+            <div class="page-title">
+                <h1>Board Detail <span style="font-size:14px;color:var(--muted);font-weight:400;">(게시글 상세)</span></h1>
+            </div>
+            <a th:href="@{/board/list.do}" class="btn btn-secondary">← Back to List</a>
+        </div>
+
+        <!-- Detail View -->
+        <div class="card" style="margin-bottom:20px;">
+            <div style="padding:16px 22px;border-bottom:1px solid var(--line);display:flex;align-items:center;gap:10px;">
+                <h2 style="font-size:15px;font-weight:700;">Post Info</h2>
+                <span th:if="${board.useYn == 'Y'}" class="badge badge-active">Active</span>
+                <span th:unless="${board.useYn == 'Y'}" class="badge badge-inactive">Inactive</span>
+            </div>
+            <div style="padding:22px;">
+                <table style="width:100%;border-collapse:collapse;">
+                    <tr style="border-bottom:1px solid var(--line);">
+                        <th style="padding:12px 0;font-size:12px;color:var(--muted);font-weight:600;width:120px;text-align:left;">No (번호)</th>
+                        <td style="padding:12px 0;" th:text="${board.boardSn}">-</td>
+                    </tr>
+                    <tr style="border-bottom:1px solid var(--line);">
+                        <th style="padding:12px 0;font-size:12px;color:var(--muted);font-weight:600;text-align:left;">Title (제목)</th>
+                        <td style="padding:12px 0;font-weight:600;" th:text="${board.boardTitle}">-</td>
+                    </tr>
+                    <tr style="border-bottom:1px solid var(--line);">
+                        <th style="padding:12px 0;font-size:12px;color:var(--muted);font-weight:600;text-align:left;">Content (내용)</th>
+                        <td style="padding:12px 0;white-space:pre-wrap;" th:text="${board.boardCn}">-</td>
+                    </tr>
+                    <tr>
+                        <th style="padding:12px 0;font-size:12px;color:var(--muted);font-weight:600;text-align:left;">Date (등록일시)</th>
+                        <td style="padding:12px 0;color:var(--muted);font-size:13px;"
+                            th:text="${#temporals.format(board.dataRegDt, 'yyyy-MM-dd HH:mm:ss')}">-</td>
+                    </tr>
+                </table>
+            </div>
+        </div>
+
+        <!-- Attachments -->
+        <div th:if="${not #lists.isEmpty(files)}" class="card" style="margin-bottom:20px;">
+            <div style="padding:16px 22px;border-bottom:1px solid var(--line);">
+                <h2 style="font-size:15px;font-weight:700;">Attachments (첨부파일)</h2>
+            </div>
+            <div style="padding:22px;">
+                <div class="table-container">
+                    <table class="table">
+                        <thead>
+                        <tr>
+                            <th>File Name (파일명)</th>
+                            <th>Size (크기)</th>
+                            <th>Download</th>
+                        </tr>
+                        </thead>
+                        <tbody>
+                        <tr th:each="file : ${files}">
+                            <td th:text="${file.origName}">report.pdf</td>
+                            <td th:text="${#numbers.formatDecimal(file.fileSize / 1024.0, 1, 1)} + ' KB'">0 KB</td>
+                            <td>
+                                <a th:href="@{/board/download.do(fileSn=${file.fileSn})}"
+                                   class="btn btn-sm btn-primary">⬇ Download</a>
+                            </td>
+                        </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+
+        <!-- Edit Form -->
+        <div class="card">
+            <div style="padding:16px 22px;border-bottom:1px solid var(--line);">
+                <h2 style="font-size:15px;font-weight:700;">Edit (수정)</h2>
+            </div>
+            <div style="padding:22px;">
+                <form id="updateForm" method="post" th:action="@{/board/update.do}">
+                    <input type="hidden" name="boardSn" th:value="${board.boardSn}"/>
+                    <div class="form-group">
+                        <label for="boardTitle">Title (제목) *</label>
+                        <input type="text" id="boardTitle" name="boardTitle" class="form-control"
+                               th:value="${board.boardTitle}"/>
+                        <span id="titleError" style="color:var(--danger);font-size:12px;display:none;">
+                            Title is required (제목을 입력하세요)
+                        </span>
+                    </div>
+                    <div class="form-group">
+                        <label for="boardCn">Content (내용)</label>
+                        <textarea id="boardCn" name="boardCn" rows="5" class="form-control"
+                                  th:text="${board.boardCn}"></textarea>
+                    </div>
+                    <div style="display:flex;gap:10px;">
+                        <button type="button" class="btn btn-success" onclick="submitUpdate()">Save (저장)</button>
+                        <button type="button" class="btn btn-danger"
+                                th:onclick="'deleteBoard(' + ${board.boardSn} + ')'">Delete (삭제)</button>
+                        <button type="button" class="btn btn-secondary"
+                                th:onclick="|location.href='@{/board/list.do}'|">Back (목록)</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+
+    </div><!-- /page-content -->
+</div><!-- /main-content -->
 
 <!-- Hidden delete form -->
 <form id="deleteForm" method="post" th:action="@{/board/delete.do}">
-    <input type="hidden" id="deleteBoardSn" name="boardSn" value="" />
+    <input type="hidden" id="deleteBoardSn" name="boardSn" value=""/>
 </form>
 
 <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
@@ -167,10 +185,9 @@
         $('#deleteForm').submit();
     }
 
-    $('#boardTitle').on('input', function() {
+    $('#boardTitle').on('input', function () {
         if ($(this).val().trim() !== '') $('#titleError').hide();
     });
 </script>
-
 </body>
 </html>

@@ -1,52 +1,16 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org" lang="ko">
 <head>
-
+    <meta charset="UTF-8">
     <title>Ste 1.B - th:attr</title>
-    <style>
-        body {
-            font-family: sans-serif;
-            max-width: 650px;
-            margin: 40px auto;
-            padding: 0 20px;
-        }
-
-        .card {
-            background: #f8f9fa;
-            border-left: 4px solid #4A90D9;
-            padding: 16px;
-            margin: 20px 0;
-            border-radius: 4px;
-        }
-
-        .note {
-            font-size: 13px;
-            color: #555;
-            margin-top: 8px;
-        }
-
-        .syntax {
-            background: #272822;
-            color: #f8f8f2;
-            padding: 10px 14px;
-            border-radius: 4px;
-            font-family: monospace;
-            font-size: 13px;
-            margin: 8px 0;
-        }
-
-        img {
-            border: 1px solid #ddd;
-            border-radius: 4px;
-        }
-
-        button {
-            padding: 8px 16px;
-            cursor: pointer;
-        }
-    </style>
+    <link rel="stylesheet" th:href="@{/css/base.css}">
+    <link rel="stylesheet" th:href="@{/css/learn.css}">
 </head>
 <body>
+<div class="learn-wrap">
+<div class="learn-nav">
+    <a th:href="@{/learn}" class="learn-back">← Back to Index</a>
+</div>
 
 <h1>Step 1.B — th:attr</h1>
 <!-- ============================================================
@@ -217,6 +181,6 @@
 &nbsp;&nbsp;
 <a href="/learn/hello">Step 1 (hello) →</a>
 
-
+</div>
 </body>
 </html>

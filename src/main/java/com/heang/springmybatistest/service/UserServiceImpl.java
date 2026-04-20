@@ -10,6 +10,7 @@ import com.heang.springmybatistest.mapper.UserDtoMapper;
 import com.heang.springmybatistest.mapper.UserMapper;
 import com.heang.springmybatistest.model.Users;
 import jakarta.validation.Valid;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import java.util.List;
 
@@ -18,13 +19,13 @@ public class UserServiceImpl implements  UserService {
 
     private final UserMapper userMapper;
     private final UserDtoMapper userDtoMapper;
+    private final PasswordEncoder passwordEncoder;
 
-
-    public UserServiceImpl(UserMapper userMapper, UserDtoMapper userDtoMapper) {
+    public UserServiceImpl(UserMapper userMapper, UserDtoMapper userDtoMapper, PasswordEncoder passwordEncoder) {
         this.userMapper = userMapper;
         this.userDtoMapper = userDtoMapper;
+        this.passwordEncoder = passwordEncoder;
     }
-
 
     @Override
     public void createUser(UserRequest userRequest) {
@@ -33,6 +34,7 @@ public class UserServiceImpl implements  UserService {
         } else {
             userRequest.setStatus(null);
         }
+        userRequest.setPassword(passwordEncoder.encode(userRequest.getPassword()));
         userMapper.insertUser(userRequest);
     }
 

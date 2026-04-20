@@ -3,20 +3,8 @@
 <head>
     <meta charset="UTF-8">
     <title>Step 5 - Fragments & Layout</title>
-    <style>
-        body { font-family: Arial, sans-serif; margin: 0; background: #f5f5f5; }
-        .content { padding: 24px; max-width: 900px; margin: 0 auto; }
-        .box { background: white; border-radius: 8px; padding: 20px; margin-bottom: 24px; box-shadow: 0 1px 4px rgba(0,0,0,.1); }
-        h1 { color: #2c3e50; }
-        h2 { color: #8e44ad; margin-top: 0; }
-        .label { display: inline-block; background: #8e44ad; color: white; padding: 2px 10px; border-radius: 4px; font-size: 13px; margin-bottom: 8px; }
-        .label.green { background: #27ae60; }
-        code { background: #f8f8f8; border: 1px solid #ddd; padding: 2px 6px; border-radius: 3px; font-size: 13px; }
-        pre { background: #2c3e50; color: #ecf0f1; padding: 16px; border-radius: 6px; overflow-x: auto; font-size: 13px; line-height: 1.6; }
-        .diff { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
-        .output-box { border: 2px dashed #8e44ad; padding: 12px; border-radius: 6px; background: #f9f4ff; }
-        .output-box.green { border-color: #27ae60; background: #f4fff6; }
-    </style>
+    <link rel="stylesheet" th:href="@{/css/base.css}">
+    <link rel="stylesheet" th:href="@{/css/learn.css}">
 </head>
 <body>
 
@@ -38,6 +26,11 @@
 <div th:replace="~{learn/fragments/navbar :: navbar}">
     <!-- This content is NEVER shown. th:replace removes this entire div. -->
     Placeholder — replaced by navbar
+</div>
+
+<div class="learn-wrap">
+<div class="learn-nav">
+    <a th:href="@{/learn}" class="learn-back">← Back to Index</a>
 </div>
 
 <div class="content">
@@ -173,6 +166,8 @@ th:replace="~{:: myFragment}"
         </a>
     </div>
 </div>
+
+</div><!-- end learn-wrap -->
 
 <!--
   Footer included with th:replace.

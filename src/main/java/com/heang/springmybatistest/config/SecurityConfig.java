@@ -32,11 +32,11 @@ public class SecurityConfig {
             .authorizeHttpRequests(auth -> auth
                 // Static resources — no login needed (정적 리소스)
                 .requestMatchers("/css/**", "/js/**", "/images/**", "/uploads/**", "/webjars/**").permitAll()
-                // Login page — must be open (로그인 페이지)
-                .requestMatchers("/login").permitAll()
+                // Login + register page — must be open (로그인/회원가입 페이지)
+                .requestMatchers("/login", "/").permitAll()
                 // Swagger — open for dev (개발용 API 문서)
                 .requestMatchers("/swagger-ui/**", "/swagger-ui.html", "/v3/api-docs/**").permitAll()
-                // REST APIs — permitted so existing AJAX calls keep working (기존 REST API)
+                // REST APIs — permitted, so existing AJAX calls keep working (기존 REST API)
                 // In a real project these would have their own JWT filter chain
                 .requestMatchers("/api/**", "/users/**", "/board/api/**").permitAll()
                 // Everything else requires login (나머지는 로그인 필요)

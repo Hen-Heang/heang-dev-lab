@@ -2,172 +2,580 @@
 <html xmlns:th="http://www.thymeleaf.org" lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>Thymeleaf Practices Index</title>
-
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Thymeleaf Lab — Store Admin</title>
+    <link rel="stylesheet" th:href="@{/css/base.css}">
+    <link rel="stylesheet" th:href="@{/css/learn.css}">
     <style>
-        body {
-            font-family: sans-serif;
-            max-width: 800px;
-            margin: 40px auto;
-            padding: 0 20px;
-            background: #f5f5f5;
-        }
+        /* ── Index-specific styles ── */
+        body { background: var(--bg); }
 
-        h1 {
-            color: #333;
-            border-bottom: 3px solid #4CAF50;
-            padding-bottom: 10px;
+        .hero {
+            background: linear-gradient(135deg, var(--primary) 0%, var(--accent) 100%);
+            border-radius: 18px;
+            padding: 36px 40px;
+            margin-bottom: 36px;
+            color: #fff;
+            position: relative;
+            overflow: hidden;
         }
-
-        h2 {
-            color: #555;
-            margin-top: 30px;
-            font-size: 1rem;
-            text-transform: uppercase;
-            letter-spacing: 1px;
+        .hero::before {
+            content: '';
+            position: absolute; inset: 0;
+            background: radial-gradient(circle at 80% 20%, rgba(255,255,255,.08) 0%, transparent 60%),
+                        radial-gradient(circle at 20% 80%, rgba(255,255,255,.05) 0%, transparent 50%);
+            pointer-events: none;
         }
+        .hero-label {
+            font-size: 11px; font-weight: 700;
+            letter-spacing: 1.5px; text-transform: uppercase;
+            opacity: .7; margin-bottom: 10px;
+        }
+        .hero-title { font-size: 28px; font-weight: 700; letter-spacing: -.4px; margin-bottom: 8px; }
+        .hero-desc  { font-size: 15px; opacity: .8; max-width: 520px; line-height: 1.6; }
+        .hero-stats {
+            display: flex; gap: 24px; margin-top: 24px; flex-wrap: wrap;
+        }
+        .hero-stat { text-align: center; }
+        .hero-stat-num  { font-size: 24px; font-weight: 700; }
+        .hero-stat-text { font-size: 12px; opacity: .7; }
 
-        .cards {
+        /* ── Level section ── */
+        .level-section { margin-bottom: 36px; }
+
+        .level-header {
+            display: flex; align-items: center; gap: 14px;
+            margin-bottom: 18px;
+        }
+        .level-badge {
+            display: inline-flex; align-items: center; gap: 6px;
+            padding: 5px 16px; border-radius: 999px;
+            font-size: 12px; font-weight: 700; letter-spacing: .5px;
+            text-transform: uppercase; white-space: nowrap;
+        }
+        .level-badge.l1 { background: #e8f0fe; color: #3b5bdb; border: 1.5px solid #bfcffc; }
+        .level-badge.l2 { background: #f3e8ff; color: #7048e8; border: 1.5px solid #d0b0ff; }
+        .level-badge.l3 { background: #ebfbee; color: #2f9e44; border: 1.5px solid #b2f2bb; }
+        .level-badge.l4 { background: #fff9db; color: #e67700; border: 1.5px solid #ffe066; }
+
+        .level-line { flex: 1; height: 1px; background: var(--line); }
+        .level-count { font-size: 12px; color: var(--muted); white-space: nowrap; }
+
+        /* ── Lesson cards grid ── */
+        .cards-grid {
             display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
             gap: 16px;
         }
 
-        .card {
-            background: white;
-            border-radius: 8px;
-            padding: 16px;
-            box-shadow: 0 2px 6px rgba(0, 0, 0, .1);
+        /* ── Lesson card ── */
+        .lesson-card {
+            background: var(--card);
+            border-radius: 14px;
+            border: 1px solid var(--line);
+            box-shadow: var(--shadow-sm);
+            display: flex; flex-direction: column;
+            transition: transform .18s, box-shadow .18s;
+            text-decoration: none; color: inherit;
+            overflow: hidden;
+        }
+        .lesson-card:hover {
+            transform: translateY(-3px);
+            box-shadow: var(--shadow);
+            border-color: #c0ccf8;
+        }
+        .lesson-card.planned {
+            opacity: .65;
+            cursor: default;
+            pointer-events: none;
         }
 
-        .card a {
-            text-decoration: none;
-            color: #2196F3;
-            font-weight: bold;
-            font-size: 1rem;
+        .card-top {
+            padding: 18px 20px 14px;
+            display: flex; align-items: flex-start;
+            justify-content: space-between; gap: 10px;
+        }
+        .card-icon {
+            width: 44px; height: 44px;
+            border-radius: 12px;
+            display: grid; place-items: center;
+            font-size: 22px;
+            flex-shrink: 0;
+        }
+        .card-icon.blue   { background: #e8f0fe; }
+        .card-icon.purple { background: #f3e8ff; }
+        .card-icon.green  { background: #ebfbee; }
+        .card-icon.orange { background: #fff3e0; }
+        .card-icon.pink   { background: #ffe0f0; }
+        .card-icon.teal   { background: #e0faf4; }
+
+        .card-step {
+            font-size: 11px; font-weight: 700;
+            padding: 3px 10px; border-radius: 999px;
+            background: var(--bg); color: var(--muted);
+            border: 1px solid var(--line);
+            white-space: nowrap;
         }
 
-        .card a:hover {
-            text-decoration: underline;
-        }
+        .card-body { padding: 0 20px 16px; flex: 1; }
+        .card-title { font-size: 15px; font-weight: 700; color: var(--ink); margin-bottom: 6px; }
+        .card-desc  { font-size: 13px; color: var(--muted); line-height: 1.55; margin-bottom: 12px; }
 
-        .card p {
-            margin: 6px 0 0;
-            color: #777;
-            font-size: 0.85rem;
+        .card-tags  { display: flex; flex-wrap: wrap; gap: 5px; }
+        .card-tag {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 11px; padding: 2px 8px;
+            border-radius: 5px;
+            background: #e8f0fe; color: var(--primary);
+            border: 1px solid #c0ccf8;
         }
+        .card-tag.gray { background: var(--bg); color: var(--muted); border-color: var(--line); }
 
-        .badge {
-            display: inline-block;
-            background: #e8f5e9;
-            color: #388e3c;
-            border-radius: 4px;
-            padding: 2px 8px;
-            font-size: 0.75rem;
-            margin-bottom: 8px;
+        .card-footer {
+            padding: 12px 20px;
+            border-top: 1px solid var(--line);
+            display: flex; align-items: center;
+            justify-content: space-between;
         }
-
-        .badge.wip {
-            background: #fff3e0;
-            color: #e65100;
-        }
+        .status-done    { font-size: 12px; font-weight: 600; color: var(--success); display: flex; align-items: center; gap: 4px; }
+        .status-planned { font-size: 12px; font-weight: 600; color: var(--muted); }
+        .card-arrow     { font-size: 18px; color: #c0ccf8; transition: transform .15s; }
+        .lesson-card:hover .card-arrow { transform: translateX(3px); color: var(--primary); }
     </style>
 </head>
 <body>
 
-<p style="margin-bottom:16px"><a th:href="@{/dashboard}" style="color:#666;text-decoration:none;">← Back to Dashboard</a></p>
-<h1>Thymeleaf Practice Index</h1>
-<p>모든 연습 페이지 목록입니다. 각 링크를 클릭해서 복습하세요.</p>
+<div class="learn-wrap" style="max-width:1100px;">
 
-<h2>Level 1 </h2>
-<div class="cards">
-
-    <div class="card">
-        <span class="badge">Step 1</span>
-        <a th:href="@{/learn/hello}">Hello / Basic Variables</a>
-        <p>th:text, th:utext, th:class, th:style, ternary, literal substitution</p>
+    <!-- Back nav -->
+    <div style="margin-bottom:24px;">
+        <a th:href="@{/dashboard}" class="learn-back">← Dashboard</a>
     </div>
 
-
-    <div class="card">
-        <span class="badge">Step 2</span>
-        <a th:href="@{/learn/users}">Loops</a>
-        <p>th:each, stat (index, count, first, last, size)</p>
+    <!-- Hero -->
+    <div class="hero">
+        <div class="hero-label">📚 Thymeleaf Lab</div>
+        <h1 class="hero-title">Thymeleaf Learning & Practice</h1>
+        <p class="hero-desc">
+            Spring Boot + Thymeleaf 핵심 문법을 단계별로 학습합니다.<br>
+            Each lesson has live examples you can run and review.
+        </p>
+        <div class="hero-stats">
+            <div class="hero-stat">
+                <div class="hero-stat-num">11</div>
+                <div class="hero-stat-text">Total Lessons</div>
+            </div>
+            <div class="hero-stat">
+                <div class="hero-stat-num">8</div>
+                <div class="hero-stat-text">Completed</div>
+            </div>
+            <div class="hero-stat">
+                <div class="hero-stat-num">3</div>
+                <div class="hero-stat-text">Planned</div>
+            </div>
+        </div>
     </div>
 
-    <div class="card">
-        <span class="badge">Step 3</span>
-        <a th:href="@{/learn/conditions}">Conditions</a>
-        <p>th:if, th:unless, th:switch, th:case</p>
+    <!-- ═══════════════════════════════════
+         LEVEL 1 — Basics
+    ═══════════════════════════════════ -->
+    <div class="level-section">
+        <div class="level-header">
+            <span class="level-badge l1">🟦 Level 1 — Basics (기초)</span>
+            <div class="level-line"></div>
+            <span class="level-count">8 lessons</span>
+        </div>
+
+        <div class="cards-grid">
+
+            <!-- Step 1 -->
+            <a th:href="@{/learn/hello}" class="lesson-card">
+                <div class="card-top">
+                    <div class="card-icon blue">📝</div>
+                    <span class="card-step">Step 1</span>
+                </div>
+                <div class="card-body">
+                    <div class="card-title">Hello — Basic Variables</div>
+                    <div class="card-desc">
+                        서버에서 HTML로 데이터를 출력하는 기본 방법을 배웁니다.<br>
+                        How to bind Java model data into your HTML template.
+                    </div>
+                    <div class="card-tags">
+                        <span class="card-tag">th:text</span>
+                        <span class="card-tag">th:utext</span>
+                        <span class="card-tag">th:class</span>
+                        <span class="card-tag">th:style</span>
+                        <span class="card-tag">${variable}</span>
+                        <span class="card-tag">ternary ?:</span>
+                    </div>
+                </div>
+                <div class="card-footer">
+                    <span class="status-done">✓ Done</span>
+                    <span class="card-arrow">›</span>
+                </div>
+            </a>
+
+            <!-- Step 2 -->
+            <a th:href="@{/learn/users}" class="lesson-card">
+                <div class="card-top">
+                    <div class="card-icon purple">🔁</div>
+                    <span class="card-step">Step 2</span>
+                </div>
+                <div class="card-body">
+                    <div class="card-title">Loops — th:each</div>
+                    <div class="card-desc">
+                        List, Array 등 컬렉션을 HTML로 반복 출력합니다.<br>
+                        Iterate over any Java collection and access loop statistics.
+                    </div>
+                    <div class="card-tags">
+                        <span class="card-tag">th:each</span>
+                        <span class="card-tag">iterStat.index</span>
+                        <span class="card-tag">iterStat.count</span>
+                        <span class="card-tag">iterStat.first</span>
+                        <span class="card-tag">iterStat.last</span>
+                        <span class="card-tag">iterStat.size</span>
+                    </div>
+                </div>
+                <div class="card-footer">
+                    <span class="status-done">✓ Done</span>
+                    <span class="card-arrow">›</span>
+                </div>
+            </a>
+
+            <!-- Step 3 -->
+            <a th:href="@{/learn/conditions}" class="lesson-card">
+                <div class="card-top">
+                    <div class="card-icon green">🔀</div>
+                    <span class="card-step">Step 3</span>
+                </div>
+                <div class="card-body">
+                    <div class="card-title">Conditions — if / switch</div>
+                    <div class="card-desc">
+                        조건에 따라 HTML 요소를 보이거나 숨깁니다.<br>
+                        Show/hide elements and choose between cases at render time.
+                    </div>
+                    <div class="card-tags">
+                        <span class="card-tag">th:if</span>
+                        <span class="card-tag">th:unless</span>
+                        <span class="card-tag">th:switch</span>
+                        <span class="card-tag">th:case</span>
+                        <span class="card-tag">th:case="*"</span>
+                    </div>
+                </div>
+                <div class="card-footer">
+                    <span class="status-done">✓ Done</span>
+                    <span class="card-arrow">›</span>
+                </div>
+            </a>
+
+            <!-- Step 4 -->
+            <a th:href="@{/learn/urls}" class="lesson-card">
+                <div class="card-top">
+                    <div class="card-icon orange">🔗</div>
+                    <span class="card-step">Step 4</span>
+                </div>
+                <div class="card-body">
+                    <div class="card-title">URLs — Link Expressions</div>
+                    <div class="card-desc">
+                        컨텍스트 경로가 자동으로 붙는 안전한 URL을 생성합니다.<br>
+                        Build context-aware URLs for links, forms, and resources.
+                    </div>
+                    <div class="card-tags">
+                        <span class="card-tag">th:href</span>
+                        <span class="card-tag">th:src</span>
+                        <span class="card-tag">@{/path}</span>
+                        <span class="card-tag">@{/path/{id}(id=${v})}</span>
+                        <span class="card-tag">?param=value</span>
+                    </div>
+                </div>
+                <div class="card-footer">
+                    <span class="status-done">✓ Done</span>
+                    <span class="card-arrow">›</span>
+                </div>
+            </a>
+
+            <!-- Step 5 -->
+            <a th:href="@{/learn/layout}" class="lesson-card">
+                <div class="card-top">
+                    <div class="card-icon teal">🧩</div>
+                    <span class="card-step">Step 5</span>
+                </div>
+                <div class="card-body">
+                    <div class="card-title">Fragments — Reusable Partials</div>
+                    <div class="card-desc">
+                        navbar, footer 같은 공통 HTML 조각을 분리하고 재사용합니다.<br>
+                        Define reusable HTML pieces and insert them across pages.
+                    </div>
+                    <div class="card-tags">
+                        <span class="card-tag">th:fragment</span>
+                        <span class="card-tag">th:replace</span>
+                        <span class="card-tag">th:insert</span>
+                        <span class="card-tag">~{file :: name}</span>
+                    </div>
+                </div>
+                <div class="card-footer">
+                    <span class="status-done">✓ Done</span>
+                    <span class="card-arrow">›</span>
+                </div>
+            </a>
+
+            <!-- Step 6 -->
+            <a th:href="@{/learn/layout-page}" class="lesson-card">
+                <div class="card-top">
+                    <div class="card-icon blue">🗂️</div>
+                    <span class="card-step">Step 6</span>
+                </div>
+                <div class="card-body">
+                    <div class="card-title">Shared Layout Page</div>
+                    <div class="card-desc">
+                        공통 navbar + footer 조각을 실제로 조합한 완성 페이지입니다.<br>
+                        A real page that assembles navbar + footer fragments together.
+                    </div>
+                    <div class="card-tags">
+                        <span class="card-tag">th:replace</span>
+                        <span class="card-tag">fragments/navbar</span>
+                        <span class="card-tag">fragments/footer</span>
+                    </div>
+                </div>
+                <div class="card-footer">
+                    <span class="status-done">✓ Done</span>
+                    <span class="card-arrow">›</span>
+                </div>
+            </a>
+
+            <!-- Step 7 -->
+            <a th:href="@{/learn/profile}" class="lesson-card">
+                <div class="card-top">
+                    <div class="card-icon pink">👤</div>
+                    <span class="card-step">Step 7</span>
+                </div>
+                <div class="card-body">
+                    <div class="card-title">Profile — Object Access</div>
+                    <div class="card-desc">
+                        Java 객체의 필드에 접근하고, null 안전 연산자를 사용합니다.<br>
+                        Access object properties, handle nulls, and build dynamic links.
+                    </div>
+                    <div class="card-tags">
+                        <span class="card-tag">${obj.field}</span>
+                        <span class="card-tag">?: Elvis</span>
+                        <span class="card-tag">?. safe nav</span>
+                        <span class="card-tag">th:if active</span>
+                        <span class="card-tag">dynamic link</span>
+                    </div>
+                </div>
+                <div class="card-footer">
+                    <span class="status-done">✓ Done</span>
+                    <span class="card-arrow">›</span>
+                </div>
+            </a>
+
+            <!-- Step 8 -->
+            <a th:href="@{/learn/inputs}" class="lesson-card">
+                <div class="card-top">
+                    <div class="card-icon orange">📋</div>
+                    <span class="card-step">Step 8</span>
+                </div>
+                <div class="card-body">
+                    <div class="card-title">Inputs — Form Binding</div>
+                    <div class="card-desc">
+                        서버 값을 폼 입력에 바인딩하고 동적 속성을 설정합니다.<br>
+                        Bind server-side values to form inputs and control attributes.
+                    </div>
+                    <div class="card-tags">
+                        <span class="card-tag">th:value</span>
+                        <span class="card-tag">th:placeholder</span>
+                        <span class="card-tag">th:readonly</span>
+                        <span class="card-tag">th:disabled</span>
+                        <span class="card-tag">th:attr</span>
+                        <span class="card-tag">th:checked</span>
+                    </div>
+                </div>
+                <div class="card-footer">
+                    <span class="status-done">✓ Done</span>
+                    <span class="card-arrow">›</span>
+                </div>
+            </a>
+
+        </div>
     </div>
 
-    <div class="card">
-        <span class="badge">Step 4</span>
-        <a th:href="@{/learn/urls}">URLs</a>
-        <p>th:href, th:src, @{} syntax</p>
+    <!-- ═══════════════════════════════════
+         LEVEL 2 — Objects
+    ═══════════════════════════════════ -->
+    <div class="level-section">
+        <div class="level-header">
+            <span class="level-badge l2">🟣 Level 2 — Objects (오브젝트)</span>
+            <div class="level-line"></div>
+            <span class="level-count">3 lessons</span>
+        </div>
+
+        <div class="cards-grid">
+
+            <!-- L2.1 -->
+            <a th:href="@{/learn/employee}" class="lesson-card">
+                <div class="card-top">
+                    <div class="card-icon purple">🏢</div>
+                    <span class="card-step">L2 — 1</span>
+                </div>
+                <div class="card-body">
+                    <div class="card-title">Nested Objects</div>
+                    <div class="card-desc">
+                        중첩 객체 필드에 접근하고 null을 안전하게 처리합니다.<br>
+                        Navigate deep object graphs and handle missing data safely.
+                    </div>
+                    <div class="card-tags">
+                        <span class="card-tag">obj.field.sub</span>
+                        <span class="card-tag">?. safe nav</span>
+                        <span class="card-tag">?: default</span>
+                        <span class="card-tag">th:if null check</span>
+                    </div>
+                </div>
+                <div class="card-footer">
+                    <span class="status-done">✓ Done</span>
+                    <span class="card-arrow">›</span>
+                </div>
+            </a>
+
+            <!-- L2.2 -->
+            <a th:href="@{/learn/map}" class="lesson-card">
+                <div class="card-top">
+                    <div class="card-icon teal">🗺️</div>
+                    <span class="card-step">L2 — 2</span>
+                </div>
+                <div class="card-body">
+                    <div class="card-title">Maps — Key/Value Iteration</div>
+                    <div class="card-desc">
+                        Map&lt;String, Object&gt; 타입을 th:each로 순회합니다.<br>
+                        Loop over map entries and access key/value pairs in templates.
+                    </div>
+                    <div class="card-tags">
+                        <span class="card-tag">Map.entrySet()</span>
+                        <span class="card-tag">entry.key</span>
+                        <span class="card-tag">entry.value</span>
+                        <span class="card-tag">th:each on Map</span>
+                    </div>
+                </div>
+                <div class="card-footer">
+                    <span class="status-done">✓ Done</span>
+                    <span class="card-arrow">›</span>
+                </div>
+            </a>
+
+            <!-- L2.3 -->
+            <a th:href="@{/learn/text}" class="lesson-card">
+                <div class="card-top">
+                    <div class="card-icon green">✏️</div>
+                    <span class="card-step">L2 — 3</span>
+                </div>
+                <div class="card-body">
+                    <div class="card-title">Text &amp; Attributes</div>
+                    <div class="card-desc">
+                        HTML을 포함한 텍스트 출력과 다양한 속성 설정 방법입니다.<br>
+                        Output raw HTML, set multiple attributes, and use inline expressions.
+                    </div>
+                    <div class="card-tags">
+                        <span class="card-tag">th:text</span>
+                        <span class="card-tag">th:utext</span>
+                        <span class="card-tag">th:attr</span>
+                        <span class="card-tag">[[${...}]] inline</span>
+                        <span class="card-tag">|literal sub|</span>
+                    </div>
+                </div>
+                <div class="card-footer">
+                    <span class="status-done">✓ Done</span>
+                    <span class="card-arrow">›</span>
+                </div>
+            </a>
+
+        </div>
     </div>
 
-    <div class="card">
-        <span class="badge">Step 5</span>
-        <a th:href="@{/learn/layout}">Fragments / Layout</a>
-        <p>th:fragment, th:replace, th:insert — shared navbar &amp; footer</p>
-    </div>
+    <!-- ═══════════════════════════════════
+         LEVEL 3 — Planned
+    ═══════════════════════════════════ -->
+    <div class="level-section">
+        <div class="level-header">
+            <span class="level-badge l3">🟢 Level 3 — Advanced (예정)</span>
+            <div class="level-line"></div>
+            <span class="level-count">3 planned</span>
+        </div>
 
-    <div class="card">
-        <span class="badge">Step 6</span>
-        <a th:href="@{/learn/layout-page}">Shared Layout Page</a>
-        <p>Real page using navbar + footer fragments combined</p>
-    </div>
+        <div class="cards-grid">
 
-    <div class="card">
-        <span class="badge">Step 7</span>
-        <a th:href="@{/learn/profile}">Profile - Object Access</a>
-        <p>Object fields, ?: Elvis, th:if active badge, dynamic link</p>
-    </div>
+            <div class="lesson-card planned">
+                <div class="card-top">
+                    <div class="card-icon orange">🔧</div>
+                    <span class="card-step">L3 — 1</span>
+                </div>
+                <div class="card-body">
+                    <div class="card-title">Utility Objects</div>
+                    <div class="card-desc">
+                        Thymeleaf 내장 유틸리티로 문자열, 숫자, 날짜를 포맷합니다.<br>
+                        Format strings, numbers, and dates with built-in helpers.
+                    </div>
+                    <div class="card-tags">
+                        <span class="card-tag gray">#strings</span>
+                        <span class="card-tag gray">#numbers</span>
+                        <span class="card-tag gray">#dates</span>
+                        <span class="card-tag gray">#lists</span>
+                        <span class="card-tag gray">#aggregates</span>
+                    </div>
+                </div>
+                <div class="card-footer">
+                    <span class="status-planned">⏳ Planned</span>
+                </div>
+            </div>
 
-    <div class="card">
-        <span class="badge">Step 8</span>
-        <a th:href="@{/learn/inputs}">Inputs</a>
-        <p>th:value, th:placeholder, th:readonly, th:attr</p>
+            <div class="lesson-card planned">
+                <div class="card-top">
+                    <div class="card-icon blue">📝</div>
+                    <span class="card-step">L3 — 2</span>
+                </div>
+                <div class="card-body">
+                    <div class="card-title">Form &amp; Validation</div>
+                    <div class="card-desc">
+                        @Valid와 BindingResult로 폼 유효성 검사 결과를 표시합니다.<br>
+                        Bind form objects and show field-level validation errors.
+                    </div>
+                    <div class="card-tags">
+                        <span class="card-tag gray">th:object</span>
+                        <span class="card-tag gray">th:field</span>
+                        <span class="card-tag gray">th:errors</span>
+                        <span class="card-tag gray">@Valid</span>
+                        <span class="card-tag gray">BindingResult</span>
+                    </div>
+                </div>
+                <div class="card-footer">
+                    <span class="status-planned">⏳ Planned</span>
+                </div>
+            </div>
+
+            <div class="lesson-card planned">
+                <div class="card-top">
+                    <div class="card-icon pink">🔐</div>
+                    <span class="card-step">L3 — 3</span>
+                </div>
+                <div class="card-body">
+                    <div class="card-title">Security Integration</div>
+                    <div class="card-desc">
+                        로그인 사용자 정보와 권한에 따라 UI를 다르게 보여줍니다.<br>
+                        Show/hide UI based on Spring Security roles and authentication.
+                    </div>
+                    <div class="card-tags">
+                        <span class="card-tag gray">sec:authorize</span>
+                        <span class="card-tag gray">sec:authentication</span>
+                        <span class="card-tag gray">hasRole()</span>
+                        <span class="card-tag gray">isAuthenticated()</span>
+                    </div>
+                </div>
+                <div class="card-footer">
+                    <span class="status-planned">⏳ Planned</span>
+                </div>
+            </div>
+
+        </div>
     </div>
 
 </div>
-
-<h2>Level 2 - 오브젝트 (Objects)</h2>
-<div class="cards">
-    <div class="card">
-        <span class="badge">L2.1</span>
-        <a th:href="@{/learn/employee}">Nested Objects</a>
-        <p>employee.department.name, safe navigation ?., Elvis ?:</p>
-    </div>
-
-    <div class="card">
-        <span class="badge">L2.2</span>
-        <a th:href="@{/learn/map}">Maps</a>
-        <p>Map&lt;String, Object&gt; → th:each on entries</p>
-    </div>
-
-    <div class="card">
-        <span class="badge">L2.3</span>
-        <a th:href="@{/learn/text}">Text &amp; Attr</a>
-        <p>th:text, th:utext, th:attr, inline expressions</p>
-    </div>
-
-    <div class="card">
-        <span class="badge wip">예정</span>
-        <span style="color:#aaa; font-weight:bold">Utility Objects</span>
-        <p>#strings, #numbers, #dates utility methods</p>
-    </div>
-</div>
-
-<h2>Level 3 — 폼 &amp; 유효성 검사 (Forms)</h2>
-<div class="cards">
-    <div class="card">
-        <span class="badge wip">예정</span>
-        <span style="color:#aaa; font-weight:bold">Form &amp; Validation</span>
-        <p>th:object, th:field, @Valid, BindingResult, th:errors</p>
-    </div>
-</div>
-
 </body>
 </html>
