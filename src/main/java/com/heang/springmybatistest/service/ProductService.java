@@ -10,6 +10,7 @@ import java.util.List;
  * Product Service Interface
  * Following a User service pattern (User 서비스 패턴 따름)
  */
+
 public interface ProductService {
 
     List<Product> search(ProductSearchRequest request);

@@ -106,7 +106,19 @@
         <include refid="ProductSearchWhere"/>
     </select>
 
-    <!-- SELECT BY ID -->
+    <!--
+        SELECT BY ID — fetch one product with its category name
+        단건 조회 — 카테고리명 포함
+
+        LEFT JOIN: return the product even if category_id has no match in category table.
+                   (INNER JOIN would silently drop products with missing/deleted categories)
+        좌측 조인: 카테고리가 없는 상품도 반환 (카테고리 삭제되어도 상품은 표시됨)
+
+        p.category_id → FK stored on the product row (상품 테이블의 외래키)
+        c.name AS category_name → pulled from category table, NULL if no match
+        #{id} → safely binds the Long parameter (SQL injection 방지)
+    -->
+
     <select id="selectProductById" parameterType="long" resultMap="ProductMap">
         SELECT p.id,
                p.name,
@@ -114,9 +126,9 @@
                p.stock,
                p.category_id,
                p.created_at,
-               c.name AS category_name
+               c.name AS category_name  <!-- NULL if category was deleted (카테고리 없으면 NULL) -->
         FROM product p
-                 LEFT JOIN category c ON p.category_id = c.id
+                 LEFT JOIN category c ON p.category_id = c.id  <!-- join key: product.category_id = category.id -->
         WHERE p.id = #{id}
     </select>
 
