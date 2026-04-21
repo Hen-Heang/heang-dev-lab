@@ -1,0 +1,96 @@
+buildscript {
+    repositories {
+        mavenLocal()
+        maven { url 'https://repo.maven.apache.org/maven2' }
+        maven { url 'https://plugins.gradle.org/m2' }
+    }
+    dependencies {
+        classpath 'org.springframework.boot:spring-boot-gradle-plugin:4.0.3'
+        classpath 'io.spring.gradle:dependency-management-plugin:1.1.7'
+    }
+}
+
+apply plugin: 'java'
+apply plugin: 'org.springframework.boot'
+apply plugin: 'io.spring.dependency-management'
+
+group = 'com.heang'
+version = '0.0.1-SNAPSHOT'
+
+java {
+    toolchain {
+        languageVersion = JavaLanguageVersion.of(21)
+    }
+}
+
+configurations {
+    compileOnly {
+        extendsFrom annotationProcessor
+    }
+}
+
+repositories {
+    mavenLocal()
+    maven { url 'https://repo.maven.apache.org/maven2' }
+}
+
+ext {
+    set('jjwtVersion', '0.11.5')
+    set('mapstructVersion', '1.6.0')
+}
+
+dependencies {
+    // Spring Boot starters
+    implementation 'org.springframework.boot:spring-boot-starter-web'
+    implementation 'org.springframework.boot:spring-boot-starter-validation'
+    implementation 'org.springframework.boot:spring-boot-starter-mail'
+    implementation 'org.springframework.boot:spring-boot-starter-thymeleaf'
+    implementation 'org.springframework.boot:spring-boot-starter-security'
+
+    // MyBatis
+    implementation 'org.mybatis.spring.boot:mybatis-spring-boot-starter:4.0.1'
+
+    // JWT
+    implementation "io.jsonwebtoken:jjwt-api:${jjwtVersion}"
+    runtimeOnly   "io.jsonwebtoken:jjwt-impl:${jjwtVersion}"
+    runtimeOnly   "io.jsonwebtoken:jjwt-jackson:${jjwtVersion}"
+
+    // MapStruct
+    implementation "org.mapstruct:mapstruct:${mapstructVersion}"
+    annotationProcessor "org.mapstruct:mapstruct-processor:${mapstructVersion}"
+    annotationProcessor 'org.projectlombok:lombok-mapstruct-binding:0.2.0'
+
+    // ModelMapper
+    implementation 'org.modelmapper:modelmapper:3.2.0'
+
+    // Swagger / SpringDoc
+    implementation 'org.springdoc:springdoc-openapi-starter-webmvc-ui:3.0.0'
+
+    // Thymeleaf + Spring Security integration
+    implementation 'org.thymeleaf.extras:thymeleaf-extras-springsecurity6'
+
+    // Apache POI (Excel)
+    implementation 'org.apache.poi:poi-ooxml:5.2.5'
+
+    // Lombok
+    compileOnly 'org.projectlombok:lombok'
+    annotationProcessor 'org.projectlombok:lombok'
+
+    // Database
+    runtimeOnly 'org.postgresql:postgresql'
+
+    // DevTools
+    developmentOnly 'org.springframework.boot:spring-boot-devtools'
+
+    // Test
+    testImplementation 'org.springframework.boot:spring-boot-starter-test'
+    testImplementation 'org.mybatis.spring.boot:mybatis-spring-boot-starter-test:4.0.1'
+}
+
+tasks.named('test') {
+    useJUnitPlatform()
+}
+
+tasks.named('bootRun') {
+    jvmArgs '--enable-native-access=ALL-UNNAMED'
+}

@@ -38,10 +38,13 @@ public class CommonCodeController {
             @RequestParam(required = false, defaultValue = "") String codeGroup,
             Model model
     ) {
-        model.addAttribute("codes",      commonCodeService.findAll(codeGroup));
-        model.addAttribute("groups",     commonCodeService.findAllGroups());
-        model.addAttribute("codeGroup",  codeGroup); // keep filter selected
-        model.addAttribute("newCode",    new CommonCode()); // empty form binding
+        model.addAttribute("codes",          commonCodeService.findAll(codeGroup));
+        model.addAttribute("groups",         commonCodeService.findAllGroups());
+        model.addAttribute("codeGroup",      codeGroup);
+        model.addAttribute("newCode",        new CommonCode());
+        model.addAttribute("userStatusCodes", commonCodeService.findByGroup("USER_STATUS"));
+        model.addAttribute("boardTypeCodes",  commonCodeService.findByGroup("BOARD_TYPE"));
+        model.addAttribute("userRoleCodes",   commonCodeService.findByGroup("USER_ROLE"));
         return "common-code/list";
     }
 

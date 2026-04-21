@@ -10,42 +10,13 @@
 <body class="sidebar-layout">
 
 <!-- ── Sidebar ── -->
-<aside class="sidebar">
-    <div class="sidebar-logo">
-        <div class="sidebar-logo-icon">🏪</div>
-        <div class="sidebar-logo-text">
-            Store Admin
-            <span>Management Panel</span>
-        </div>
-    </div>
-    <nav class="sidebar-nav">
-        <div class="sidebar-section">Main Menu</div>
-        <a th:href="@{/dashboard}" class="nav-item"><span class="nav-icon">📊</span> Dashboard</a>
-        <a th:href="@{/store/product}" class="nav-item"><span class="nav-icon">📦</span> Products</a>
-        <a th:href="@{/store/category}" class="nav-item"><span class="nav-icon">📁</span> Categories</a>
-        <a th:href="@{/}" class="nav-item"><span class="nav-icon">👥</span> Users</a>
-        <a th:href="@{/board/list.do}" class="nav-item active"><span class="nav-icon">📝</span> Board</a>
-        <a th:href="@{/common-code}" class="nav-item"><span class="nav-icon">🗂️</span> Common Codes</a>
-        <div class="sidebar-section">Dev Tools</div>
-        <a th:href="@{/learn}" class="nav-item"><span class="nav-icon">📚</span> Thymeleaf Lab <span class="nav-badge">Lab</span></a>
-        <a th:href="@{/swagger-ui.html}" class="nav-item"><span class="nav-icon">🔌</span> Swagger API</a>
-    </nav>
-    <div class="sidebar-footer">
-        <a href="#" class="nav-item"><span class="nav-icon">⚙️</span> Settings</a>
-        <form th:action="@{/logout}" method="post" style="margin: 2px 0;">
-            <button type="submit" class="nav-item"
-                    style="width:100%; background:none; border:none; cursor:pointer; text-align:left;">
-                <span class="nav-icon">🚪</span> Logout
-            </button>
-        </form>
-    </div>
-</aside>
+<aside th:replace="~{fragments/sidebar :: sidebar('board')}"></aside>
 
 <!-- ── Main Content ── -->
 <div class="main-content">
     <header class="topbar">
         <div class="topbar-left">
-            <div class="topbar-breadcrumb">Home <span>›</span> <strong>Board</strong></div>
+            <div class="topbar-breadcrumb">홈 (Home) <span>›</span> <strong>게시판 (Board)</strong></div>
         </div>
         <div class="topbar-right">
             <a th:href="@{/swagger-ui.html}" class="topbar-btn" title="API Docs">🔌</a>
@@ -70,14 +41,14 @@
         <form id="searchForm" method="get" th:action="@{/board/list.do}" class="search-box" style="margin-bottom:16px;">
             <div class="search-row">
                 <div class="search-item">
-                    <label>Search By</label>
+                    <label>검색 유형 (Search By)</label>
                     <select name="searchType" class="form-control">
                         <option value="title" th:selected="${search.searchType == 'title'}">Title (제목)</option>
                         <option value="content" th:selected="${search.searchType == 'content'}">Content (내용)</option>
                     </select>
                 </div>
                 <div class="search-item" style="flex:1;">
-                    <label>Keyword</label>
+                    <label>검색어 (Keyword)</label>
                     <input type="text" name="keyword" class="form-control"
                            th:value="${search.keyword}" placeholder="Search... (검색어 입력)"/>
                 </div>
@@ -117,8 +88,8 @@
                            style="color:var(--ink);text-decoration:none;font-weight:500;">Title</a>
                     </td>
                     <td>
-                        <span th:if="${board.useYn == 'Y'}" class="badge badge-active">Active</span>
-                        <span th:unless="${board.useYn == 'Y'}" class="badge badge-inactive">Inactive</span>
+                        <span th:if="${board.useYn == 'Y'}" class="badge badge-active">활성 (Active)</span>
+                        <span th:unless="${board.useYn == 'Y'}" class="badge badge-inactive">비활성 (Inactive)</span>
                     </td>
                     <td style="color:var(--muted);font-size:13px;white-space:nowrap;"
                         th:text="${#temporals.format(board.dataRegDt, 'yyyy-MM-dd HH:mm')}">2026-01-01 00:00</td>

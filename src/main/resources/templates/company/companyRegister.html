@@ -1,0 +1,156 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>대상 기업 신규등록 (New Company Register)</title>
+    <link rel="stylesheet" th:href="@{/css/base.css}">
+    <link rel="stylesheet" th:href="@{/css/layout.css}">
+    <link rel="stylesheet" th:href="@{/css/components.css}">
+</head>
+<body class="sidebar-layout">
+
+<!-- ── Sidebar ── -->
+<aside th:replace="~{fragments/sidebar :: sidebar('company')}"></aside>
+
+<!-- ── Main Content ── -->
+<div class="main-content">
+    <header class="topbar">
+        <div class="topbar-left">
+            <div class="topbar-breadcrumb">
+                홈 (Home) <span>›</span>
+                <a th:href="@{/company/list}" style="color:var(--muted);text-decoration:none;">기업 관리 (Company)</a>
+                <span>›</span> <strong>신규등록 (New Register)</strong>
+            </div>
+        </div>
+        <div class="topbar-right">
+            <a th:href="@{/swagger-ui.html}" class="topbar-btn" title="API Docs">🔌</a>
+            <div class="avatar">A</div>
+        </div>
+    </header>
+
+    <div class="page-content">
+
+        <div class="page-header">
+            <div class="page-title">
+                <h1>대상 기업 신규등록 <small style="font-size:14px;font-weight:400;color:var(--muted);">New Company Register</small></h1>
+                <p>신규 기업 정보를 입력하고 등록하세요. (Fill in the form and click Register)</p>
+            </div>
+            <a th:href="@{/company/list}" class="btn btn-secondary">← 목록 (List)</a>
+        </div>
+
+        <form th:action="@{/company/register}" method="post" th:object="${companyInVO}">
+
+            <!-- 기업 기본 정보 (Basic Company Info) -->
+            <div class="card">
+                <div class="card-title">기업 기본 정보 (Basic Company Info)</div>
+                <div style="display:grid; grid-template-columns:1fr 1fr; gap:16px;">
+
+                    <div class="form-group">
+                        <label>기업명 (Company Name) <span class="required">*</span></label>
+                        <label>
+                            <input type="text" class="form-control" name="companyName"
+                                   th:value="*{companyName}" placeholder="기업명 입력 (Enter company name)" required />
+                        </label>
+                    </div>
+                    <div class="form-group">
+                        <label>대표자명 (CEO Name)</label>
+                        <label>
+                            <input type="text" class="form-control" name="ceoName"
+                                   th:value="*{ceoName}" placeholder="대표자명 입력 (Enter CEO name)" />
+                        </label>
+                    </div>
+                    <div class="form-group">
+                        <label>사업자번호 (Business No.) <span class="required">*</span></label>
+                        <input type="text" class="form-control" name="businessNo"
+                               th:value="*{businessNo}" placeholder="000-00-00000" required />
+                    </div>
+                    <div class="form-group">
+                        <label>전화번호 (Phone)</label>
+                        <input type="text" class="form-control" name="phone"
+                               th:value="*{phone}" placeholder="010-0000-0000" />
+                    </div>
+                    <div class="form-group">
+                        <label>주소 (Address)</label>
+                        <input type="text" class="form-control" name="address"
+                               th:value="*{address}" placeholder="주소 입력 (Enter address)" />
+                    </div>
+                    <div class="form-group">
+                        <label>상세주소 (Address Detail)</label>
+                        <input type="text" class="form-control" name="addressDetail"
+                               th:value="*{addressDetail}" placeholder="상세주소 입력 (Floor, unit, etc.)" />
+                    </div>
+
+                </div>
+            </div>
+
+            <!-- 신청 정보 (Application Info) -->
+            <div class="card">
+                <div class="card-title">신청 정보 (Application Info)</div>
+                <div style="display:grid; grid-template-columns:1fr 1fr; gap:16px;">
+
+                    <div class="form-group">
+                        <label>신청매체 (Apply Channel)</label>
+                        <select class="form-control" name="applyChannel">
+                            <option value="ONLINE"  th:selected="*{applyChannel == 'ONLINE'}">온라인 (Online)</option>
+                            <option value="OFFLINE" th:selected="*{applyChannel == 'OFFLINE'}">오프라인 (Offline)</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label>신청상태 (Status)</label>
+                        <select class="form-control" name="status">
+                            <option value="신청" th:selected="*{status == '신청'}">신청 (Applied)</option>
+                            <option value="승인" th:selected="*{status == '승인'}">승인 (Approved)</option>
+                            <option value="반려" th:selected="*{status == '반려'}">반려 (Rejected)</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label>결제유형 (Payment Type)</label>
+                        <input type="text" class="form-control" name="paymentType"
+                               th:value="*{paymentType}" placeholder="카드 / 포인트 (Card / Points)" />
+                    </div>
+                    <div class="form-group">
+                        <label>결제사 (Payment Provider)</label>
+                        <input type="text" class="form-control" name="paymentProvider"
+                               th:value="*{paymentProvider}" placeholder="예: 하나카드 (e.g. Hana Card)" />
+                    </div>
+                    <div class="form-group">
+                        <label>근로자 수 (Worker Count)</label>
+                        <input type="number" class="form-control" name="workerCount"
+                               th:value="*{workerCount}" placeholder="0" min="0" />
+                    </div>
+
+                </div>
+            </div>
+
+            <!-- 담당자 정보 (Contact Person) -->
+            <div class="card">
+                <div class="card-title">담당자 정보 (Contact Person)</div>
+                <div style="display:grid; grid-template-columns:1fr 1fr; gap:16px;">
+
+                    <div class="form-group">
+                        <label>담당자명 (Contact Name)</label>
+                        <input type="text" class="form-control" name="contactName"
+                               th:value="*{contactName}" placeholder="담당자명 입력 (Enter contact name)" />
+                    </div>
+                    <div class="form-group">
+                        <label>담당자 연락처 (Contact Phone)</label>
+                        <input type="text" class="form-control" name="contactPhone"
+                               th:value="*{contactPhone}" placeholder="010-0000-0000" />
+                    </div>
+
+                </div>
+            </div>
+
+            <div style="display:flex; justify-content:flex-end; gap:10px; margin-top:8px;">
+                <a th:href="@{/company/list}" class="btn btn-secondary">취소 (Cancel)</a>
+                <button type="submit" class="btn btn-primary">등록 (Register)</button>
+            </div>
+
+        </form>
+
+    </div><!-- /page-content -->
+</div><!-- /main-content -->
+
+</body>
+</html>

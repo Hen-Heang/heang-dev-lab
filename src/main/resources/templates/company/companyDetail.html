@@ -1,0 +1,169 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>기업 상세조회 (Company Detail)</title>
+    <link rel="stylesheet" th:href="@{/css/base.css}">
+    <link rel="stylesheet" th:href="@{/css/layout.css}">
+    <link rel="stylesheet" th:href="@{/css/components.css}">
+</head>
+<body class="sidebar-layout">
+
+<!-- ── Sidebar ── -->
+<aside th:replace="~{fragments/sidebar :: sidebar('company')}"></aside>
+
+<!-- ── Main Content ── -->
+<div class="main-content">
+    <header class="topbar">
+        <div class="topbar-left">
+            <div class="topbar-breadcrumb">
+                홈 (Home) <span>›</span>
+                <a th:href="@{/company/list}" style="color:var(--muted);text-decoration:none;">기업 관리 (Company)</a>
+                <span>›</span> <strong>상세 (Detail)</strong>
+            </div>
+        </div>
+        <div class="topbar-right">
+            <a th:href="@{/swagger-ui.html}" class="topbar-btn" title="API Docs">🔌</a>
+            <div class="avatar">A</div>
+        </div>
+    </header>
+
+    <div class="page-content" th:if="${detail != null}">
+
+        <div class="page-header">
+            <div class="page-title">
+                <h1 th:text="${detail.companyName}">기업명</h1>
+                <p>
+                    신청일 (Applied): <span th:text="${#strings.substring(detail.createdAt, 0, 10)}">-</span>
+                    &nbsp;|&nbsp; 상태 (Status):
+                    <span class="badge"
+                          th:classappend="${detail.status == '승인'} ? 'badge-success' : (${detail.status == '반려'} ? 'badge-danger' : 'badge-primary')"
+                          th:text="${detail.status}">신청</span>
+                </p>
+            </div>
+            <a th:href="@{/company/list}" class="btn btn-secondary">← 목록으로 (Back to List)</a>
+        </div>
+
+        <!-- 기업 기본 정보 (Basic Company Info) -->
+        <div class="card">
+            <div class="card-title">기업 기본 정보 (Basic Company Info)</div>
+            <div class="user-detail">
+                <div class="user-detail-row">
+                    <div class="user-detail-label">기업명 (Company)</div>
+                    <div class="user-detail-value" th:text="${detail.companyName}">-</div>
+                </div>
+                <div class="user-detail-row">
+                    <div class="user-detail-label">대표자명 (CEO)</div>
+                    <div class="user-detail-value" th:text="${detail.ceoName}">-</div>
+                </div>
+                <div class="user-detail-row">
+                    <div class="user-detail-label">사업자번호 (Biz No.)</div>
+                    <div class="user-detail-value" th:text="${detail.businessNo}">-</div>
+                </div>
+                <div class="user-detail-row">
+                    <div class="user-detail-label">전화번호 (Phone)</div>
+                    <div class="user-detail-value" th:text="${detail.phone}">-</div>
+                </div>
+                <div class="user-detail-row">
+                    <div class="user-detail-label">주소 (Address)</div>
+                    <div class="user-detail-value"
+                         th:text="${detail.address} + ' ' + ${detail.addressDetail ?: ''}">-
+                    </div>
+                </div>
+                <div class="user-detail-row">
+                    <div class="user-detail-label">근로자 수 (Workers)</div>
+                    <div class="user-detail-value" th:text="${detail.workerCount}">0</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- 신청 정보 (Application Info) -->
+        <div class="card">
+            <div class="card-title">신청 정보 (Application Info)</div>
+            <div class="user-detail">
+                <div class="user-detail-row">
+                    <div class="user-detail-label">신청매체 (Channel)</div>
+                    <div class="user-detail-value"
+                         th:text="${detail.applyChannel == 'ONLINE' ? '온라인 (Online)' : '오프라인 (Offline)'}">-
+                    </div>
+                </div>
+                <div class="user-detail-row">
+                    <div class="user-detail-label">신청상태 (Status)</div>
+                    <div class="user-detail-value">
+                        <span class="badge"
+                              th:classappend="${detail.status == '승인'} ? 'badge-success' : (${detail.status == '반려'} ? 'badge-danger' : 'badge-primary')"
+                              th:text="${detail.status}">신청</span>
+                    </div>
+                </div>
+                <div class="user-detail-row">
+                    <div class="user-detail-label">결제유형 (Payment Type)</div>
+                    <div class="user-detail-value" th:text="${detail.paymentType}">-</div>
+                </div>
+                <div class="user-detail-row">
+                    <div class="user-detail-label">결제사 (Provider)</div>
+                    <div class="user-detail-value" th:text="${detail.paymentProvider}">-</div>
+                </div>
+                <div class="user-detail-row">
+                    <div class="user-detail-label">신청일 (Applied Date)</div>
+                    <div class="user-detail-value"
+                         th:text="${#strings.substring(detail.createdAt, 0, 10)}">-
+                    </div>
+                </div>
+                <div class="user-detail-row">
+                    <div class="user-detail-label">접수일 (Received Date)</div>
+                    <div class="user-detail-value"
+                         th:text="${detail.updatedAt != null ? #strings.substring(detail.updatedAt, 0, 10) : '-'}">-
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- 담당자 정보 (Contact Person) -->
+        <div class="card">
+            <div class="card-title">담당자 정보 (Contact Person)</div>
+            <div class="user-detail">
+                <div class="user-detail-row">
+                    <div class="user-detail-label">담당자명 (Name)</div>
+                    <div class="user-detail-value" th:text="${detail.contactName}">-</div>
+                </div>
+                <div class="user-detail-row">
+                    <div class="user-detail-label">담당자 연락처 (Phone)</div>
+                    <div class="user-detail-value" th:text="${detail.contactPhone}">-</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- 승인 / 반려 Actions -->
+        <div style="display:flex; gap:10px; justify-content:flex-end; margin-top:8px;">
+            <form th:action="@{/company/status}" method="post" style="display:inline;">
+                <input type="hidden" name="id" th:value="${detail.id}"/>
+                <input type="hidden" name="status" value="승인"/>
+                <button type="submit" class="btn btn-success"
+                        th:disabled="${detail.status == '승인'}">승인 (Approve)
+                </button>
+            </form>
+            <form th:action="@{/company/status}" method="post" style="display:inline;">
+                <input type="hidden" name="id" th:value="${detail.id}"/>
+                <input type="hidden" name="status" value="반려"/>
+                <button type="submit" class="btn btn-danger"
+                        th:disabled="${detail.status == '반려'}">반려 (Reject)
+                </button>
+            </form>
+            <a th:href="@{/company/list}" class="btn btn-secondary">목록 (List)</a>
+        </div>
+
+    </div><!-- /page-content -->
+
+    <!-- detail == null fallback -->
+    <div class="page-content" th:if="${detail == null}">
+        <div class="no-data">해당 기업 정보를 찾을 수 없습니다. (Company not found)</div>
+        <div style="text-align:center; margin-top:16px;">
+            <a th:href="@{/company/list}" class="btn btn-secondary">← 목록으로 (Back to List)</a>
+        </div>
+    </div>
+
+</div><!-- /main-content -->
+
+</body>
+</html>

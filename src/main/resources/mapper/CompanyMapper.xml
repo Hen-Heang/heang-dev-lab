@@ -1,0 +1,113 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.heang.springmybatistest.mapper.CompanyMapper">
+
+    <!-- ResultMap: DB column (snake_case) → Java field (camelCase) -->
+    <resultMap id="companyResult" type="com.heang.springmybatistest.vo.CompanyOutVO">
+        <id     property="id"              column="id"/>
+        <result property="companyName"     column="company_name"/>
+        <result property="ceoName"         column="ceo_name"/>
+        <result property="businessNo"      column="business_no"/>
+        <result property="phone"           column="phone"/>
+        <result property="address"         column="address"/>
+        <result property="addressDetail"   column="address_detail"/>
+        <result property="paymentType"     column="payment_type"/>
+        <result property="paymentProvider" column="payment_provider"/>
+        <result property="applyChannel"    column="apply_channel"/>
+        <result property="status"          column="status"/>
+        <result property="contactName"     column="contact_name"/>
+        <result property="contactPhone"    column="contact_phone"/>
+        <result property="workerCount"     column="worker_count"/>
+        <result property="createdAt"       column="created_at"/>
+        <result property="updatedAt"       column="updated_at"/>
+    </resultMap>
+
+    <!-- ================================
+         SELECT LIST  (신청 접수내역 목록)
+         Page 18 of UI design document
+         ================================ -->
+    <select id="selectList" parameterType="com.heang.springmybatistest.vo.CompanyInVO"
+            resultMap="companyResult">
+        SELECT id, company_name, ceo_name, business_no, phone,
+               payment_type, payment_provider, apply_channel,
+               status, contact_name, created_at, updated_at
+        FROM company
+        <where>
+            <if test="companyName != null and companyName != ''">
+                AND company_name LIKE '%' || #{companyName} || '%'
+            </if>
+            <if test="status != null and status != ''">
+                AND status = #{status}
+            </if>
+            <if test="dateFrom != null and dateFrom != ''">
+                AND DATE(created_at) &gt;= #{dateFrom}::date
+            </if>
+            <if test="dateTo != null and dateTo != ''">
+                AND DATE(created_at) &lt;= #{dateTo}::date
+            </if>
+        </where>
+        ORDER BY created_at DESC
+        LIMIT #{_rowcount} OFFSET #{_startrow}
+    </select>
+
+    <!-- ================================
+         SELECT COUNT  (total rows for pagination)
+         ================================ -->
+    <select id="selectListTotCnt" parameterType="com.heang.springmybatistest.vo.CompanyInVO"
+            resultType="int">
+        SELECT COUNT(*)
+        FROM company
+        <where>
+            <if test="companyName != null and companyName != ''">
+                AND company_name LIKE '%' || #{companyName} || '%'
+            </if>
+            <if test="status != null and status != ''">
+                AND status = #{status}
+            </if>
+            <if test="dateFrom != null and dateFrom != ''">
+                AND DATE(created_at) &gt;= #{dateFrom}::date
+            </if>
+            <if test="dateTo != null and dateTo != ''">
+                AND DATE(created_at) &lt;= #{dateTo}::date
+            </if>
+        </where>
+    </select>
+
+    <!-- ================================
+         SELECT DETAIL  (상세조회 팝업)
+         ================================ -->
+    <select id="selectDetail" parameterType="com.heang.springmybatistest.vo.CompanyInVO"
+            resultMap="companyResult">
+        SELECT *
+        FROM company
+        WHERE id = #{id}
+    </select>
+
+    <!-- ================================
+         INSERT  (대상 기업 신규등록)
+         ================================ -->
+    <insert id="insert" parameterType="com.heang.springmybatistest.vo.CompanyInVO">
+        INSERT INTO company (
+            company_name, ceo_name, business_no, phone, address, address_detail,
+            payment_type, payment_provider, apply_channel, status,
+            contact_name, contact_phone, worker_count
+        ) VALUES (
+            #{companyName}, #{ceoName}, #{businessNo}, #{phone}, #{address}, #{addressDetail},
+            #{paymentType}, #{paymentProvider}, #{applyChannel}, '신청',
+            #{contactName}, #{contactPhone}, #{workerCount}
+        )
+    </insert>
+
+    <!-- ================================
+         UPDATE STATUS  (승인/반려)
+         ================================ -->
+    <update id="updateStatus" parameterType="com.heang.springmybatistest.vo.CompanyInVO">
+        UPDATE company
+        SET status     = #{status},
+            updated_at = NOW()
+        WHERE id = #{id}
+    </update>
+
+</mapper>

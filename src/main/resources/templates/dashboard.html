@@ -11,58 +11,7 @@
 <body class="sidebar-layout">
 
 <!-- ── Sidebar ── -->
-<aside class="sidebar">
-    <div class="sidebar-logo">
-        <div class="sidebar-logo-icon">🏪</div>
-        <div class="sidebar-logo-text">
-            Store Admin
-            <span>Management Panel</span>
-        </div>
-    </div>
-
-    <nav class="sidebar-nav">
-        <div class="sidebar-section">Main Menu</div>
-        <a th:href="@{/dashboard}" class="nav-item active">
-            <span class="nav-icon">📊</span> Dashboard
-        </a>
-        <a th:href="@{/store/product}" class="nav-item">
-            <span class="nav-icon">📦</span> Products
-        </a>
-        <a th:href="@{/store/category}" class="nav-item">
-            <span class="nav-icon">📁</span> Categories
-        </a>
-        <a th:href="@{/}" class="nav-item">
-            <span class="nav-icon">👥</span> Users
-        </a>
-        <a th:href="@{/board/list.do}" class="nav-item">
-            <span class="nav-icon">📝</span> Board
-        </a>
-        <a th:href="@{/common-code}" class="nav-item">
-            <span class="nav-icon">🗂️</span> Common Codes
-        </a>
-
-        <div class="sidebar-section">Dev Tools</div>
-        <a th:href="@{/learn}" class="nav-item">
-            <span class="nav-icon">📚</span> Thymeleaf Lab
-            <span class="nav-badge">Lab</span>
-        </a>
-        <a th:href="@{/swagger-ui.html}" class="nav-item">
-            <span class="nav-icon">🔌</span> Swagger API
-        </a>
-    </nav>
-
-    <div class="sidebar-footer">
-        <a href="#" class="nav-item">
-            <span class="nav-icon">⚙️</span> Settings
-        </a>
-        <form th:action="@{/logout}" method="post" style="margin: 2px 0;">
-            <button type="submit" class="nav-item"
-                    style="width:100%; background:none; border:none; cursor:pointer; text-align:left;">
-                <span class="nav-icon">🚪</span> Logout (로그아웃)
-            </button>
-        </form>
-    </div>
-</aside>
+<aside th:replace="~{fragments/sidebar :: sidebar('dashboard')}"></aside>
 
 <!-- ── Main Content ── -->
 <div class="main-content">
@@ -70,7 +19,7 @@
     <header class="topbar">
         <div class="topbar-left">
             <div class="topbar-breadcrumb">
-                Home <span>›</span> <strong>Dashboard</strong>
+                홈 (Home) <span>›</span> <strong>대시보드 (Dashboard)</strong>
             </div>
         </div>
         <div class="topbar-right">
@@ -82,8 +31,8 @@
     <div class="page-content">
 
         <div class="page-header">
-            <h1>Good morning 👋</h1>
-            <p>Here's what's happening in your store today.</p>
+            <h1>안녕하세요 👋 <small style="font-size:16px;font-weight:400;color:var(--muted);">Good morning</small></h1>
+            <p>오늘 스토어 현황입니다. (Here's what's happening in your store today.)</p>
         </div>
 
         <!-- Stat Cards -->
@@ -120,10 +69,18 @@
                     <div class="stat-sub">Published entries</div>
                 </div>
             </div>
+            <div class="stat-card">
+                <div class="stat-icon blue">🏢</div>
+                <div class="stat-body">
+                    <div class="stat-label">참여 기업</div>
+                    <div class="stat-value loading-pulse" id="companyCount">—</div>
+                    <div class="stat-sub">신청 접수된 기업</div>
+                </div>
+            </div>
         </div>
 
         <!-- Quick Access -->
-        <div class="section-title">Quick Access</div>
+        <div class="section-title">빠른 접근 (Quick Access)</div>
         <div class="quick-grid">
             <a th:href="@{/store/product}" class="quick-card c-purple">
                 <div class="quick-card-icon">📦</div>
@@ -162,6 +119,14 @@
                 <div class="quick-card-body">
                     <div class="quick-card-title">Thymeleaf Lab</div>
                     <div class="quick-card-desc">Learning exercises &amp; practice</div>
+                </div>
+                <span class="quick-card-arrow">›</span>
+            </a>
+            <a th:href="@{/company/list}" class="quick-card c-blue">
+                <div class="quick-card-icon">🏢</div>
+                <div class="quick-card-body">
+                    <div class="quick-card-title">기업 관리</div>
+                    <div class="quick-card-desc">신청 접수내역 · 기업 신규등록</div>
                 </div>
                 <span class="quick-card-arrow">›</span>
             </a>
@@ -210,6 +175,18 @@
         .catch(() => {
             document.getElementById('boardCount').textContent = '0';
             document.getElementById('boardCount').classList.remove('loading-pulse');
+        });
+
+    fetch('/company/count')
+        .then(r => r.json())
+        .then(res => {
+            const el = document.getElementById('companyCount');
+            el.classList.remove('loading-pulse');
+            el.textContent = res.data ?? res.count ?? 0;
+        })
+        .catch(() => {
+            document.getElementById('companyCount').textContent = '0';
+            document.getElementById('companyCount').classList.remove('loading-pulse');
         });
 </script>
 </body>

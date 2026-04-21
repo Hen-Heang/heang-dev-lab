@@ -6,7 +6,20 @@
       "Read(//Applications/Postgres.app/Contents/Versions/latest/bin/**)",
       "Read(//usr/local/bin/**)",
       "Read(//opt/homebrew/bin/**)",
-      "Bash(cmd.exe /c \"mvnw.cmd test -Dtest=HashVerifyTest 2>&1\")"
+      "Bash(cmd.exe /c \"mvnw.cmd test -Dtest=HashVerifyTest 2>&1\")",
+      "PowerShell(py *)",
+      "Bash(curl -L --ssl-no-revoke --output /tmp/gradle-8.13-bin.zip \"https://services.gradle.org/distributions/gradle-8.13-bin.zip\")",
+      "Bash(mkdir -p C:/Users/user/.gradle/wrapper/dists/gradle-8.13-bin)",
+      "Bash(echo \"mkdir result: $?\")",
+      "Read(//c/Users/user/**)",
+      "Bash(cp /tmp/gradle-8.13-bin.zip C:/Users/user/.gradle/wrapper/dists/gradle-8.13-bin/)",
+      "PowerShell($env:JAVA_HOME = \"C:\\\\Program Files\\\\Eclipse Adoptium\\\\jdk-21.0.9.10-hotspot\"; cd \"C:\\\\Practice\\\\heang-dev-lab\"; .\\\\gradlew.bat dependencies --configuration compileClasspath --no-daemon 2>&1 | Select-Object -Last 60)",
+      "Bash(mkdir -p C:/Users/user/.m2/repository/org/springframework/boot/spring-boot-gradle-plugin/4.0.3)",
+      "Bash(curl -k -L -o C:/Users/user/.m2/repository/org/springframework/boot/spring-boot-gradle-plugin/4.0.3/spring-boot-gradle-plugin-4.0.3.jar https://repo.maven.apache.org/maven2/org/springframework/boot/spring-boot-gradle-plugin/4.0.3/spring-boot-gradle-plugin-4.0.3.jar)",
+      "Bash(curl -k -L -o C:/Users/user/.m2/repository/org/springframework/boot/spring-boot-gradle-plugin/4.0.3/spring-boot-gradle-plugin-4.0.3.pom https://repo.maven.apache.org/maven2/org/springframework/boot/spring-boot-gradle-plugin/4.0.3/spring-boot-gradle-plugin-4.0.3.pom)",
+      "Bash(mkdir -p C:/Users/user/.m2/repository/io/spring/gradle/dependency-management-plugin/1.1.7)",
+      "Bash(curl -k -L -o C:/Users/user/.m2/repository/io/spring/gradle/dependency-management-plugin/1.1.7/dependency-management-plugin-1.1.7.jar https://repo.maven.apache.org/maven2/io/spring/gradle/dependency-management-plugin/1.1.7/dependency-management-plugin-1.1.7.jar)",
+      "Bash(curl -k -L -o C:/Users/user/.m2/repository/io/spring/gradle/dependency-management-plugin/1.1.7/dependency-management-plugin-1.1.7.pom https://repo.maven.apache.org/maven2/io/spring/gradle/dependency-management-plugin/1.1.7/dependency-management-plugin-1.1.7.pom)"
     ]
   }
 }

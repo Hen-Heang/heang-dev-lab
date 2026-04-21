@@ -1,0 +1,149 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>신청 접수내역 (Application List)</title>
+    <link rel="stylesheet" th:href="@{/css/base.css}">
+    <link rel="stylesheet" th:href="@{/css/layout.css}">
+    <link rel="stylesheet" th:href="@{/css/components.css}">
+</head>
+<body class="sidebar-layout">
+
+<!-- ── Sidebar ── -->
+<aside th:replace="~{fragments/sidebar :: sidebar('company')}"></aside>
+
+<!-- ── Main Content ── -->
+<div class="main-content">
+    <header class="topbar">
+        <div class="topbar-left">
+            <div class="topbar-breadcrumb">
+                홈 (Home) <span>›</span>
+                기업 관리 (Company) <span>›</span>
+                <strong>신청 접수내역 (Application List)</strong>
+            </div>
+        </div>
+        <div class="topbar-right">
+            <a th:href="@{/swagger-ui.html}" class="topbar-btn" title="API Docs">🔌</a>
+            <div class="avatar">A</div>
+        </div>
+    </header>
+
+    <div class="page-content">
+
+        <div class="page-header">
+            <div class="page-title">
+                <h1>신청 접수내역 <small style="font-size:14px;font-weight:400;color:var(--muted);">Application List</small></h1>
+                <p>검색결과 (Results): <strong th:text="${totalCount}">0</strong>건</p>
+            </div>
+            <a th:href="@{/company/register}" class="btn btn-primary">+ 신규등록 (New Register)</a>
+        </div>
+
+        <!-- ── Search Form ── -->
+        <form th:action="@{/company/list}" method="get" class="search-box">
+            <div class="search-row">
+
+                <div class="search-item">
+                    <label>신청상태 (Status)</label>
+                    <select name="status" class="search-select">
+                        <option value=""    th:selected="${searchVO.status == null or searchVO.status == ''}">전체 (All)</option>
+                        <option value="신청" th:selected="${searchVO.status == '신청'}">신청 (Applied)</option>
+                        <option value="승인" th:selected="${searchVO.status == '승인'}">승인 (Approved)</option>
+                        <option value="반려" th:selected="${searchVO.status == '반려'}">반려 (Rejected)</option>
+                    </select>
+                </div>
+
+                <div class="search-item">
+                    <label>기업명 (Company Name)</label>
+                    <input type="text" name="companyName" class="search-input"
+                           th:value="${searchVO.companyName}" placeholder="기업명 입력 (Enter company name)"
+                           style="min-width:180px;"/>
+                </div>
+
+                <div class="search-item">
+                    <label>조회기간 시작 (Date From)</label>
+                    <input type="date" name="dateFrom" class="search-input"
+                           th:value="${searchVO.dateFrom}" style="min-width:150px;"/>
+                </div>
+
+                <div class="search-item">
+                    <label>조회기간 종료 (Date To)</label>
+                    <input type="date" name="dateTo" class="search-input"
+                           th:value="${searchVO.dateTo}" style="min-width:150px;"/>
+                </div>
+
+                <div class="search-item search-actions" style="flex-direction:row; align-items:flex-end; gap:8px;">
+                    <button type="submit" class="btn btn-primary">검색 (Search)</button>
+                    <button type="button" class="btn btn-secondary"
+                            onclick="location.href='/company/list'">초기화 (Reset)</button>
+                </div>
+            </div>
+        </form>
+
+        <!-- ── Data Table ── -->
+        <div class="table-container">
+            <table class="table">
+                <thead>
+                    <tr>
+                        <th style="text-align:center;">#</th>
+                        <th>신청일자 (Applied Date)</th>
+                        <th>신청매체 (Channel)</th>
+                        <th>기업명 (Company)</th>
+                        <th>신청상태 (Status)</th>
+                        <th>사업자번호 (Biz No.)</th>
+                        <th>결제사 (Payment)</th>
+                        <th>접수일 (Received)</th>
+                        <th>전화번호 (Phone)</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr th:if="${#lists.isEmpty(resultList)}">
+                        <td colspan="9" class="no-data">데이터가 없습니다. (No data found)</td>
+                    </tr>
+                    <tr th:each="item, stat : ${resultList}"
+                        th:onclick="|location.href='@{/company/detail}?id=${item.id}'|"
+                        style="cursor:pointer;">
+                        <td style="text-align:center;color:var(--muted);font-size:12px;" th:text="${stat.count}">1</td>
+                        <td th:text="${#strings.substring(item.createdAt, 0, 10)}">2026.01.01</td>
+                        <td th:text="${item.applyChannel == 'ONLINE' ? '온라인 (Online)' : '오프라인 (Offline)'}">온라인</td>
+                        <td th:text="${item.companyName}">기업명</td>
+                        <td>
+                            <span class="badge"
+                                  th:classappend="${item.status == '승인'} ? 'badge-success' : (${item.status == '반려'} ? 'badge-danger' : 'badge-primary')"
+                                  th:text="${item.status == '승인'} ? '승인 (Approved)' : (${item.status == '반려'} ? '반려 (Rejected)' : '신청 (Applied)')">신청 (Applied)</span>
+                        </td>
+                        <td th:text="${item.businessNo}">000-00-00000</td>
+                        <td th:text="${item.paymentProvider}">-</td>
+                        <td th:text="${item.updatedAt != null ? #strings.substring(item.updatedAt, 0, 10) : '-'}">-</td>
+                        <td th:text="${item.phone}">010-0000-0000</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+
+        <!-- ── Pagination ── -->
+        <div class="pagination" th:if="${totalPages > 0}">
+            <a th:if="${currentPage > 1}"
+               th:href="@{/company/list(status=${searchVO.status},companyName=${searchVO.companyName},dateFrom=${searchVO.dateFrom},dateTo=${searchVO.dateTo},_startrow=${(currentPage-2)*10})}"
+               class="btn btn-sm btn-secondary">&laquo;</a>
+
+            <th:block th:each="i : ${#numbers.sequence(1, totalPages)}">
+                <a th:if="${i != currentPage}"
+                   th:href="@{/company/list(status=${searchVO.status},companyName=${searchVO.companyName},dateFrom=${searchVO.dateFrom},dateTo=${searchVO.dateTo},_startrow=${(i-1)*10})}"
+                   class="btn btn-sm btn-secondary"
+                   th:text="${i}">1</a>
+                <span th:if="${i == currentPage}"
+                      class="btn btn-sm btn-primary"
+                      th:text="${i}">1</span>
+            </th:block>
+
+            <a th:if="${currentPage < totalPages}"
+               th:href="@{/company/list(status=${searchVO.status},companyName=${searchVO.companyName},dateFrom=${searchVO.dateFrom},dateTo=${searchVO.dateTo},_startrow=${currentPage*10})}"
+               class="btn btn-sm btn-secondary">&raquo;</a>
+        </div>
+
+    </div><!-- /page-content -->
+</div><!-- /main-content -->
+
+</body>
+</html>

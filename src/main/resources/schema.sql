@@ -1,6 +1,32 @@
 -- =====================================================
--- Spring MyBatis Test Schema
--- PostgreSQL setup script for users, category, and product
+-- Spring MyBatis Test — Master Schema
+-- PostgreSQL | heang-dev-lab practice project
+-- =====================================================
+--
+-- HOW TO USE THIS FILE
+-- 1. Full reset (new DB):   run the entire file top to bottom
+-- 2. Existing DB migration: run only the MIGRATIONS section at the bottom
+--
+-- CHANGELOG — what was added and when
+-- -------------------------------------------------------
+-- [initial]    users, co_smp_board_m, category, product, students
+-- [2026-04-17] product.image_url column added
+-- [2026-04-19] common_code table added
+-- [2026-04-19] board_file table added
+-- [2026-04-20] company table added
+-- [2026-04-21] sidebar.html fragment created (not SQL — noted for reference)
+-- -------------------------------------------------------
+--
+-- HOW TO ADD A NEW TABLE (새 테이블 추가 방법)
+-- Step 1: Add CREATE TABLE to the main section below (for full reset)
+-- Step 2: Add CREATE TABLE IF NOT EXISTS to the MIGRATIONS section (for existing DB)
+-- Step 3: Update the CHANGELOG above with [YYYY-MM-DD] description
+-- Step 4: Update CLAUDE.md > Database Tables section
+--
+-- HOW TO ADD A NEW FUNCTION (새 함수 추가 방법)
+-- Step 1: Add CREATE OR REPLACE FUNCTION to the FUNCTIONS section at the bottom
+-- Step 2: Add a comment above the function: -- [YYYY-MM-DD] function_name — what it does
+-- Step 3: Update the CHANGELOG above
 -- =====================================================
 
 -- Reset tables in dependency order
@@ -256,3 +282,57 @@ CREATE TABLE IF NOT EXISTS board_file (
         REFERENCES co_smp_board_m(board_sn)
         ON DELETE CASCADE    -- delete files when board post is deleted (게시글 삭제 시 파일도 삭제)
 );
+
+
+-- [2026-04-20] Add company table
+
+CREATE TABLE company (
+                         id               BIGSERIAL PRIMARY KEY,
+                         company_name     VARCHAR(100)  NOT NULL,
+                         ceo_name         VARCHAR(50)   NOT NULL,
+                         business_no      VARCHAR(20)   NOT NULL UNIQUE,
+                         address          VARCHAR(200),
+                         address_detail   VARCHAR(100),
+                         phone            VARCHAR(20),
+                         homepage         VARCHAR(200),
+                         payment_type     VARCHAR(10),
+                         payment_provider VARCHAR(50),
+                         apply_channel    VARCHAR(10)  DEFAULT 'ONLINE',
+                         status           VARCHAR(10)  DEFAULT '신청',
+                         contact_name     VARCHAR(50),
+                         contact_phone    VARCHAR(20),
+                         worker_count     INT          DEFAULT 0,
+                         created_at       TIMESTAMP    DEFAULT NOW(),
+                         updated_at       TIMESTAMP    DEFAULT NOW()
+);
+
+INSERT INTO company (company_name, ceo_name, business_no, phone, payment_type, payment_provider, apply_channel, status, contact_name, contact_phone, worker_count)
+VALUES
+    ('비즈플레이 주식회사', '홍길동', '107-88-36126', '010-1111-7777', '카드사', '하나카드', 'ONLINE', '승인', '김철수', '010-1111-0001', 300),
+    ('동대문엽기떡볶이',   '장홍련', '107-88-36125', '010-0000-8888', '식권사', '비플식권', 'ONLINE', '신청', '이영희', '010-1111-0002', 50),
+    ('당진종합할인마트',   '이순신', '107-88-36127', '041-3773-2945', '식권사', '식권대장', 'OFFLINE','신청', '박민준', '010-1111-0003', 120),
+    ('에이티',           '세종대왕','107-88-36180', '041-1111-1111', '식권사', '페이코',   'OFFLINE','승인', '최지원', '010-1111-0004', 80),
+    ('세븐티',           '유관순', '107-88-36170', '041-8888-0000', '카드사', '신한카드', 'OFFLINE','반려', '정수빈', '010-1111-0005', 200);
+
+
+-- =====================================================
+-- FUNCTIONS (함수)
+-- Add new functions below following this pattern:
+--
+-- [YYYY-MM-DD] function_name(params) — what it does (Korean: 설명)
+-- CREATE OR REPLACE FUNCTION function_name(...) ...
+-- =====================================================
+
+-- (no functions yet — add here when needed)
+-- Example pattern:
+--
+-- -- [2026-04-21] get_company_stats() — returns count by status (상태별 기업 수 집계)
+-- CREATE OR REPLACE FUNCTION get_company_stats()
+-- RETURNS TABLE(status VARCHAR, cnt BIGINT) AS $$
+-- BEGIN
+--     RETURN QUERY
+--     SELECT c.status, COUNT(*)
+--     FROM company c
+--     GROUP BY c.status;
+-- END;
+-- $$ LANGUAGE plpgsql;

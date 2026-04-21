@@ -10,36 +10,7 @@
 <body class="sidebar-layout">
 
 <!-- ── Sidebar ── -->
-<aside class="sidebar">
-    <div class="sidebar-logo">
-        <div class="sidebar-logo-icon">🏪</div>
-        <div class="sidebar-logo-text">
-            Store Admin
-            <span>Management Panel</span>
-        </div>
-    </div>
-    <nav class="sidebar-nav">
-        <div class="sidebar-section">Main Menu</div>
-        <a th:href="@{/dashboard}" class="nav-item"><span class="nav-icon">📊</span> Dashboard</a>
-        <a th:href="@{/store/product}" class="nav-item"><span class="nav-icon">📦</span> Products</a>
-        <a th:href="@{/store/category}" class="nav-item"><span class="nav-icon">📁</span> Categories</a>
-        <a th:href="@{/}" class="nav-item"><span class="nav-icon">👥</span> Users</a>
-        <a th:href="@{/board/list.do}" class="nav-item active"><span class="nav-icon">📝</span> Board</a>
-        <a th:href="@{/common-code}" class="nav-item"><span class="nav-icon">🗂️</span> Common Codes</a>
-        <div class="sidebar-section">Dev Tools</div>
-        <a th:href="@{/learn}" class="nav-item"><span class="nav-icon">📚</span> Thymeleaf Lab <span class="nav-badge">Lab</span></a>
-        <a th:href="@{/swagger-ui.html}" class="nav-item"><span class="nav-icon">🔌</span> Swagger API</a>
-    </nav>
-    <div class="sidebar-footer">
-        <a href="#" class="nav-item"><span class="nav-icon">⚙️</span> Settings</a>
-        <form th:action="@{/logout}" method="post" style="margin: 2px 0;">
-            <button type="submit" class="nav-item"
-                    style="width:100%; background:none; border:none; cursor:pointer; text-align:left;">
-                <span class="nav-icon">🚪</span> Logout
-            </button>
-        </form>
-    </div>
-</aside>
+<aside th:replace="~{fragments/sidebar :: sidebar('board')}"></aside>
 
 <!-- ── Main Content ── -->
 <div class="main-content">
@@ -47,8 +18,8 @@
         <div class="topbar-left">
             <div class="topbar-breadcrumb">
                 Home <span>›</span>
-                <a th:href="@{/board/list.do}" style="color:var(--muted);text-decoration:none;">Board</a>
-                <span>›</span> <strong>Detail</strong>
+                <a th:href="@{/board/list.do}" style="color:var(--muted);text-decoration:none;">게시판 (Board)</a>
+                <span>›</span> <strong>상세 (Detail)</strong>
             </div>
         </div>
         <div class="topbar-right">
@@ -70,8 +41,8 @@
         <div class="card" style="margin-bottom:20px;">
             <div style="padding:16px 22px;border-bottom:1px solid var(--line);display:flex;align-items:center;gap:10px;">
                 <h2 style="font-size:15px;font-weight:700;">Post Info</h2>
-                <span th:if="${board.useYn == 'Y'}" class="badge badge-active">Active</span>
-                <span th:unless="${board.useYn == 'Y'}" class="badge badge-inactive">Inactive</span>
+                <span th:if="${board.useYn == 'Y'}" class="badge badge-active">활성 (Active)</span>
+                <span th:unless="${board.useYn == 'Y'}" class="badge badge-inactive">비활성 (Inactive)</span>
             </div>
             <div style="padding:22px;">
                 <table style="width:100%;border-collapse:collapse;">

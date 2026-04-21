@@ -29,11 +29,15 @@ java --enable-native-access=ALL-UNNAMED -jar target/spring-mybatis-test-0.0.1-SN
 - http://localhost:8080/ — Create user form
 - http://localhost:8080/user-list — User list
 - http://localhost:8080/dashboard — Dashboard (links to all modules)
-- http://localhost:8080/board/list.do — Board list (← Dashboard button included)
+- http://localhost:8080/board/list.do — Board list
 - http://localhost:8080/board/insertForm.do — New board post form
 - http://localhost:8080/board/detail.do?boardSn={id} — Board detail + edit
 - http://localhost:8080/store/category — Category management
 - http://localhost:8080/store/product — Product management
+- http://localhost:8080/company/list — Company application list
+- http://localhost:8080/company/register — New company register form
+- http://localhost:8080/company/detail?id={id} — Company detail + approve/reject
+- http://localhost:8080/common-code — Common code management
 - http://localhost:8080/swagger-ui.html — Swagger API docs
 
 ## Package Structure
@@ -55,16 +59,40 @@ Located in `src/main/resources/mapper/`:
 - `UserMapper.xml`
 - `CategoryMapper.xml`
 - `ProductMapper.xml`
+- `CommonCodeMapper.xml`
+- `CompanyMapper.xml`
 - `DynamicSqlPracticeMapper.xml`
 
 ## Database Tables
-- `users` — id, username, email, password, name, phone, role, status, created_at, updated_at
-- `co_smp_board_m` — board_sn (PK), board_title, board_cn, use_yn, data_reg_dt
-- `category` — id, name, created_at
-- `product` — id, name, price, stock, category_id (FK → category), created_at
+| Table | Key Columns | Added |
+|-------|-------------|-------|
+| `users` | id, username, email, password, name, phone, role, status, created_at, updated_at | initial |
+| `co_smp_board_m` | board_sn (PK), board_title, board_cn, use_yn, data_reg_dt | initial |
+| `category` | id, name, created_at | initial |
+| `product` | id, name, price, stock, category_id (FK→category), image_url, created_at | initial |
+| `students` | id, name, email, age, major, created_at | initial |
+| `common_code` | code_group+code_value (PK), code_name, sort_order, use_yn, created_at | 2026-04-19 |
+| `board_file` | file_sn (PK), board_sn (FK→board), orig_name, saved_name, file_size, created_at | 2026-04-19 |
+| `company` | id, company_name, ceo_name, business_no, phone, address, apply_channel, status, contact_name, worker_count, created_at, updated_at | 2026-04-20 |
 
 Run `schema.sql` to recreate tables + sample data.
 Set `SPRING_SQL_INIT_MODE=always` to auto-run on startup.
+
+## SQL Changelog Convention
+Every new table, migration, or function in `schema.sql` must follow this format:
+
+```sql
+-- =====================================================
+-- [YYYY-MM-DD] Short description (한국어 설명)
+-- Purpose: why this was added
+-- =====================================================
+CREATE TABLE ... or ALTER TABLE ... or CREATE FUNCTION ...
+```
+
+For migrations only (existing DB, not full reset):
+- Add to the `-- MIGRATIONS` section at the bottom of `schema.sql`
+- Use `CREATE TABLE IF NOT EXISTS` / `ALTER TABLE ... ADD COLUMN IF NOT EXISTS`
+- Always include the date in the comment
 
 ## API Response Pattern
 All REST endpoints return `ApiResponse<T>`:

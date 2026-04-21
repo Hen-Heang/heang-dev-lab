@@ -11,7 +11,7 @@
 <header th:replace="~{layout/default :: header}"></header>
 
 <div class="container">
-    <div th:replace="~{layout/default :: lnb}"></div>
+    <div th:replace="~{layout/default :: lnb('entAplRe')}"></div>
 
     <div class="content-wrap">
         <div class="content-header">
@@ -39,19 +39,19 @@
                                             <option value=""></option>
                                             <option value="경기도" selected>경기도</option>
                                         </select>
-                                        <select class="form-select select2" id="시군" name="시군" data-placeholder="시/군 선택">
+                                        <label for="시군"></label><select class="form-select select2" id="시군" name="시군" data-placeholder="시/군 선택">
                                             <option value=""></option>
                                             <option value="옵션1">옵션1</option>
                                             <option value="옵션2">옵션2</option>
                                             <option value="옵션3">옵션3</option>
                                         </select>
-                                        <select class="form-select select2" id="구" name="구" data-placeholder="구 선택">
+                                        <label for="구"></label><select class="form-select select2" id="구" name="구" data-placeholder="구 선택">
                                             <option value=""></option>
                                             <option value="옵션1">옵션1</option>
                                             <option value="옵션2">옵션2</option>
                                             <option value="옵션3">옵션3</option>
                                         </select>
-                                        <select class="form-select select2" id="기업명" name="entNm" data-placeholder="기업명 선택">
+                                        <label for="기업명"></label><select class="form-select select2" id="기업명" name="entNm" data-placeholder="기업명 선택">
                                             <option value=""></option>
                                             <option value="옵션1">옵션1</option>
                                             <option value="옵션2">옵션2</option>
@@ -68,7 +68,7 @@
                                             <input class="from" type="text" id="기간S" name="fromDt" value="" maxlength="10" placeholder="YYYY.MM.DD" />
                                         </div>
                                         <div class="input-wrap input_datepicker_wrap">
-                                            <input class="to" type="text" id="기간E" name="toDt" value="" maxlength="10" placeholder="YYYY.MM.DD" />
+                                            <label for="기간E"></label><input class="to" type="text" id="기간E" name="toDt" value="" maxlength="10" placeholder="YYYY.MM.DD" />
                                         </div>
                                         <div class="form-check">
                                             <input class="form-check-input" type="checkbox" id="전체기간" name="allPeriodYn" value="Y" />

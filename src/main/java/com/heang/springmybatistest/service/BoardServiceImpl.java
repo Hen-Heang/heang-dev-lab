@@ -125,7 +125,7 @@ public class BoardServiceImpl implements BoardService {
      *   - If boardDAO.insert() succeeds but boardFileService.saveFiles() throws
      *     → the board INSERT is rolled back automatically
      *   - Either BOTH succeed or NOTHING is saved
-     *
+     * <p>
      * This is the most important pattern to understand before working in Korea.
      * Every write operation that touches 2+ tables must be @Transactional.
      */

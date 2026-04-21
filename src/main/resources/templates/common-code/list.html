@@ -538,13 +538,10 @@
                     <label>
                         <select>
                             <option value="">-- select --</option>
-                            <option th:each="code : ${#strings.isEmpty(codeGroup) ? @commonCodeService.findByGroup('USER_STATUS') : {}}"
+                            <option th:each="code : ${userStatusCodes}"
                                     th:value="${code.codeValue}"
                                     th:text="${code.codeName}">
                             </option>
-                            <!-- Fallback static options when filtered -->
-                            <option th:if="${not #strings.isEmpty(codeGroup)}" value="ACTIVE">활성</option>
-                            <option th:if="${not #strings.isEmpty(codeGroup)}" value="INACTIVE">비활성</option>
                         </select>
                     </label>
                 </div>
@@ -554,12 +551,10 @@
                     <label>
                         <select>
                             <option value="">-- select --</option>
-                            <option th:each="code : ${#strings.isEmpty(codeGroup) ? @commonCodeService.findByGroup('BOARD_TYPE') :{} }"
+                            <option th:each="code : ${boardTypeCodes}"
                                     th:value="${code.codeValue}"
                                     th:text="${code.codeName}">
                             </option>
-                            <option th:if="${not #strings.isEmpty(codeGroup)}" value="01">공지사항</option>
-                            <option th:if="${not #strings.isEmpty(codeGroup)}" value="02">자유게시판</option>
                         </select>
                     </label>
                 </div>
@@ -569,11 +564,10 @@
                     <label>
                         <select>
                             <option value="">-- select --</option>
-                            <option th:each="code : ${#strings.isEmpty(codeGroup) ? @commonCodeService.findByGroup('USER_ROLE') : {}}"
+                            <option th:each="code : ${userRoleCodes}"
                                     th:value="${code.codeValue}"
                                     th:text="${code.codeName}">
                             </option>
-                            <option th:if="${not #strings.isEmpty(codeGroup)}" value="ROLE_ADMIN">관리자</option>
                         </select>
                     </label>
                 </div>

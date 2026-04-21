@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="ko">
+<body>
+
+<!--
+  th:fragment="sidebar(activePage)"
+    → Defines a reusable sidebar block named "sidebar"
+    → Takes one parameter: activePage (a string like 'dashboard', 'board', 'company')
+
+  How to use in any page:
+    <aside th:replace="~{fragments/sidebar :: sidebar('dashboard')}"></aside>
+    <aside th:replace="~{fragments/sidebar :: sidebar('board')}"></aside>
+    <aside th:replace="~{fragments/sidebar :: sidebar('company')}"></aside>
+
+  th:classappend:
+    → Adds a CSS class on top of the existing class
+    → ${activePage == 'dashboard'}? 'active': ''
+    → Result when true: class="nav-item active"
+    → Result when false: class="nav-item"
+-->
+<aside th:fragment="sidebar(activePage)" class="sidebar">
+
+    <div class="sidebar-logo">
+        <div class="sidebar-logo-icon">🏪</div>
+        <div class="sidebar-logo-text">
+            Store Admin
+            <span>Management Panel</span>
+        </div>
+    </div>
+
+    <nav class="sidebar-nav">
+        <div class="sidebar-section">메인 메뉴 (Main Menu)</div>
+
+        <a th:href="@{/dashboard}"
+           class="nav-item"
+           th:classappend="${activePage == 'dashboard'} ? ' active' : ''">
+            <span class="nav-icon">📊</span> 대시보드 (Dashboard)
+        </a>
+
+        <a th:href="@{/store/product}"
+           class="nav-item"
+           th:classappend="${activePage == 'product'} ? ' active' : ''">
+            <span class="nav-icon">📦</span> 상품 (Products)
+        </a>
+
+        <a th:href="@{/store/category}"
+           class="nav-item"
+           th:classappend="${activePage == 'category'} ? ' active' : ''">
+            <span class="nav-icon">📁</span> 카테고리 (Categories)
+        </a>
+
+        <a th:href="@{/}"
+           class="nav-item"
+           th:classappend="${activePage == 'users'} ? ' active' : ''">
+            <span class="nav-icon">👥</span> 사용자 (Users)
+        </a>
+
+        <a th:href="@{/board/list.do}"
+           class="nav-item"
+           th:classappend="${activePage == 'board'} ? ' active' : ''">
+            <span class="nav-icon">📝</span> 게시판 (Board)
+        </a>
+
+        <a th:href="@{/company/list}"
+           class="nav-item"
+           th:classappend="${activePage == 'company'} ? ' active' : ''">
+            <span class="nav-icon">🏢</span> 기업 관리 (Company)
+        </a>
+
+        <a th:href="@{/common-code}"
+           class="nav-item"
+           th:classappend="${activePage == 'common-code'} ? ' active' : ''">
+            <span class="nav-icon">🗂️</span> 공통코드 (Common Codes)
+        </a>
+
+        <div class="sidebar-section">개발 도구 (Dev Tools)</div>
+
+        <a th:href="@{/learn}"
+           class="nav-item"
+           th:classappend="${activePage == 'learn'} ? ' active' : ''">
+            <span class="nav-icon">📚</span> Thymeleaf Lab            <span class="nav-badge"></span>
+        </a>
+
+        <a th:href="@{/swagger-ui.html}" class="nav-item">
+            <span class="nav-icon">🔌</span> Swagger API
+        </a>
+    </nav>
+
+    <div class="sidebar-footer">
+        <a href="#" class="nav-item">
+            <span class="nav-icon">⚙️</span> 설정 (Settings)
+        </a>
+        <form th:action="@{/logout}" method="post" style="margin: 2px 0;">
+            <button type="submit" class="nav-item"
+                    style="width:100%; background:none; border:none; cursor:pointer; text-align:left;">
+                <span class="nav-icon">🚪</span> 로그아웃 (Logout)
+            </button>
+        </form>
+    </div>
+
+</aside>
+
+</body>
+</html>
