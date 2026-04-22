@@ -1,0 +1,521 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="ko">
+
+<head>
+    <th:block th:replace="~{layout/default :: head}"></th:block>
+    <title>예산 관리</title>
+    <style>
+        /* Hide day-grid so datepicker shows only month/year */
+        .ui-datepicker.month-only .ui-datepicker-calendar { display: none; }
+        .ui-datepicker.month-only { width: 220px; }
+    </style>
+</head>
+
+<body class="sub-page">
+
+<header th:replace="~{layout/default :: header}"></header>
+
+<div class="container">
+    <div th:replace="~{layout/default :: lnb-budget('bgtMng')}"></div>
+
+    <div class="content-wrap">
+        <div class="content-header">
+            <div class="title-wrap">
+                <div class="title">예산 관리</div>
+                <div class="location">
+                    <i class="icon-home"></i>
+                    <span>홈</span>
+                    <span>거래/예산/정산현황</span>
+                    <span>예산 관리</span>
+                    <span>예산 관리</span>
+                </div>
+            </div>
+        </div>
+
+        <div class="content-body">
+            <div class="search-form-wrap">
+                <form>
+                    <div class="search-form-inner">
+                        <div class="search-form">
+                            <div class="row">
+                                <div class="col-12">
+                                    <label class="form-label" for="지자체"><span>지자체</span></label>
+                                    <div class="form-container">
+                                        <select class="form-select select2" id="jijache" name="sidoCd"
+                                                data-placeholder="시/도 선택" disabled>
+                                            <option value=""></option>
+                                            <option value="41" selected>경기도</option>
+                                        </select>
+                                        <label for="sigun"></label>
+                                        <select class="form-select select2" id="sigun" name="sigunguCd"
+                                                data-placeholder="시/군 선택">
+                                            <option value=""></option>
+                                            <option value="41110">수원시</option>
+                                            <option value="41130">성남시</option>
+                                            <option value="41150">의정부시</option>
+                                        </select>
+                                        <label for="gu"></label>
+                                        <select class="form-select select2" id="gu" name="guCd"
+                                                data-placeholder="구 선택">
+                                            <option value=""></option>
+                                        </select>
+                                        <label for="eupCd"></label>
+                                        <select class="form-select select2" id="eupCd" name="emdCd"
+                                                data-placeholder="읍면동 선택">
+                                            <option value=""></option>
+                                        </select>
+                                    </div>
+                                </div><!-- .col -->
+                            </div><!-- .row -->
+                            <div class="row">
+                                <div class="col-12">
+                                    <label class="form-label" for="기간S"><span>조회기간</span></label>
+                                    <div class="form-container">
+                                        <div class="input-wrap input_datepicker_wrap">
+                                            <input class="from" type="text" id="기간S" name="srchStrtMm"
+                                                   value="" maxlength="7" placeholder="YYYY-MM" />
+                                        </div>
+                                        <div class="input-wrap input_datepicker_wrap">
+                                            <label for="기간E"></label>
+                                            <input class="to" type="text" id="기간E" name="srchEndMm"
+                                                   value="" maxlength="7" placeholder="YYYY-MM" />
+                                        </div>
+                                        <div class="form-check">
+                                            <input class="form-check-input" type="checkbox"
+                                                   id="wholPrdYn" name="wholPrdYn" value="Y" />
+                                            <label class="form-check-label" for="wholPrdYn">전체기간</label>
+                                        </div>
+                                    </div><!-- .form-container -->
+                                </div><!-- .col -->
+                            </div><!-- .row -->
+                        </div><!-- .search-form -->
+                        <div class="button-wrap">
+                            <button type="button" class="btn btn-primary"
+                                    onclick="fn_selectBgtMngList()">
+                                <i class="icon-search"></i>
+                                <span>검색</span>
+                            </button>
+                        </div>
+                    </div><!-- .search-form-inner -->
+                </form>
+            </div><!-- .search-form-wrap -->
+
+            <div class="section-header">
+                <div class="title-wrap">
+                    <div class="title">검색결과<span id="totCnt" class="small text-primary">(0건)</span></div>
+                </div>
+                <div class="button-wrap">
+                    <button type="button" class="btn btn-line" onclick="fn_downloadExcel()">
+                        <i class="icon-filedown"></i>
+                        <span>엑셀다운</span>
+                    </button>
+                    <button type="button" class="btn btn-primary"
+                            onclick="fn_openPopup(null)">
+                        <span>예산등록</span>
+                    </button>
+                </div>
+            </div><!-- .section-header -->
+
+            <div class="section-body">
+                <div class="grid-area">
+                    <div class="table-wrap">
+                        <table class="all-center">
+                            <thead>
+                                <tr>
+                                    <th>순번</th>
+                                    <th>지자체</th>
+                                    <th>시작월</th>
+                                    <th>종료월</th>
+                                    <th>국비(A)</th>
+                                    <th>지방비(B)</th>
+                                    <th>예산합계(A+B)</th>
+                                </tr>
+                            </thead>
+                            <tbody id="gridBody">
+                                <tr>
+                                    <td colspan="7">데이터가 없습니다</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div><!-- .section-body -->
+
+            <div class="section-foot">
+                <div class="pagination-wrap">
+                    <ul class="pagination">
+                        <li class="first"><button class="btn"><i class="icon-arrow-first"></i></button></li>
+                        <li class="prev"><button class="btn"><i class="icon-arrow-prev"></i></button></li>
+                        <li class="page active"><span>1</span></li>
+                        <li class="next"><button class="btn disabled"><i class="icon-arrow-next"></i></button></li>
+                        <li class="last"><button class="btn disabled"><i class="icon-arrow-last"></i></button></li>
+                    </ul>
+                </div>
+            </div><!-- .section-foot -->
+        </div>
+    </div><!-- .content-wrap -->
+</div><!-- .container -->
+
+<div id="layerPopup" class="layerPopup">
+    <div class="layer-wrap" style="width:760px;">
+        <div class="layer-header">
+            <h4 id="popupTitle" class="layer-title">예산등록</h4>
+            <div class="button-wrap">
+                <button type="button" class="btn btn_close" title="창닫기" onclick="fn_closePopup()">
+                    <i class="icon-close"></i>
+                </button>
+            </div>
+        </div><!-- .layer-header -->
+        <div class="layer-body">
+            <div class="section-body">
+                <div class="table-wrap">
+                    <table class="tbl-form">
+                        <colgroup>
+                            <col style="width:100px;">
+                            <col style="width:50%;">
+                            <col style="width:100px;">
+                            <col style="width:50%;">
+                        </colgroup>
+                        <tbody>
+                            <tr>
+                                <th>
+                                    <label class="form-label" for="pop_sido"><span>지자체</span></label>
+                                </th>
+                                <td colspan="3">
+                                    <div class="form-container">
+                                        <select class="form-select select2" id="pop_sido"
+                                                data-placeholder="시/도 선택" disabled>
+                                            <option value=""></option>
+                                            <option value="41" selected>경기도</option>
+                                        </select>
+                                        <label for="pop_sigungu"></label>
+                                        <select class="form-select select2" id="pop_sigungu"
+                                                data-placeholder="시/군 선택">
+                                            <option value=""></option>
+                                            <option value="41110">수원시</option>
+                                            <option value="41130">성남시</option>
+                                            <option value="41150">의정부시</option>
+                                        </select>
+                                        <label for="pop_gu"></label>
+                                        <select class="form-select select2" id="pop_gu"
+                                                data-placeholder="구 선택">
+                                            <option value=""></option>
+                                        </select>
+                                    </div>
+                                </td>
+                            </tr>
+                            <tr>
+                                <th>
+                                    <label class="form-label" for="pop_startYy"><span>기간</span></label>
+                                </th>
+                                <td colspan="3">
+                                    <div class="form-container col-12">
+                                        <select class="form-select select2" id="pop_startYy"
+                                                data-placeholder="선택">
+                                            <option value=""></option>
+                                            <option value="2026">2026</option>
+                                            <option value="2025">2025</option>
+                                            <option value="2024">2024</option>
+                                        </select>
+                                        <div class="unit">년</div>
+                                        <label for="pop_startMm"></label>
+                                        <select class="form-select select2" id="pop_startMm"
+                                                data-placeholder="선택">
+                                            <option value=""></option>
+                                            <option value="01">01</option>
+                                            <option value="02">02</option>
+                                            <option value="03">03</option>
+                                            <option value="04">04</option>
+                                            <option value="05">05</option>
+                                            <option value="06">06</option>
+                                            <option value="07">07</option>
+                                            <option value="08">08</option>
+                                            <option value="09">09</option>
+                                            <option value="10">10</option>
+                                            <option value="11">11</option>
+                                            <option value="12">12</option>
+                                        </select>
+                                        <div class="unit">월</div>
+                                        -
+                                        <label for="pop_endYy"></label>
+                                        <select class="form-select select2" id="pop_endYy"
+                                                data-placeholder="선택">
+                                            <option value=""></option>
+                                            <option value="2026">2026</option>
+                                            <option value="2025">2025</option>
+                                            <option value="2024">2024</option>
+                                        </select>
+                                        <div class="unit">년</div>
+                                        <label for="pop_endMm"></label>
+                                        <select class="form-select select2" id="pop_endMm"
+                                                data-placeholder="선택">
+                                            <option value=""></option>
+                                            <option value="12">12</option>
+                                            <option value="11">11</option>
+                                            <option value="10">10</option>
+                                            <option value="09">09</option>
+                                            <option value="08">08</option>
+                                            <option value="07">07</option>
+                                            <option value="06">06</option>
+                                            <option value="05">05</option>
+                                            <option value="04">04</option>
+                                            <option value="03">03</option>
+                                            <option value="02">02</option>
+                                            <option value="01">01</option>
+                                        </select>
+                                        <div class="unit">월</div>
+                                    </div><!-- .form-container -->
+                                </td>
+                            </tr>
+                            <tr>
+                                <th>
+                                    <label class="form-label" for="pop_ntnlBgt"><span>국비예산</span></label>
+                                </th>
+                                <td>
+                                    <div class="form-container">
+                                        <div class="input-wrap">
+                                            <input class="number" type="text" id="pop_ntnlBgt"
+                                                   value="" placeholder="숫자만 입력" />
+                                        </div>
+                                        <div class="unit">원</div>
+                                    </div><!-- .form-container -->
+                                </td>
+                                <th>
+                                    <label class="form-label" for="pop_lclBgt"><span>지방비 예산</span></label>
+                                </th>
+                                <td>
+                                    <div class="form-container">
+                                        <div class="input-wrap">
+                                            <input class="number" type="text" id="pop_lclBgt"
+                                                   value="" placeholder="숫자만 입력" />
+                                        </div>
+                                        <div class="unit">원</div>
+                                    </div><!-- .form-container -->
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div><!-- .section-body -->
+        </div><!-- .layer-body -->
+        <div class="layer-footer">
+            <div class="button-wrap">
+                <button type="button" class="btn btn-line" id="btnDelete"
+                        style="display:none;" onclick="fn_deleteBgt()">
+                    <span>삭제</span>
+                </button>
+                <button type="button" class="btn btn-line btn_close" onclick="fn_closePopup()">
+                    <span>닫기</span>
+                </button>
+                <button type="button" class="btn btn-primary" onclick="fn_saveBgt()">
+                    <span>저장</span>
+                </button>
+            </div>
+        </div><!-- .layer-footer -->
+    </div><!-- .layer-wrap -->
+</div><!-- #layerPopup -->
+
+<script th:inline="javascript">
+    let currentId = null;
+
+    $(document).ready(function() {
+        $('.select2').select2();
+
+        // Month picker (YYYY-MM) — hides day grid via CSS class
+        $('.input_datepicker_wrap input').datepicker({
+            dateFormat: 'yy-mm',
+            changeMonth: true,
+            changeYear: true,
+            showButtonPanel: true,
+            yearRange: '2020:2030',
+            beforeShow: function(input, inst) {
+                setTimeout(function() {
+                    inst.dpDiv.addClass('month-only');
+                }, 0);
+            },
+            onClose: function(dateText, inst) {
+                var month = $('#ui-datepicker-div .ui-datepicker-month :selected').val();
+                var year  = $('#ui-datepicker-div .ui-datepicker-year :selected').val();
+                if (month !== undefined && year !== undefined) {
+                    var mm = String(parseInt(month) + 1).padStart(2, '0');
+                    $(this).val(year + '-' + mm);
+                }
+            }
+        });
+
+        // 전체기간 checkbox → disable/enable date inputs
+        $('#wholPrdYn').on('change', function() {
+            var disabled = $(this).is(':checked');
+            $('#기간S, #기간E').prop('disabled', disabled).val('');
+        });
+
+        fn_selectBgtMngList();
+    });
+
+    function fn_selectBgtMngList() {
+        $.ajax({
+            url: '/budget/selectBgtMngList.do',
+            type: 'POST',
+            contentType: 'application/json',
+            data: JSON.stringify({
+                sidoCd:     $('#jijache').val(),
+                sigunguCd:  $('#sigun').val(),
+                guCd:       $('#gu').val(),
+                emdCd:      $('#eupCd').val(),
+                srchStrtMm: $('#기간S').val(),
+                srchEndMm:  $('#기간E').val(),
+                wholPrdYn:  $('#wholPrdYn').is(':checked') ? 'Y' : null
+            }),
+            success: function(data) {
+                fn_renderGrid(data);
+                $('#totCnt').text('(' + data.length + '건)');
+            }
+        });
+    }
+
+    function fn_renderGrid(data) {
+        var html = '';
+        if (data.length === 0) {
+            html = '<tr><td colspan="7">데이터가 없습니다</td></tr>';
+        } else {
+            $.each(data, function(i, row) {
+                html += '<tr style="cursor:pointer;" onclick="fn_openPopup(' + (row.id ? row.id : 'null') + ')">';
+                html += '<td>' + row.rn + '</td>';
+                html += '<td>' + row.jijacheNm + '</td>';
+                html += '<td>' + row.startMm + '</td>';
+                html += '<td>' + row.endMm + '</td>';
+                html += '<td style="text-align:right;">' + row.ntnlBgt.toLocaleString() + '</td>';
+                html += '<td style="text-align:right;">' + row.lclBgt.toLocaleString() + '</td>';
+                html += '<td style="text-align:right;">' + row.bgtSum.toLocaleString() + '</td>';
+                html += '</tr>';
+            });
+        }
+        $('#gridBody').html(html);
+    }
+
+    function fn_openPopup(id) {
+        currentId = id;
+        fn_clearPopup();
+        if (id === null) {
+            $('#popupTitle').text('예산등록');
+            $('#btnDelete').hide();
+            $('#layerPopup').fadeIn('fast');
+        } else {
+            $('#popupTitle').text('예산수정');
+            $('#btnDelete').show();
+            $.ajax({
+                url: '/budget/selectBgtMngDetail.do',
+                type: 'POST',
+                contentType: 'application/json',
+                data: JSON.stringify({ id: id }),
+                success: function(d) {
+                    $('#pop_sigungu').val(d.sigunguCd).trigger('change');
+                    $('#pop_gu').val(d.guCd).trigger('change');
+                    $('#pop_startYy').val(d.startYy).trigger('change');
+                    $('#pop_startMm').val(d.startMm).trigger('change');
+                    $('#pop_endYy').val(d.endYy).trigger('change');
+                    $('#pop_endMm').val(d.endMm).trigger('change');
+                    $('#pop_ntnlBgt').val(d.ntnlBgt);
+                    $('#pop_lclBgt').val(d.lclBgt);
+                    $('#layerPopup').fadeIn('fast');
+                }
+            });
+        }
+    }
+
+    function fn_closePopup() {
+        $('#layerPopup').fadeOut('fast');
+        fn_clearPopup();
+    }
+
+    function fn_clearPopup() {
+        $('#pop_sigungu').val('').trigger('change');
+        $('#pop_gu').val('').trigger('change');
+        $('#pop_startYy').val('').trigger('change');
+        $('#pop_startMm').val('').trigger('change');
+        $('#pop_endYy').val('').trigger('change');
+        $('#pop_endMm').val('').trigger('change');
+        $('#pop_ntnlBgt').val('');
+        $('#pop_lclBgt').val('');
+    }
+
+    function fn_saveBgt() {
+        var sigunguCd = $('#pop_sigungu').val();
+        var startYy   = $('#pop_startYy').val();
+        var startMm   = $('#pop_startMm').val();
+        var endYy     = $('#pop_endYy').val();
+        var endMm     = $('#pop_endMm').val();
+        var ntnlBgt   = $('#pop_ntnlBgt').val();
+        var lclBgt    = $('#pop_lclBgt').val();
+
+        if (!sigunguCd) { alert('시/군을 선택해주세요.'); return; }
+        if (!startYy || !startMm) { alert('시작 연월을 선택해주세요.'); return; }
+        if (!endYy   || !endMm)   { alert('종료 연월을 선택해주세요.'); return; }
+        if (!ntnlBgt) { alert('국비예산을 입력해주세요.'); return; }
+        if (!lclBgt)  { alert('지방비예산을 입력해주세요.'); return; }
+
+        var url    = currentId ? '/budget/updateBgtMng.do' : '/budget/insertBgtMng.do';
+        var params = {
+            id:        currentId,
+            sidoCd:    '41',
+            sidoNm:    '경기도',
+            sigunguCd: sigunguCd,
+            sigunguNm: $('#pop_sigungu option:selected').text(),
+            guCd:      $('#pop_gu').val(),
+            guNm:      $('#pop_gu option:selected').text(),
+            startYy:   startYy,
+            startMm:   startMm,
+            endYy:     endYy,
+            endMm:     endMm,
+            ntnlBgt:   parseInt(ntnlBgt),
+            lclBgt:    parseInt(lclBgt)
+        };
+
+        $.ajax({
+            url:         url,
+            type:        'POST',
+            contentType: 'application/json',
+            data:        JSON.stringify(params),
+            success: function() {
+                alert(currentId ? '수정되었습니다.' : '등록되었습니다.');
+                fn_closePopup();
+                fn_selectBgtMngList();
+            },
+            error: function() {
+                alert('저장 중 오류가 발생했습니다.');
+            }
+        });
+    }
+
+    function fn_downloadExcel() {
+        var params = new URLSearchParams();
+        params.append('sidoCd',     $('#jijache').val());
+        params.append('sigunguCd',  $('#sigun').val());
+        params.append('guCd',       $('#gu').val());
+        params.append('srchStrtMm', $('#기간S').val());
+        params.append('srchEndMm',  $('#기간E').val());
+        if ($('#wholPrdYn').is(':checked')) params.append('wholPrdYn', 'Y');
+        location.href = '/budget/downloadBgtMngExcel.do?' + params.toString();
+    }
+
+    function fn_deleteBgt() {
+        if (!confirm('삭제하시겠습니까?')) return;
+        $.ajax({
+            url:         '/budget/deleteBgtMng.do',
+            type:        'POST',
+            contentType: 'application/json',
+            data:        JSON.stringify({ id: currentId }),
+            success: function() {
+                alert('삭제되었습니다.');
+                fn_closePopup();
+                fn_selectBgtMngList();
+            },
+            error: function() {
+                alert('삭제 중 오류가 발생했습니다.');
+            }
+        });
+    }
+</script>
+
+</body>
+</html>

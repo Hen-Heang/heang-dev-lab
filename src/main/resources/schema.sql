@@ -15,6 +15,7 @@
 -- [2026-04-19] board_file table added
 -- [2026-04-20] company table added
 -- [2026-04-21] sidebar.html fragment created (not SQL — noted for reference)
+-- [2026-04-22] budget_mng table added
 -- -------------------------------------------------------
 --
 -- HOW TO ADD A NEW TABLE (새 테이블 추가 방법)
@@ -240,6 +241,36 @@ INSERT INTO students (name, email, age, major) VALUES ('Bob Johnson', 'bob@examp
 INSERT INTO students (name, email, age, major) VALUES ('Charlie Brown', 'charlie@example.com', 21, 'Physics');
 
 -- =====================================================
+-- [2026-04-22] Budget management table (예산 관리 테이블)
+-- Purpose: store national/local budget by region and period
+-- =====================================================
+CREATE TABLE budget_mng (
+    id          BIGSERIAL    PRIMARY KEY,
+    sido_cd     VARCHAR(10)  NOT NULL,
+    sido_nm     VARCHAR(50),
+    sigungu_cd  VARCHAR(10),
+    sigungu_nm  VARCHAR(50),
+    gu_cd       VARCHAR(10),
+    gu_nm       VARCHAR(50),
+    start_yy    CHAR(4)      NOT NULL,
+    start_mm    CHAR(2)      NOT NULL,
+    end_yy      CHAR(4)      NOT NULL,
+    end_mm      CHAR(2)      NOT NULL,
+    ntnl_bgt    BIGINT       NOT NULL DEFAULT 0,
+    lcl_bgt     BIGINT       NOT NULL DEFAULT 0,
+    del_yn      CHAR(1)      NOT NULL DEFAULT 'N',
+    created_at  TIMESTAMP    NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    updated_at  TIMESTAMP    NOT NULL DEFAULT CURRENT_TIMESTAMP
+);
+
+INSERT INTO budget_mng (sido_cd, sido_nm, sigungu_cd, sigungu_nm, start_yy, start_mm, end_yy, end_mm, ntnl_bgt, lcl_bgt)
+VALUES
+    ('41', '경기도', '41210', '광명시', '2026', '01', '2026', '12', 10000000, 5000000),
+    ('41', '경기도', '41170', '안양시', '2026', '01', '2026', '12', 20000000, 10000000),
+    ('41', '경기도', '41460', '용인시', '2026', '01', '2026', '12', 30000000, 15000000),
+    ('41', '경기도', '41500', '이천시', '2026', '01', '2026', '12', 40000000, 20000000);
+
+-- =====================================================
 -- MIGRATIONS
 -- Run these only on existing databases (already created).
 -- If you ran schema.sql from scratch, skip this section.
@@ -314,6 +345,28 @@ VALUES
     ('에이티',           '세종대왕','107-88-36180', '041-1111-1111', '식권사', '페이코',   'OFFLINE','승인', '최지원', '010-1111-0004', 80),
     ('세븐티',           '유관순', '107-88-36170', '041-8888-0000', '카드사', '신한카드', 'OFFLINE','반려', '정수빈', '010-1111-0005', 200);
 
+
+-- =====================================================
+-- [2026-04-22] Budget management table (for existing DB)
+-- =====================================================
+CREATE TABLE IF NOT EXISTS budget_mng (
+    id          BIGSERIAL    PRIMARY KEY,
+    sido_cd     VARCHAR(10)  NOT NULL,
+    sido_nm     VARCHAR(50),
+    sigungu_cd  VARCHAR(10),
+    sigungu_nm  VARCHAR(50),
+    gu_cd       VARCHAR(10),
+    gu_nm       VARCHAR(50),
+    start_yy    CHAR(4)      NOT NULL,
+    start_mm    CHAR(2)      NOT NULL,
+    end_yy      CHAR(4)      NOT NULL,
+    end_mm      CHAR(2)      NOT NULL,
+    ntnl_bgt    BIGINT       NOT NULL DEFAULT 0,
+    lcl_bgt     BIGINT       NOT NULL DEFAULT 0,
+    del_yn      CHAR(1)      NOT NULL DEFAULT 'N',
+    created_at  TIMESTAMP    NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    updated_at  TIMESTAMP    NOT NULL DEFAULT CURRENT_TIMESTAMP
+);
 
 -- =====================================================
 -- FUNCTIONS (함수)

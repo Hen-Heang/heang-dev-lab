@@ -15,7 +15,7 @@ import org.springframework.security.web.SecurityFilterChain;
  * Korean enterprise pattern:
  *   - Session-based login (not JWT) for admin web pages
  *   - Custom login page at /login
- *   - REST APIs (/api/**) permitted without login — they use JWT separately
+ *   - REST APIs (/api/**) permitted without a login — they use JWT separately
  *   - MVC pages require authentication
  *
  * @EnableMethodSecurity → enables @PreAuthorize on controller methods
@@ -33,12 +33,14 @@ public class SecurityConfig {
                 // Static resources — no login needed (정적 리소스)
                 .requestMatchers("/css/**", "/js/**", "/images/**", "/uploads/**", "/webjars/**").permitAll()
                 // Login + register page — must be open (로그인/회원가입 페이지)
-                .requestMatchers("/login", "/").permitAll()
+                .requestMatchers("/login", "/", "/error").permitAll()
                 // Swagger — open for dev (개발용 API 문서)
                 .requestMatchers("/swagger-ui/**", "/swagger-ui.html", "/v3/api-docs/**").permitAll()
                 // REST APIs — permitted, so existing AJAX calls keep working (기존 REST API)
                 // In a real project these would have their own JWT filter chain
                 .requestMatchers("/api/**", "/users/**", "/board/api/**").permitAll()
+                // TEMP — allow budget page without login for dev testing (개발 테스트용)
+                .requestMatchers("/budget/**").permitAll()
                 // Everything else requires login (나머지는 로그인 필요)
                 .anyRequest().authenticated()
             )
@@ -67,7 +69,7 @@ public class SecurityConfig {
             // Disable CSRF for REST API paths (Thymeleaf forms get CSRF automatically)
             // th:action in Thymeleaf forms automatically injects the CSRF hidden field
             .csrf(csrf -> csrf
-                .ignoringRequestMatchers("/api/**", "/users/**")
+                .ignoringRequestMatchers("/api/**", "/users/**", "/budget/**")
             );
 
         return http.build();

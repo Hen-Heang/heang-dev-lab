@@ -62,6 +62,7 @@ Located in `src/main/resources/mapper/`:
 - `CommonCodeMapper.xml`
 - `CompanyMapper.xml`
 - `DynamicSqlPracticeMapper.xml`
+- `BgtMngMapper.xml` — resultMap → `BgtMngOutVO` (list) / `BgtMngVO` (detail), SELECT/INSERT/UPDATE/soft-DELETE
 
 ## Database Tables
 | Table | Key Columns | Added |
@@ -74,6 +75,7 @@ Located in `src/main/resources/mapper/`:
 | `common_code` | code_group+code_value (PK), code_name, sort_order, use_yn, created_at | 2026-04-19 |
 | `board_file` | file_sn (PK), board_sn (FK→board), orig_name, saved_name, file_size, created_at | 2026-04-19 |
 | `company` | id, company_name, ceo_name, business_no, phone, address, apply_channel, status, contact_name, worker_count, created_at, updated_at | 2026-04-20 |
+| `budget_mng` | id, sido_cd, sido_nm, sigungu_cd, sigungu_nm, gu_cd, gu_nm, start_yy, start_mm, end_yy, end_mm, ntnl_bgt, lcl_bgt, del_yn, created_at, updated_at | 2026-04-22 |
 
 Run `schema.sql` to recreate tables + sample data.
 Set `SPRING_SQL_INIT_MODE=always` to auto-run on startup.
