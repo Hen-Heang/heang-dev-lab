@@ -2,20 +2,42 @@
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 
+<!--
+    BgtMngMapper.xml — SQL for Budget Management (예산 관리 SQL)
+
+    namespace must exactly match the Java @Mapper interface full class path.
+    MyBatis uses this to link method calls in Java → SQL statements here.
+-->
 <mapper namespace="com.heang.springmybatistest.mapper.BgtMngMapper">
 
-    <!-- ResultMap: DB column (snake_case) → Java field (camelCase) -->
+    <!--
+        [resultMap — bgtMngOutResult]
+        Maps DB column names (snake_case) → Java field names (camelCase) in BgtMngOutVO.
+
+        Why do we need this?
+          mybatis.configuration.map-underscore-to-camel-case=true handles simple cases
+          (e.g. ntnl_bgt → ntnlBgt automatically).
+          But computed/aliased columns like 'jijache_nm' or 'start_mm_full' need explicit mapping.
+
+        id     = primary key column (special tag for PK)
+        result = regular column mapping
+    -->
     <resultMap id="bgtMngOutResult" type="com.heang.springmybatistest.vo.BgtMngOutVO">
         <id     property="id"         column="id"/>
         <result property="rn"         column="rn"/>
-        <result property="jijacheNm"  column="jijache_nm"/>
-        <result property="startMm"    column="start_mm_full"/>
-        <result property="endMm"      column="end_mm_full"/>
+        <result property="jijacheNm"  column="jijache_nm"/>   <!-- computed alias in SQL -->
+        <result property="startMm"    column="start_mm_full"/> <!-- computed alias: start_yy||'-'||start_mm -->
+        <result property="endMm"      column="end_mm_full"/>   <!-- computed alias: end_yy||'-'||end_mm -->
         <result property="ntnlBgt"    column="ntnl_bgt"/>
         <result property="lclBgt"     column="lcl_bgt"/>
-        <result property="bgtSum"     column="bgt_sum"/>
+        <result property="bgtSum"     column="bgt_sum"/>       <!-- computed alias: ntnl_bgt + lcl_bgt -->
     </resultMap>
 
+    <!--
+        [resultMap — bgtMngDetailResult]
+        Maps DB columns → Java fields in BgtMngVO (full detail for edit popup).
+        All fields are raw DB columns (not computed), so mapping is straightforward.
+    -->
     <resultMap id="bgtMngDetailResult" type="com.heang.springmybatistest.vo.BgtMngVO">
         <id     property="id"         column="id"/>
         <result property="sidoCd"     column="sido_cd"/>
@@ -33,23 +55,102 @@
         <result property="delYn"      column="del_yn"/>
     </resultMap>
 
-    <!-- ================================
-         SELECT LIST  (예산 목록)
-         ================================ -->
-    <select id="selectBgtMngList" parameterType="com.heang.springmybatistest.vo.BgtMngInVO"
+    <!-- ================================================================
+         SELECT LIST  (예산 목록 조회)
+         Matches: BgtMngMapper.selectBgtMngList(BgtMngInVO inVO)
+         ================================================================ -->
+    <select id="selectBgtMngList"
+            parameterType="com.heang.springmybatistest.vo.BgtMngInVO"
             resultMap="bgtMngOutResult">
         SELECT
+            <!--
+                ROW_NUMBER() OVER (ORDER BY id)
+                = assigns a sequential number (1, 2, 3...) to each row
+                This is the 순번 column in the grid.
+                It re-numbers every time you search, so page 2 starts at 11, not 1.
+            -->
             ROW_NUMBER() OVER (ORDER BY id) AS rn,
             id,
+            <!--
+                지자체명 = 시/도 + 시/군 combined display name
+                CASE WHEN sigungu_nm is filled → "경기도 수원시"
+                     ELSE just sido_nm         → "경기도"
+                || is PostgreSQL string concatenation (like + in Java)
+            -->
             CASE
                 WHEN sigungu_nm IS NOT NULL AND sigungu_nm != '' THEN sido_nm || ' ' || sigungu_nm
                 ELSE sido_nm
             END AS jijache_nm,
+            <!-- Combine year + month into YYYY-MM display format -->
             start_yy || '-' || start_mm AS start_mm_full,
             end_yy   || '-' || end_mm   AS end_mm_full,
             ntnl_bgt,
             lcl_bgt,
-            ntnl_bgt + lcl_bgt AS bgt_sum
+            ntnl_bgt + lcl_bgt AS bgt_sum  <!-- total budget computed in SQL -->
+        FROM budget_mng
+        <!--
+            <where> tag: smarter than writing WHERE manually
+              - Adds WHERE only if at least one <if> condition is true
+              - Automatically removes leading AND/OR from the first condition
+              - del_yn = 'N' is always included (filters out soft-deleted records)
+        -->
+        <where>
+            AND del_yn = 'N'
+            <!--
+                <if test="..."> = dynamic condition (OGNL expression)
+                Only adds this SQL fragment if the condition is true.
+                This is how MyBatis builds flexible WHERE clauses without many Java if-else blocks.
+            -->
+            <if test="sigunguCd != null and sigunguCd != ''">
+                AND sigungu_cd = #{sigunguCd}
+            </if>
+            <if test="guCd != null and guCd != ''">
+                AND gu_cd = #{guCd}
+            </if>
+            <!--
+                Date filter — only applied when wholPrdYn is null (전체기간 NOT checked).
+                IMPORTANT: use == null, NOT != 'Y'
+                Reason: OGNL treats single-quoted 'Y' as a char (numeric) and tries to compare
+                it as a number → throws NumberFormatException.
+                The safe pattern is to check for null vs non-null only.
+
+                &gt; = >   (XML must escape > as &gt; inside attribute/content)
+                &lt; = <   (XML must escape < as &lt;)
+            -->
+            <if test="wholPrdYn == null">
+                <if test="srchStrtMm != null and srchStrtMm != ''">
+                    AND (start_yy || '-' || start_mm) &gt;= #{srchStrtMm}
+                </if>
+                <if test="srchEndMm != null and srchEndMm != ''">
+                    AND (end_yy || '-' || end_mm) &lt;= #{srchEndMm}
+                </if>
+            </if>
+        </where>
+        ORDER BY id
+        <!--
+            Pagination: LIMIT = max rows to return, OFFSET = how many rows to skip
+            #{pageSize} and #{offset} come from BgtMngInVO:
+              pageSize = 10  (field default)
+              offset   = (pageNo - 1) * pageSize  (computed by getOffset() method)
+            Example: page 2 → LIMIT 10 OFFSET 10  (skip first 10, return next 10)
+        -->
+        LIMIT #{pageSize} OFFSET #{offset}
+    </select>
+
+    <!-- ================================================================
+         SELECT COUNT  (페이징용 전체 건수)
+         Matches: BgtMngMapper.selectBgtMngListCount(BgtMngInVO inVO)
+
+         Same WHERE conditions as selectBgtMngList but:
+           - No SELECT columns (just COUNT(*))
+           - No ORDER BY
+           - No LIMIT / OFFSET
+         → returns the total number of matching rows regardless of current page
+         ================================================================ -->
+    <select id="selectBgtMngListCount"
+            parameterType="com.heang.springmybatistest.vo.BgtMngInVO"
+            resultType="int">
+        SELECT COUNT(*)
         FROM budget_mng
         <where>
             AND del_yn = 'N'
@@ -68,26 +169,37 @@
                 </if>
             </if>
         </where>
-        ORDER BY id
     </select>
 
-    <!-- ================================
-         SELECT DETAIL  (상세조회 — 팝업 수정용)
-         ================================ -->
-    <select id="selectBgtMngDetail" parameterType="com.heang.springmybatistest.vo.BgtMngInVO"
+    <!-- ================================================================
+         SELECT DETAIL  (상세 조회 — 팝업 수정용)
+         Matches: BgtMngMapper.selectBgtMngDetail(BgtMngInVO inVO)
+
+         Fetches all raw editable fields for one record by PK (id).
+         AND del_yn = 'N' → prevents editing a soft-deleted record.
+         ================================================================ -->
+    <select id="selectBgtMngDetail"
+            parameterType="com.heang.springmybatistest.vo.BgtMngInVO"
             resultMap="bgtMngDetailResult">
         SELECT id, sido_cd, sido_nm, sigungu_cd, sigungu_nm,
                gu_cd, gu_nm, start_yy, start_mm, end_yy, end_mm,
                ntnl_bgt, lcl_bgt, del_yn
         FROM budget_mng
-        WHERE id = #{id}
+        WHERE id = #{id}       <!-- #{id} = inVO.getId() — MyBatis calls the getter automatically -->
           AND del_yn = 'N'
     </select>
 
-    <!-- ================================
+    <!-- ================================================================
          INSERT  (예산 등록)
-         ================================ -->
-    <insert id="insertBgtMng" parameterType="com.heang.springmybatistest.vo.BgtMngInVO">
+         Matches: BgtMngMapper.insertBgtMng(BgtMngInVO inVO)
+
+         #{fieldName} = MyBatis placeholder → calls inVO.getFieldName() at runtime
+         id is NOT listed because PostgreSQL BIGSERIAL auto-generates it.
+         del_yn defaults to 'N' (defined in table schema).
+         created_at / updated_at default to NOW() (defined in table schema).
+         ================================================================ -->
+    <insert id="insertBgtMng"
+            parameterType="com.heang.springmybatistest.vo.BgtMngInVO">
         INSERT INTO budget_mng (
             sido_cd, sido_nm, sigungu_cd, sigungu_nm, gu_cd, gu_nm,
             start_yy, start_mm, end_yy, end_mm,
@@ -99,10 +211,19 @@
         )
     </insert>
 
-    <!-- ================================
+    <!-- ================================================================
          UPDATE  (예산 수정)
-         ================================ -->
-    <update id="updateBgtMng" parameterType="com.heang.springmybatistest.vo.BgtMngInVO">
+         Matches: BgtMngMapper.updateBgtMng(BgtMngInVO inVO)
+
+         <set> tag: smarter than writing SET manually
+           - Automatically removes trailing comma from the last <if> that is true
+           - Only updates fields whose <if> condition passes (partial update)
+
+         updated_at = NOW() is always included (no <if> needed — always update the timestamp)
+         AND del_yn = 'N' → safety check, prevents accidentally updating a deleted record
+         ================================================================ -->
+    <update id="updateBgtMng"
+            parameterType="com.heang.springmybatistest.vo.BgtMngInVO">
         UPDATE budget_mng
         <set>
             <if test="sigunguCd != null and sigunguCd != ''">sigungu_cd = #{sigunguCd},</if>
@@ -121,10 +242,19 @@
           AND del_yn = 'N'
     </update>
 
-    <!-- ================================
-         DELETE  (soft delete — 예산 삭제)
-         ================================ -->
-    <update id="deleteBgtMng" parameterType="com.heang.springmybatistest.vo.BgtMngInVO">
+    <!-- ================================================================
+         SOFT DELETE  (논리삭제 — 예산 삭제)
+         Matches: BgtMngMapper.deleteBgtMng(BgtMngInVO inVO)
+
+         This is NOT a SQL DELETE statement — it is an UPDATE.
+         Soft delete pattern:
+           del_yn = 'Y'  → marks the record as deleted
+           updated_at    → records when it was deleted
+         All SELECT queries use WHERE del_yn = 'N' to exclude these records.
+         The row still exists in the DB and can be recovered if needed.
+         ================================================================ -->
+    <update id="deleteBgtMng"
+            parameterType="com.heang.springmybatistest.vo.BgtMngInVO">
         UPDATE budget_mng
         SET del_yn     = 'Y',
             updated_at = NOW()

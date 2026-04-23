@@ -2,23 +2,51 @@
 <html xmlns:th="http://www.thymeleaf.org" lang="ko">
 
 <head>
+    <!--
+        [Thymeleaf Fragment]
+        th:replace = pull a fragment from another file and insert it here
+        layout/default: head → src/templates/layout/default.html → head fragment
+        All shared CSS/JS (jQuery, Select2, datepicker, etc.) are loaded from there
+    -->
     <th:block th:replace="~{layout/default :: head}"></th:block>
     <title>예산 관리</title>
     <style>
-        /* Hide day-grid so datepicker shows only month/year */
+        /*
+            [Month Picker CSS Trick]
+            jQuery UI datepicker shows a full calendar by default (year/month/day).
+            We only need year-month (연-월), so we hide the day grid (.ui-datepicker-calendar).
+            The class 'month-only' is added dynamically in JS via beforeShow callback.
+        */
         .ui-datepicker.month-only .ui-datepicker-calendar { display: none; }
         .ui-datepicker.month-only { width: 220px; }
     </style>
 </head>
 
+<!--
+    [Layout trigger]
+    body class="sub-page "→ layout.css applies GNB (top bar) + LNB (sidebar) layout
+    Different from dashboard which uses class="sidebar-layout"
+-->
 <body class="sub-page">
 
+<!--
+    [Thymeleaf Fragment — Header]
+    GNB (Global Navigation Bar) = top blue header bar
+    Pulled from layout/default.html: header fragment
+-->
 <header th:replace="~{layout/default :: header}"></header>
 
 <div class="container">
+    <!--
+        [Thymeleaf Fragment — Sidebar with parameter]
+        LNB (Local Navigation Bar) = left sidebar menu
+        'bgtMng' parameter → used inside the fragment to mark the current menu as active
+        (sets 'active' CSS class on the matching menu item)
+    -->
     <div th:replace="~{layout/default :: lnb-budget('bgtMng')}"></div>
 
     <div class="content-wrap">
+        <!-- Page title + breadcrumb (위치경로) -->
         <div class="content-header">
             <div class="title-wrap">
                 <div class="title">예산 관리</div>
@@ -33,14 +61,28 @@
         </div>
 
         <div class="content-body">
+            <!--
+                [Search Form — 검색 폼]
+                This form does NOT submit to the server the normal way.
+                The search button calls fn_selectBgtMngList() directly via onclick.
+                Values are read with $('#id').val() and sent to the server via AJAX.
+            -->
             <div class="search-form-wrap">
                 <form>
                     <div class="search-form-inner">
                         <div class="search-form">
+
+                            <!-- Row 1: 지자체 (Region) — 시/도 → 시/군 → 구 → 읍면동 cascade dropdowns -->
                             <div class="row">
                                 <div class="col-12">
                                     <label class="form-label" for="지자체"><span>지자체</span></label>
                                     <div class="form-container">
+                                        <!--
+                                            disabled → 시/도 is fixed to 경기도, not selectable
+                                            class="select2" → JS converts this into a searchable dropdown via Select2 library
+                                            name="sidoCd" → maps to BgtMngInVO.sidoCd on the server
+                                        -->
+                                        <label for="jijache"></label>
                                         <select class="form-select select2" id="jijache" name="sidoCd"
                                                 data-placeholder="시/도 선택" disabled>
                                             <option value=""></option>
@@ -65,12 +107,18 @@
                                             <option value=""></option>
                                         </select>
                                     </div>
-                                </div><!-- .col -->
-                            </div><!-- .row -->
+                                </div>
+                            </div>
+
+                            <!-- Row 2: 조회기간 (Search period) YYYY-MM ~ YYYY-MM + 전체기간 checkbox -->
                             <div class="row">
                                 <div class="col-12">
                                     <label class="form-label" for="기간S"><span>조회기간</span></label>
                                     <div class="form-container">
+                                        <!--
+                                            class="input_datepicker_wrap" → JS targets this class to init the month picker
+                                            name="srchStrtMm" → maps to BgtMngInVO.srchStrtMm on the server
+                                        -->
                                         <div class="input-wrap input_datepicker_wrap">
                                             <input class="from" type="text" id="기간S" name="srchStrtMm"
                                                    value="" maxlength="7" placeholder="YYYY-MM" />
@@ -80,15 +128,24 @@
                                             <input class="to" type="text" id="기간E" name="srchEndMm"
                                                    value="" maxlength="7" placeholder="YYYY-MM" />
                                         </div>
+                                        <!--
+                                            전체기간 (All period) checkbox:
+                                            checked → JS disables the date inputs, sends wholPrdYn: 'Y' to server
+                                            unchecked → date inputs active, sends wholPrdYn: null to server
+                                            MyBatis XML: <if test="wholPrdYn == null"> applies the date filter
+                                            → when 'Y', the date filter is skipped → returns all records
+                                        -->
                                         <div class="form-check">
                                             <input class="form-check-input" type="checkbox"
                                                    id="wholPrdYn" name="wholPrdYn" value="Y" />
                                             <label class="form-check-label" for="wholPrdYn">전체기간</label>
                                         </div>
-                                    </div><!-- .form-container -->
-                                </div><!-- .col -->
-                            </div><!-- .row -->
-                        </div><!-- .search-form -->
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Search button → calls fn_selectBgtMngList() -->
                         <div class="button-wrap">
                             <button type="button" class="btn btn-primary"
                                     onclick="fn_selectBgtMngList()">
@@ -96,26 +153,39 @@
                                 <span>검색</span>
                             </button>
                         </div>
-                    </div><!-- .search-form-inner -->
+                    </div>
                 </form>
-            </div><!-- .search-form-wrap -->
+            </div>
 
+            <!-- Section header: result count (검색결과) + action buttons -->
             <div class="section-header">
                 <div class="title-wrap">
-                    <div class="title">검색결과<span id="totCnt" class="small text-primary">(0건)</span></div>
+                    <!--
+                        #totCnt → updated by JS after AJAX response
+                        example: $('#totCnt').text('(3건)')  →  shows "(3건)"
+                    -->
+                    <div class="title">검색결과 <span id="totCnt" class="small text-primary">(0건)</span></div>
                 </div>
                 <div class="button-wrap">
+                    <!-- Excel download: NOT AJAX — uses location.href so browser handles the file dialog -->
                     <button type="button" class="btn btn-line" onclick="fn_downloadExcel()">
                         <i class="icon-filedown"></i>
                         <span>엑셀다운</span>
                     </button>
+                    <!-- fn_openPopup(null) → null means register mode (새 등록) -->
                     <button type="button" class="btn btn-primary"
                             onclick="fn_openPopup(null)">
                         <span>예산등록</span>
                     </button>
                 </div>
-            </div><!-- .section-header -->
+            </div>
 
+            <!--
+                [Data Grid — 목록]
+                thead is static HTML (fixed column headers).
+                tbody#gridBody → JS fn_renderGrid() dynamically builds <tr> rows from AJAX response.
+                Default content "데이터가 없습니다" is replaced immediately on page load.
+            -->
             <div class="section-body">
                 <div class="grid-area">
                     <div class="table-wrap">
@@ -131,6 +201,7 @@
                                     <th>예산합계(A+B)</th>
                                 </tr>
                             </thead>
+                            <!-- JS injects <tr> rows here dynamically -->
                             <tbody id="gridBody">
                                 <tr>
                                     <td colspan="7">데이터가 없습니다</td>
@@ -139,8 +210,13 @@
                         </table>
                     </div>
                 </div>
-            </div><!-- .section-body -->
+            </div>
 
+            <!--
+                [Pagination — 페이징]
+                Currently static HTML buttons (not wired to JS yet).
+                Next step: fn_renderPagination() will make these dynamic.
+            -->
             <div class="section-foot">
                 <div class="pagination-wrap">
                     <ul class="pagination">
@@ -151,24 +227,40 @@
                         <li class="last"><button class="btn disabled"><i class="icon-arrow-last"></i></button></li>
                     </ul>
                 </div>
-            </div><!-- .section-foot -->
+            </div>
         </div>
-    </div><!-- .content-wrap -->
-</div><!-- .container -->
+    </div>
+</div>
 
+<!--
+    [Layer Popup — 팝업]
+    Always exists in the DOM but hidden (display:none via CSS).
+    fn_openPopup() → fadeIn to show
+    fn_closePopup() → fadeOut to hide
+
+    Two modes controlled by currentId variable:
+      id = null → Register mode (등록): empty form, 삭제 button hidden
+      id = number → Edit mode (수정): form filled with existing data, 삭제 button visible
+-->
 <div id="layerPopup" class="layerPopup">
     <div class="layer-wrap" style="width:760px;">
         <div class="layer-header">
+            <!-- popupTitle text is changed by JS: '예산등록' or '예산수정' -->
             <h4 id="popupTitle" class="layer-title">예산등록</h4>
             <div class="button-wrap">
                 <button type="button" class="btn btn_close" title="창닫기" onclick="fn_closePopup()">
                     <i class="icon-close"></i>
                 </button>
             </div>
-        </div><!-- .layer-header -->
+        </div>
+
         <div class="layer-body">
             <div class="section-body">
                 <div class="table-wrap">
+                    <!--
+                        tbl-form = form table layout: th(label) | td(input) side-by-side
+                        colgroup fixes column widths
+                    -->
                     <table class="tbl-form">
                         <colgroup>
                             <col style="width:100px;">
@@ -177,18 +269,25 @@
                             <col style="width:50%;">
                         </colgroup>
                         <tbody>
+                            <!-- Row 1: 지자체 (region) — 시/도 fixed, 시/군 + 구 selectable -->
                             <tr>
                                 <th>
                                     <label class="form-label" for="pop_sido"><span>지자체</span></label>
                                 </th>
                                 <td colspan="3">
                                     <div class="form-container">
+                                        <!-- pop_sido: fixed to 경기도, disabled -->
                                         <select class="form-select select2" id="pop_sido"
                                                 data-placeholder="시/도 선택" disabled>
                                             <option value=""></option>
                                             <option value="41" selected>경기도</option>
                                         </select>
                                         <label for="pop_sigungu"></label>
+                                        <!--
+                                            In edit mode, JS sets value like:
+                                            $('#pop_sigungu').val(d.sigunguCd).trigger('change')
+                                            trigger('change') is required for Select2 to update its UI display
+                                        -->
                                         <select class="form-select select2" id="pop_sigungu"
                                                 data-placeholder="시/군 선택">
                                             <option value=""></option>
@@ -204,14 +303,16 @@
                                     </div>
                                 </td>
                             </tr>
+
+                            <!-- Row 2: 기간 (period) — start year/month ~ end year/month -->
                             <tr>
                                 <th>
                                     <label class="form-label" for="pop_startYy"><span>기간</span></label>
                                 </th>
                                 <td colspan="3">
                                     <div class="form-container col-12">
-                                        <select class="form-select select2" id="pop_startYy"
-                                                data-placeholder="선택">
+                                        <!-- Start: year select + month select -->
+                                        <select class="form-select select2" id="pop_startYy" data-placeholder="선택">
                                             <option value=""></option>
                                             <option value="2026">2026</option>
                                             <option value="2025">2025</option>
@@ -219,8 +320,7 @@
                                         </select>
                                         <div class="unit">년</div>
                                         <label for="pop_startMm"></label>
-                                        <select class="form-select select2" id="pop_startMm"
-                                                data-placeholder="선택">
+                                        <select class="form-select select2" id="pop_startMm" data-placeholder="선택">
                                             <option value=""></option>
                                             <option value="01">01</option>
                                             <option value="02">02</option>
@@ -237,9 +337,9 @@
                                         </select>
                                         <div class="unit">월</div>
                                         -
+                                        <!-- End: year select + month select -->
                                         <label for="pop_endYy"></label>
-                                        <select class="form-select select2" id="pop_endYy"
-                                                data-placeholder="선택">
+                                        <select class="form-select select2" id="pop_endYy" data-placeholder="선택">
                                             <option value=""></option>
                                             <option value="2026">2026</option>
                                             <option value="2025">2025</option>
@@ -247,8 +347,7 @@
                                         </select>
                                         <div class="unit">년</div>
                                         <label for="pop_endMm"></label>
-                                        <select class="form-select select2" id="pop_endMm"
-                                                data-placeholder="선택">
+                                        <select class="form-select select2" id="pop_endMm" data-placeholder="선택">
                                             <option value=""></option>
                                             <option value="12">12</option>
                                             <option value="11">11</option>
@@ -264,9 +363,11 @@
                                             <option value="01">01</option>
                                         </select>
                                         <div class="unit">월</div>
-                                    </div><!-- .form-container -->
+                                    </div>
                                 </td>
                             </tr>
+
+                            <!-- Row 3: 국비예산 (national budget) + 지방비예산 (local budget) -->
                             <tr>
                                 <th>
                                     <label class="form-label" for="pop_ntnlBgt"><span>국비예산</span></label>
@@ -278,7 +379,7 @@
                                                    value="" placeholder="숫자만 입력" />
                                         </div>
                                         <div class="unit">원</div>
-                                    </div><!-- .form-container -->
+                                    </div>
                                 </td>
                                 <th>
                                     <label class="form-label" for="pop_lclBgt"><span>지방비 예산</span></label>
@@ -290,16 +391,21 @@
                                                    value="" placeholder="숫자만 입력" />
                                         </div>
                                         <div class="unit">원</div>
-                                    </div><!-- .form-container -->
+                                    </div>
                                 </td>
                             </tr>
                         </tbody>
                     </table>
                 </div>
-            </div><!-- .section-body -->
-        </div><!-- .layer-body -->
+            </div>
+        </div>
+
         <div class="layer-footer">
             <div class="button-wrap">
+                <!--
+                    btnDelete: hidden by default (register mode)
+                    shown only in edit mode — controlled by fn_openPopup(id)
+                -->
                 <button type="button" class="btn btn-line" id="btnDelete"
                         style="display:none;" onclick="fn_deleteBgt()">
                     <span>삭제</span>
@@ -311,17 +417,41 @@
                     <span>저장</span>
                 </button>
             </div>
-        </div><!-- .layer-footer -->
-    </div><!-- .layer-wrap -->
-</div><!-- #layerPopup -->
+        </div>
+    </div>
+</div>
 
 <script th:inline="javascript">
+    /*
+     * [Global Variable]
+     * currentId = the id of the record currently open in the popup
+     *   null → register mode (INSERT)
+     *   number → edit/delete mode (UPDATE / soft DELETE)
+     */
     let currentId = null;
 
+    /*
+     * [Page Initialization]
+     * $(document).ready() = runs after the full HTML is loaded into the browser
+     * This is a core jQuery pattern — if JS runs before the DOM is ready, elements won't be found
+     */
     $(document).ready(function() {
+
+        // Initialize Select2: upgrades plain <select> into searchable dropdowns
         $('.select2').select2();
 
-        // Month picker (YYYY-MM) — hides day grid via CSS class
+        /*
+         * [Month Picker Initialization]
+         * jQuery UI datepicker configured for year-month only (no day selection)
+         *
+         * Two key tricks:
+         * 1) beforeShow → adds 'month-only' class to the datepicker popup div
+         *    → CSS hides .ui-datepicker-calendar (the day grid)
+         *
+         * 2) onClose → manually reads the selected year and month, writes YYYY-MM into the input
+         *    → JS months are 0-indexed (Jan=0, Dec=11), so we do +1
+         *    → padStart(2, '0') ensures two digits: month 4 → '04'
+         */
         $('.input_datepicker_wrap input').datepicker({
             dateFormat: 'yy-mm',
             changeMonth: true,
@@ -334,28 +464,50 @@
                 }, 0);
             },
             onClose: function(dateText, inst) {
-                var month = $('#ui-datepicker-div .ui-datepicker-month :selected').val();
-                var year  = $('#ui-datepicker-div .ui-datepicker-year :selected').val();
+                const month = $('#ui-datepicker-div .ui-datepicker-month :selected').val();
+                const year  = $('#ui-datepicker-div .ui-datepicker-year :selected').val();
                 if (month !== undefined && year !== undefined) {
-                    var mm = String(parseInt(month) + 1).padStart(2, '0');
+                    const mm = String(parseInt(month) + 1).padStart(2, '0');
                     $(this).val(year + '-' + mm);
                 }
             }
         });
 
-        // 전체기간 checkbox → disable/enable date inputs
+        /*
+         * [전체기간 Checkbox Event]
+         * checked → disable date inputs + clear values → server receives wholPrdYn: 'Y'
+         * unchecked → enable date inputs again → server receives wholPrdYn: null
+         *
+         * Why null (not empty string)?
+         * MyBatis XML uses: <if test="wholPrdYn == null">
+         * An empty string "" is NOT null → the condition would fail and skip the date filter wrongly
+         */
         $('#wholPrdYn').on('change', function() {
-            var disabled = $(this).is(':checked');
+            const disabled = $(this).is(':checked');
             $('#기간S, #기간E').prop('disabled', disabled).val('');
         });
 
+        // Autoload the grid when the page first opens (no search filters applied)
         fn_selectBgtMngList();
     });
 
+    /*
+     * [Search / Load List — 목록 조회 AJAX]
+     *
+     * Flow:
+     *   JS collects form values → POST to /budget/selectBgtMngList.do (JSON body)
+     *   → BgtMngController → BgtMngService → BgtMngMapper → PostgreSQL
+     *   → Returns List<BgtMngOutVO> as JSON array
+     *   → fn_renderGrid(data) replaces tbody content
+     *
+     * Key AJAX settings:
+     *   contentType: 'application/json' → tells server this is JSON (required for @RequestBody)
+     *   JSON.stringify({...})           → converts JS object to JSON string for the request body
+     */
     function fn_selectBgtMngList() {
         $.ajax({
-            url: '/budget/selectBgtMngList.do',
-            type: 'POST',
+            url:         '/budget/selectBgtMngList.do',
+            type:        'POST',
             contentType: 'application/json',
             data: JSON.stringify({
                 sidoCd:     $('#jijache').val(),
@@ -364,6 +516,7 @@
                 emdCd:      $('#eupCd').val(),
                 srchStrtMm: $('#기간S').val(),
                 srchEndMm:  $('#기간E').val(),
+                // checked → 'Y', unchecked → null (must be null, not '', for MyBatis <if> to work correctly)
                 wholPrdYn:  $('#wholPrdYn').is(':checked') ? 'Y' : null
             }),
             success: function(data) {
@@ -373,8 +526,18 @@
         });
     }
 
+    /*
+     * [Render Grid — 그리드 렌더링]
+     * Builds HTML <tr> strings from the AJAX response array and injects into #gridBody
+     *
+     * Key points:
+     * - Empty array → show "데이터가 없습니다" message row
+     * - $.each(data, function(i, row)) → loop through each item in the array
+     * - row.ntnlBgt.toLocaleString() → adds comma formatting: five million → "5,000,000"
+     * - Each row has onclick="fn_openPopup(row.id)" → clicking a row opens edit popup
+     */
     function fn_renderGrid(data) {
-        var html = '';
+        let html = '';
         if (data.length === 0) {
             html = '<tr><td colspan="7">데이터가 없습니다</td></tr>';
         } else {
@@ -393,21 +556,39 @@
         $('#gridBody').html(html);
     }
 
+    /*
+     * [Open Popup — 팝업 열기]
+     *
+     * id = null → Register mode: clear form, hide 삭제 button, show popup
+     * id = number → Edit mode: fetch existing data from the server, fill form, show popup
+     *
+     * Edit mode AJAX flow:
+     *   POST /budget/selectBgtMngDetail.do { id: id }
+     *   → Returns BgtMngVO (full detail fields)
+     *   → Fill each input with .val(value).trigger('change')
+     *
+     * Why .trigger('change')?
+     *   Select2 does not update its visible UI when you call .val() alone.
+     *   .trigger('change') forces Select2 to re-read the new value and refresh the display.
+     */
     function fn_openPopup(id) {
         currentId = id;
-        fn_clearPopup();
+        fn_clearPopup(); // always clear old data first
+
         if (id === null) {
+            // Register mode (등록)
             $('#popupTitle').text('예산등록');
             $('#btnDelete').hide();
             $('#layerPopup').fadeIn('fast');
         } else {
+            // Edit mode (수정) — load existing data from server
             $('#popupTitle').text('예산수정');
             $('#btnDelete').show();
             $.ajax({
-                url: '/budget/selectBgtMngDetail.do',
-                type: 'POST',
+                url:         '/budget/selectBgtMngDetail.do',
+                type:        'POST',
                 contentType: 'application/json',
-                data: JSON.stringify({ id: id }),
+                data:        JSON.stringify({ id: id }),
                 success: function(d) {
                     $('#pop_sigungu').val(d.sigunguCd).trigger('change');
                     $('#pop_gu').val(d.guCd).trigger('change');
@@ -423,11 +604,17 @@
         }
     }
 
+    // Close popup — fade out then clear all fields
     function fn_closePopup() {
         $('#layerPopup').fadeOut('fast');
         fn_clearPopup();
     }
 
+    /*
+     * [Clear Popup Fields — 팝업 초기화]
+     * Called before opening popup (to avoid showing previous record's data)
+     * Select2 fields need .trigger('change') after .val('') to reset the visible UI too
+     */
     function fn_clearPopup() {
         $('#pop_sigungu').val('').trigger('change');
         $('#pop_gu').val('').trigger('change');
@@ -439,47 +626,65 @@
         $('#pop_lclBgt').val('');
     }
 
+    /*
+     * [Save — 저장 (INSERT or UPDATE)]
+     *
+     * Step 1 — Validation: check each required field
+     *   if empty → alert message + return (stops the function immediately)
+     *
+     * Step 2 — Decide URL using ternary operator:
+     *   currentId is null → INSERT → /budget/insertBgtMng.do
+     *   currentId is number → UPDATE → /budget/updateBgtMng.do
+     *
+     * Step 3 — POST AJAX with full form data as JSON
+     *   parseInt(ntnlBgt) → converts string "5000000" to number 5000000
+     *   Server expects Long type, so we must send a number, not a string
+     *
+     * On success: alert → close popup → refresh grid
+     */
     function fn_saveBgt() {
-        var sigunguCd = $('#pop_sigungu').val();
-        var startYy   = $('#pop_startYy').val();
-        var startMm   = $('#pop_startMm').val();
-        var endYy     = $('#pop_endYy').val();
-        var endMm     = $('#pop_endMm').val();
-        var ntnlBgt   = $('#pop_ntnlBgt').val();
-        var lclBgt    = $('#pop_lclBgt').val();
+        // Step 1: Validation (유효성 검사)
+        const sigunguCd = $('#pop_sigungu').val();
+        const startYy   = $('#pop_startYy').val();
+        const startMm   = $('#pop_startMm').val();
+        const endYy     = $('#pop_endYy').val();
+        const endMm     = $('#pop_endMm').val();
+        const ntnlBgt   = $('#pop_ntnlBgt').val();
+        const lclBgt    = $('#pop_lclBgt').val();
 
-        if (!sigunguCd) { alert('시/군을 선택해주세요.'); return; }
+        if (!sigunguCd)           { alert('시/군을 선택해주세요.'); return; }
         if (!startYy || !startMm) { alert('시작 연월을 선택해주세요.'); return; }
         if (!endYy   || !endMm)   { alert('종료 연월을 선택해주세요.'); return; }
-        if (!ntnlBgt) { alert('국비예산을 입력해주세요.'); return; }
-        if (!lclBgt)  { alert('지방비예산을 입력해주세요.'); return; }
+        if (!ntnlBgt)             { alert('국비예산을 입력해주세요.'); return; }
+        if (!lclBgt)              { alert('지방비예산을 입력해주세요.'); return; }
 
-        var url    = currentId ? '/budget/updateBgtMng.do' : '/budget/insertBgtMng.do';
-        var params = {
-            id:        currentId,
-            sidoCd:    '41',
-            sidoNm:    '경기도',
-            sigunguCd: sigunguCd,
-            sigunguNm: $('#pop_sigungu option:selected').text(),
-            guCd:      $('#pop_gu').val(),
-            guNm:      $('#pop_gu option:selected').text(),
-            startYy:   startYy,
-            startMm:   startMm,
-            endYy:     endYy,
-            endMm:     endMm,
-            ntnlBgt:   parseInt(ntnlBgt),
-            lclBgt:    parseInt(lclBgt)
-        };
+        // Step 2: Decide URL (ternary: condition ? valueIfTrue: valueIfFalse)
+        const url = currentId ? '/budget/updateBgtMng.do' : '/budget/insertBgtMng.do';
 
+        // Step 3: POST AJAX
         $.ajax({
             url:         url,
             type:        'POST',
             contentType: 'application/json',
-            data:        JSON.stringify(params),
+            data: JSON.stringify({
+                id:        currentId,
+                sidoCd:    '41',
+                sidoNm:    '경기도',
+                sigunguCd: sigunguCd,
+                sigunguNm: $('#pop_sigungu option:selected').text(), // text of the selected <option>
+                guCd:      $('#pop_gu').val(),
+                guNm:      $('#pop_gu option:selected').text(),
+                startYy:   startYy,
+                startMm:   startMm,
+                endYy:     endYy,
+                endMm:     endMm,
+                ntnlBgt:   parseInt(ntnlBgt), // string → integer (server expects Long)
+                lclBgt:    parseInt(lclBgt)
+            }),
             success: function() {
                 alert(currentId ? '수정되었습니다.' : '등록되었습니다.');
                 fn_closePopup();
-                fn_selectBgtMngList();
+                fn_selectBgtMngList(); // refresh the grid
             },
             error: function() {
                 alert('저장 중 오류가 발생했습니다.');
@@ -487,8 +692,21 @@
         });
     }
 
+    /*
+     * [Excel Download — 엑셀 다운로드]
+     *
+     * Why NOT AJAX?
+     *   AJAX receives the response into JS memory — it cannot trigger a browser "Save file" dialog.
+     *   location.href makes the browser send a GET request directly.
+     *   Server responds with a header: Content-Disposition: attachment; filename="예산관리.xlsx"
+     *   → Browser automatically shows the file download dialog.
+     *
+     * URLSearchParams: converts a JS object into a URL query string
+     *   example result: sidoCd=41&sigunguCd=41110&srchStrtMm=2026-01
+     */
+
     function fn_downloadExcel() {
-        var params = new URLSearchParams();
+        const params = new URLSearchParams();
         params.append('sidoCd',     $('#jijache').val());
         params.append('sigunguCd',  $('#sigun').val());
         params.append('guCd',       $('#gu').val());
@@ -498,6 +716,20 @@
         location.href = '/budget/downloadBgtMngExcel.do?' + params.toString();
     }
 
+    /*
+     * [Delete — 삭제 (Soft Delete)]
+     *
+     * confirm() → shows browser confirmation dialog
+     *   OK → returns true → continues
+     *   Cancel → returns false → !false = true → return stops the function
+     *
+     * Soft Delete explained:
+     *   We do NOT run SQL DELETE.
+     *   Instead: UPDATE budget_mng SET del_yn = 'Y' WHERE id =?
+     *   The record stays in the DB but is treated as deleted.
+     *   All SELECT queries filter with WHERE del_yn = 'N' to exclude it.
+     *   Benefit: data can be recovered, and audit history is preserved (감사추적).
+     */
     function fn_deleteBgt() {
         if (!confirm('삭제하시겠습니까?')) return;
         $.ajax({
@@ -508,7 +740,7 @@
             success: function() {
                 alert('삭제되었습니다.');
                 fn_closePopup();
-                fn_selectBgtMngList();
+                fn_selectBgtMngList(); // refresh the grid
             },
             error: function() {
                 alert('삭제 중 오류가 발생했습니다.');

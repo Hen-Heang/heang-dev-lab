@@ -62,23 +62,31 @@
                     </div>
                     <div class="form-group">
                         <label>사업자번호 (Business No.) <span class="required">*</span></label>
-                        <input type="text" class="form-control" name="businessNo"
-                               th:value="*{businessNo}" placeholder="000-00-00000" required />
+                        <label>
+                            <input type="text" class="form-control" name="businessNo"
+                                   th:value="*{businessNo}" placeholder="000-00-00000" required />
+                        </label>
                     </div>
                     <div class="form-group">
                         <label>전화번호 (Phone)</label>
-                        <input type="text" class="form-control" name="phone"
-                               th:value="*{phone}" placeholder="010-0000-0000" />
+                        <label>
+                            <input type="text" class="form-control" name="phone"
+                                   th:value="*{phone}" placeholder="010-0000-0000" />
+                        </label>
                     </div>
                     <div class="form-group">
                         <label>주소 (Address)</label>
-                        <input type="text" class="form-control" name="address"
-                               th:value="*{address}" placeholder="주소 입력 (Enter address)" />
+                        <label>
+                            <input type="text" class="form-control" name="address"
+                                   th:value="*{address}" placeholder="주소 입력 (Enter address)" />
+                        </label>
                     </div>
                     <div class="form-group">
                         <label>상세주소 (Address Detail)</label>
-                        <input type="text" class="form-control" name="addressDetail"
-                               th:value="*{addressDetail}" placeholder="상세주소 입력 (Floor, unit, etc.)" />
+                        <label>
+                            <input type="text" class="form-control" name="addressDetail"
+                                   th:value="*{addressDetail}" placeholder="상세주소 입력 (Floor, unit, etc.)" />
+                        </label>
                     </div>
 
                 </div>
@@ -91,33 +99,43 @@
 
                     <div class="form-group">
                         <label>신청매체 (Apply Channel)</label>
-                        <select class="form-control" name="applyChannel">
-                            <option value="ONLINE"  th:selected="*{applyChannel == 'ONLINE'}">온라인 (Online)</option>
-                            <option value="OFFLINE" th:selected="*{applyChannel == 'OFFLINE'}">오프라인 (Offline)</option>
-                        </select>
+                        <label>
+                            <select class="form-control" name="applyChannel">
+                                <option value="ONLINE"  th:selected="*{applyChannel == 'ONLINE'}">온라인 (Online)</option>
+                                <option value="OFFLINE" th:selected="*{applyChannel == 'OFFLINE'}">오프라인 (Offline)</option>
+                            </select>
+                        </label>
                     </div>
                     <div class="form-group">
                         <label>신청상태 (Status)</label>
-                        <select class="form-control" name="status">
-                            <option value="신청" th:selected="*{status == '신청'}">신청 (Applied)</option>
-                            <option value="승인" th:selected="*{status == '승인'}">승인 (Approved)</option>
-                            <option value="반려" th:selected="*{status == '반려'}">반려 (Rejected)</option>
-                        </select>
+                        <label>
+                            <select class="form-control" name="status">
+                                <option value="신청" th:selected="*{status == '신청'}">신청 (Applied)</option>
+                                <option value="승인" th:selected="*{status == '승인'}">승인 (Approved)</option>
+                                <option value="반려" th:selected="*{status == '반려'}">반려 (Rejected)</option>
+                            </select>
+                        </label>
                     </div>
                     <div class="form-group">
                         <label>결제유형 (Payment Type)</label>
-                        <input type="text" class="form-control" name="paymentType"
-                               th:value="*{paymentType}" placeholder="카드 / 포인트 (Card / Points)" />
+                        <label>
+                            <input type="text" class="form-control" name="paymentType"
+                                   th:value="*{paymentType}" placeholder="카드 / 포인트 (Card / Points)" />
+                        </label>
                     </div>
                     <div class="form-group">
                         <label>결제사 (Payment Provider)</label>
-                        <input type="text" class="form-control" name="paymentProvider"
-                               th:value="*{paymentProvider}" placeholder="예: 하나카드 (e.g. Hana Card)" />
+                        <label>
+                            <input type="text" class="form-control" name="paymentProvider"
+                                   th:value="*{paymentProvider}" placeholder="예: 하나카드 (e.g. Hana Card)" />
+                        </label>
                     </div>
                     <div class="form-group">
                         <label>근로자 수 (Worker Count)</label>
-                        <input type="number" class="form-control" name="workerCount"
-                               th:value="*{workerCount}" placeholder="0" min="0" />
+                        <label>
+                            <input type="number" class="form-control" name="workerCount"
+                                   th:value="*{workerCount}" placeholder="0" min="0" />
+                        </label>
                     </div>
 
                 </div>
@@ -130,13 +148,17 @@
 
                     <div class="form-group">
                         <label>담당자명 (Contact Name)</label>
-                        <input type="text" class="form-control" name="contactName"
-                               th:value="*{contactName}" placeholder="담당자명 입력 (Enter contact name)" />
+                        <label>
+                            <input type="text" class="form-control" name="contactName"
+                                   th:value="*{contactName}" placeholder="담당자명 입력 (Enter contact name)" />
+                        </label>
                     </div>
                     <div class="form-group">
                         <label>담당자 연락처 (Contact Phone)</label>
-                        <input type="text" class="form-control" name="contactPhone"
-                               th:value="*{contactPhone}" placeholder="010-0000-0000" />
+                        <label>
+                            <input type="text" class="form-control" name="contactPhone"
+                                   th:value="*{contactPhone}" placeholder="010-0000-0000" />
+                        </label>
                     </div>
 
                 </div>

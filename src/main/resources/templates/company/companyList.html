@@ -45,19 +45,23 @@
 
                 <div class="search-item">
                     <label>신청상태 (Status)</label>
-                    <select name="status" class="search-select">
-                        <option value=""    th:selected="${searchVO.status == null or searchVO.status == ''}">전체 (All)</option>
-                        <option value="신청" th:selected="${searchVO.status == '신청'}">신청 (Applied)</option>
-                        <option value="승인" th:selected="${searchVO.status == '승인'}">승인 (Approved)</option>
-                        <option value="반려" th:selected="${searchVO.status == '반려'}">반려 (Rejected)</option>
-                    </select>
+                    <label>
+                        <select name="status" class="search-select">
+                            <option value=""    th:selected="${searchVO.status == null or searchVO.status == ''}">전체 (All)</option>
+                            <option value="신청" th:selected="${searchVO.status == '신청'}">신청 (Applied)</option>
+                            <option value="승인" th:selected="${searchVO.status == '승인'}">승인 (Approved)</option>
+                            <option value="반려" th:selected="${searchVO.status == '반려'}">반려 (Rejected)</option>
+                        </select>
+                    </label>
                 </div>
 
                 <div class="search-item">
                     <label>기업명 (Company Name)</label>
-                    <input type="text" name="companyName" class="search-input"
-                           th:value="${searchVO.companyName}" placeholder="기업명 입력 (Enter company name)"
-                           style="min-width:180px;"/>
+                    <label>
+                        <input type="text" name="companyName" class="search-input"
+                               th:value="${searchVO.companyName}" placeholder="기업명 입력 (Enter company name)"
+                               style="min-width:180px;"/>
+                    </label>
                 </div>
 
                 <div class="search-item">
@@ -68,8 +72,10 @@
 
                 <div class="search-item">
                     <label>조회기간 종료 (Date To)</label>
-                    <input type="date" name="dateTo" class="search-input"
-                           th:value="${searchVO.dateTo}" style="min-width:150px;"/>
+                    <label>
+                        <input type="date" name="dateTo" class="search-input"
+                               th:value="${searchVO.dateTo}" style="min-width:150px;"/>
+                    </label>
                 </div>
 
                 <div class="search-item search-actions" style="flex-direction:row; align-items:flex-end; gap:8px;">

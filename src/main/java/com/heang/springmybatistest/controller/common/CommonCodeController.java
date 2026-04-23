@@ -53,7 +53,7 @@ public class CommonCodeController {
      * Register a new code (신규 코드 등록)
      *
      * @ModelAttribute maps all form fields to CommonCode automatically
-     * RedirectAttributes.addFlashAttribute → shows success/error message after redirect
+     * RedirectAttributes.addFlashAttribute → shows a success/error message after redirect
      */
     @PostMapping("/insert")
     public String insert(
