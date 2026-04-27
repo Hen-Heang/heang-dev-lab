@@ -16,6 +16,7 @@
 -- [2026-04-20] company table added
 -- [2026-04-21] sidebar.html fragment created (not SQL — noted for reference)
 -- [2026-04-22] budget_mng table added
+-- [2026-04-27] co_bbs_m, co_comm_cd_d, bbs_seq added (FAQ management)
 -- -------------------------------------------------------
 --
 -- HOW TO ADD A NEW TABLE (새 테이블 추가 방법)
@@ -367,6 +368,63 @@ CREATE TABLE IF NOT EXISTS budget_mng (
     created_at  TIMESTAMP    NOT NULL DEFAULT CURRENT_TIMESTAMP,
     updated_at  TIMESTAMP    NOT NULL DEFAULT CURRENT_TIMESTAMP
 );
+
+-- =====================================================
+-- [2026-04-27] FAQ board tables (자주하는 질문 관리)
+-- Purpose: co_bbs_m stores FAQ posts; co_comm_cd_d stores shared common codes
+--          including bbs_ki_cd (게시판 구분) used in the board type dropdown
+-- =====================================================
+
+-- sequence for co_bbs_m PK
+CREATE SEQUENCE IF NOT EXISTS bbs_seq START 1;
+
+-- common code detail table (공통코드 상세 테이블)
+CREATE TABLE IF NOT EXISTS co_comm_cd_d (
+    comm_cd          VARCHAR(20)  NOT NULL,
+    comm_dtcd        VARCHAR(10)  NOT NULL,
+    comm_dtl_cd_nm   VARCHAR(300),
+    inq_ord_no       NUMERIC(3)   DEFAULT 0,
+    comm_dtl_cn      VARCHAR(1000),
+    use_yn           CHAR(1)      NOT NULL DEFAULT 'Y',
+    data_reg_ip_addr VARCHAR(155),
+    data_reg_id      VARCHAR(20),
+    data_reg_dt      TIMESTAMP    NOT NULL DEFAULT NOW(),
+    data_chg_ip_addr VARCHAR(155),
+    data_chg_id      VARCHAR(20),
+    data_chg_dt      TIMESTAMP,
+    comm_cd_len      NUMERIC(2),
+    PRIMARY KEY (comm_cd, comm_dtcd),
+    CONSTRAINT chk_co_comm_cd_d_use_yn CHECK (use_yn IN ('Y', 'N'))
+);
+
+-- board kind codes (게시판 구분 코드)
+INSERT INTO co_comm_cd_d (comm_cd, comm_dtcd, comm_dtl_cd_nm, inq_ord_no, use_yn) VALUES
+    ('bbs_ki_cd', '01', '공지사항',          1, 'Y'),
+    ('bbs_ki_cd', '02', '자주하는 질문(FAQ)', 2, 'Y'),
+    ('bbs_ki_cd', '03', '이벤트',            3, 'Y')
+ON CONFLICT DO NOTHING;
+
+-- FAQ board table (자주하는 질문 게시판 테이블)
+CREATE TABLE IF NOT EXISTS co_bbs_m (
+    bbs_sn           BIGINT       PRIMARY KEY DEFAULT nextval('bbs_seq'),
+    bbs_ki_cd        VARCHAR(10),
+    bbs_title        VARCHAR(500) NOT NULL,
+    bbs_cn           TEXT,
+    use_yn           CHAR(1)      NOT NULL DEFAULT 'Y',
+    data_reg_ip_addr VARCHAR(155),
+    data_reg_id      VARCHAR(20),
+    data_reg_dt      TIMESTAMP    NOT NULL DEFAULT NOW(),
+    data_chg_ip_addr VARCHAR(155),
+    data_chg_id      VARCHAR(20),
+    data_chg_dt      TIMESTAMP,
+    CONSTRAINT chk_co_bbs_m_use_yn CHECK (use_yn IN ('Y', 'N'))
+);
+
+INSERT INTO co_bbs_m (bbs_ki_cd, bbs_title, bbs_cn, use_yn, data_reg_id) VALUES
+    ('02', '지원대상은 누구인가요?',     '사업대상 지방 정부에 위치한 중소기업에 재직중인 근로자입니다.', 'Y', 'admin'),
+    ('02', '복지관련서비스 질문1',       '복지관련서비스 답변1 입니다.',                              'Y', 'admin'),
+    ('02', '복지관련서비스 질문2',       '복지관련서비스 답변2 입니다.',                              'Y', 'admin'),
+    ('01', '공지사항 테스트',            '공지사항 내용입니다.',                                     'Y', 'admin');
 
 -- =====================================================
 -- FUNCTIONS (함수)

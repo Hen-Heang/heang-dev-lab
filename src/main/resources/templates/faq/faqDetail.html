@@ -1,0 +1,137 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>자주하는 질문 상세/수정 (FAQ Detail)</title>
+    <link rel="stylesheet" th:href="@{/css/base.css}">
+    <link rel="stylesheet" th:href="@{/css/layout.css}">
+    <link rel="stylesheet" th:href="@{/css/components.css}">
+</head>
+<body class="sidebar-layout">
+
+<aside th:replace="~{fragments/sidebar :: sidebar('faq')}"></aside>
+
+<div class="main-content">
+    <header class="topbar">
+        <div class="topbar-left">
+            <div class="topbar-breadcrumb">
+                플랫폼관리 <span>›</span> 게시판관리 <span>›</span>
+                <a th:href="@{/faq/list.do}" style="color:var(--muted);text-decoration:none;">자주하는 질문 관리</a>
+                <span>›</span> <strong>상세/수정</strong>
+            </div>
+        </div>
+        <div class="topbar-right">
+            <div class="avatar">A</div>
+        </div>
+    </header>
+
+    <div class="page-content" th:if="${result != null}">
+
+        <div class="page-header">
+            <div class="page-title">
+                <h1>자주하는 질문 상세/수정</h1>
+            </div>
+        </div>
+
+        <form th:action="@{/faq/updateProc.do}" method="post" id="editForm">
+            <input type="hidden" name="bbsSn" th:value="${result.bbsSn}"/>
+
+            <div class="card">
+                <div class="user-detail">
+
+                    <div class="user-detail-row">
+                        <div class="user-detail-label">게시판구분</div>
+                        <div class="user-detail-value">
+                            <select name="bbsKiCd" class="search-select">
+                                <option value="">선택</option>
+                                <option th:each="cd : ${bbsKiCdList}"
+                                        th:value="${cd.commDtcd}"
+                                        th:text="${cd.commDtlCdNm}"
+                                        th:selected="${result.bbsKiCd == cd.commDtcd}">구분</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <div class="user-detail-row">
+                        <div class="user-detail-label">제목 <span style="color:red;">*</span></div>
+                        <div class="user-detail-value">
+                            <input type="text" name="bbsTitle" id="bbsTitle"
+                                   class="search-input" style="width:100%;max-width:600px;"
+                                   maxlength="500" th:value="${result.bbsTitle}"/>
+                            <span id="titleByte" style="font-size:12px;color:var(--muted);">
+                                <span th:text="${#strings.length(result.bbsTitle)}">0</span> / 500byte
+                            </span>
+                        </div>
+                    </div>
+
+                    <div class="user-detail-row">
+                        <div class="user-detail-label">내용 <span style="color:red;">*</span></div>
+                        <div class="user-detail-value">
+                            <textarea name="bbsCn" id="bbsCn"
+                                      rows="12" style="width:100%;max-width:700px;padding:10px;border:1px solid var(--border);border-radius:6px;resize:vertical;"
+                                      th:text="${result.bbsCn}"></textarea>
+                            <br/>
+                            <span id="cnByte" style="font-size:12px;color:var(--muted);">
+                                <span th:text="${result.bbsCn != null ? #strings.length(result.bbsCn) : 0}">0</span> / 1000byte
+                            </span>
+                        </div>
+                    </div>
+
+                    <div class="user-detail-row">
+                        <div class="user-detail-label">작성자</div>
+                        <div class="user-detail-value" th:text="${result.dataRegId}">-</div>
+                    </div>
+
+                    <div class="user-detail-row">
+                        <div class="user-detail-label">등록일시</div>
+                        <div class="user-detail-value" th:text="${result.dataRegDt}">-</div>
+                    </div>
+
+                </div>
+            </div>
+
+            <div style="display:flex;gap:10px;justify-content:center;margin-top:24px;">
+
+                <!-- 삭제 -->
+                <form th:action="@{/faq/deleteProc.do}" method="post" style="display:inline;">
+                    <input type="hidden" name="bbsSn" th:value="${result.bbsSn}"/>
+                    <button type="button" class="btn btn-danger" onclick="deleteFaq(this)">삭제</button>
+                </form>
+
+                <!-- 수정 확인 -->
+                <button type="button" class="btn btn-primary" onclick="submitEdit()">수정</button>
+
+                <!-- 목록 -->
+                <a th:href="@{/faq/list.do}" class="btn btn-secondary">목록</a>
+
+            </div>
+        </form>
+
+    </div>
+</div>
+
+<script>
+    document.getElementById('bbsTitle').addEventListener('input', function () {
+        document.getElementById('titleByte').textContent = this.value.length + ' / 500byte';
+    });
+    document.getElementById('bbsCn').addEventListener('input', function () {
+        document.getElementById('cnByte').textContent = this.value.length + ' / 1000byte';
+    });
+
+    function submitEdit() {
+        const title = document.getElementById('bbsTitle').value.trim();
+        const cn    = document.getElementById('bbsCn').value.trim();
+        if (!title) { alert('제목을 입력하세요.'); return; }
+        if (!cn)    { alert('내용을 입력하세요.'); return; }
+        document.getElementById('editForm').submit();
+    }
+
+    function deleteFaq(btn) {
+        if (!confirm('삭제하시겠습니까?')) return;
+        btn.closest('form').submit();
+    }
+</script>
+
+</body>
+</html>

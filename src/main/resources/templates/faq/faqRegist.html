@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>자주하는 질문 등록 (FAQ Register)</title>
+    <link rel="stylesheet" th:href="@{/css/base.css}">
+    <link rel="stylesheet" th:href="@{/css/layout.css}">
+    <link rel="stylesheet" th:href="@{/css/components.css}">
+</head>
+<body class="sidebar-layout">
+
+<aside th:replace="~{fragments/sidebar :: sidebar('faq')}"></aside>
+
+<div class="main-content">
+    <header class="topbar">
+        <div class="topbar-left">
+            <div class="topbar-breadcrumb">
+                플랫폼관리 <span>›</span> 게시판관리 <span>›</span>
+                <a th:href="@{/faq/list.do}" style="color:var(--muted);text-decoration:none;">자주하는 질문 관리</a>
+                <span>›</span> <strong>등록</strong>
+            </div>
+        </div>
+        <div class="topbar-right">
+            <div class="avatar">A</div>
+        </div>
+    </header>
+
+    <div class="page-content">
+
+        <div class="page-header">
+            <div class="page-title">
+                <h1>자주하는 질문 등록</h1>
+            </div>
+        </div>
+
+        <form th:action="@{/faq/registProc.do}" method="post" id="registForm">
+            <div class="card">
+
+                <div class="user-detail">
+
+                    <div class="user-detail-row">
+                        <div class="user-detail-label">게시판구분</div>
+                        <div class="user-detail-value">
+                            <select name="bbsKiCd" class="search-select">
+                                <option value="">선택</option>
+                                <option th:each="cd : ${bbsKiCdList}"
+                                        th:value="${cd.commDtcd}"
+                                        th:text="${cd.commDtlCdNm}">구분</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <div class="user-detail-row">
+                        <div class="user-detail-label">제목 <span style="color:red;">*</span></div>
+                        <div class="user-detail-value">
+                            <input type="text" name="bbsTitle" id="bbsTitle"
+                                   class="search-input" style="width:100%;max-width:600px;"
+                                   placeholder="제목을 입력하세요" maxlength="500"/>
+                            <span id="titleByte" style="font-size:12px;color:var(--muted);">0 / 500byte</span>
+                        </div>
+                    </div>
+
+                    <div class="user-detail-row">
+                        <div class="user-detail-label">내용 <span style="color:red;">*</span></div>
+                        <div class="user-detail-value">
+                            <textarea name="bbsCn" id="bbsCn"
+                                      rows="12" style="width:100%;max-width:700px;padding:10px;border:1px solid var(--border);border-radius:6px;resize:vertical;"
+                                      placeholder="내용을 입력하세요"></textarea>
+                            <br/>
+                            <span id="cnByte" style="font-size:12px;color:var(--muted);">0 / 1000byte</span>
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+
+            <div style="display:flex;gap:10px;justify-content:center;margin-top:24px;">
+                <a th:href="@{/faq/list.do}" class="btn btn-secondary">취소</a>
+                <button type="button" class="btn btn-primary" onclick="submitForm()">확인</button>
+            </div>
+        </form>
+
+    </div>
+</div>
+
+<script>
+    document.getElementById('bbsTitle').addEventListener('input', function () {
+        document.getElementById('titleByte').textContent = this.value.length + ' / 500byte';
+    });
+    document.getElementById('bbsCn').addEventListener('input', function () {
+        document.getElementById('cnByte').textContent = this.value.length + ' / 1000byte';
+    });
+
+    function submitForm() {
+        const title = document.getElementById('bbsTitle').value.trim();
+        const cn    = document.getElementById('bbsCn').value.trim();
+        if (!title) { alert('제목을 입력하세요.'); return; }
+        if (!cn)    { alert('내용을 입력하세요.'); return; }
+        document.getElementById('registForm').submit();
+    }
+</script>
+
+</body>
+</html>

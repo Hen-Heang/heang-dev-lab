@@ -1,0 +1,122 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>자주하는 질문 관리 (FAQ)</title>
+    <link rel="stylesheet" th:href="@{/css/base.css}">
+    <link rel="stylesheet" th:href="@{/css/layout.css}">
+    <link rel="stylesheet" th:href="@{/css/components.css}">
+</head>
+<body class="sidebar-layout">
+
+<aside th:replace="~{fragments/sidebar :: sidebar('faq')}"></aside>
+
+<div class="main-content">
+    <header class="topbar">
+        <div class="topbar-left">
+            <div class="topbar-breadcrumb">
+                플랫폼관리 <span>›</span> 게시판관리 <span>›</span>
+                <strong>자주하는 질문 관리</strong>
+            </div>
+        </div>
+        <div class="topbar-right">
+            <a th:href="@{/swagger-ui.html}" class="topbar-btn" title="API Docs">🔌</a>
+            <div class="avatar">A</div>
+        </div>
+    </header>
+
+    <div class="page-content">
+
+        <div class="page-header">
+            <div class="page-title">
+                <h1>자주하는 질문 관리 <small style="font-size:14px;font-weight:400;color:var(--muted);">FAQ</small></h1>
+                <p>검색결과: <strong th:text="${totCnt}">0</strong>건</p>
+            </div>
+            <a th:href="@{/faq/regist.do}" class="btn btn-primary">+ 신규등록</a>
+        </div>
+
+        <!-- 검색 폼 -->
+        <form th:action="@{/faq/list.do}" method="get" class="search-box">
+            <div class="search-row">
+
+                <div class="search-item">
+                    <label>게시판구분</label>
+                    <select name="bbsKiCd" class="search-select">
+                        <option value="" th:selected="${searchVO.bbsKiCd == null or searchVO.bbsKiCd == ''}">전체</option>
+                        <option th:each="cd : ${bbsKiCdList}"
+                                th:value="${cd.commDtcd}"
+                                th:text="${cd.commDtlCdNm}"
+                                th:selected="${searchVO.bbsKiCd == cd.commDtcd}">구분</option>
+                    </select>
+                </div>
+
+                <div class="search-item">
+                    <label>검색조건</label>
+                    <select name="searchCondition" class="search-select">
+                        <option value="1" th:selected="${searchVO.searchCondition == '1'}">제목</option>
+                        <option value="2" th:selected="${searchVO.searchCondition == '2'}">내용</option>
+                        <option value="3" th:selected="${searchVO.searchCondition == '3'}">제목+내용</option>
+                    </select>
+                </div>
+
+                <div class="search-item">
+                    <label>검색어</label>
+                    <input type="text" name="searchKeyword" class="search-input"
+                           th:value="${searchVO.searchKeyword}" placeholder="검색어 입력" style="min-width:180px;"/>
+                </div>
+
+                <div class="search-item">
+                    <label>등록일 시작</label>
+                    <input type="date" name="searchStartDt" class="search-input"
+                           th:value="${searchVO.searchStartDt}" style="min-width:150px;"/>
+                </div>
+
+                <div class="search-item">
+                    <label>등록일 종료</label>
+                    <input type="date" name="searchEndDt" class="search-input"
+                           th:value="${searchVO.searchEndDt}" style="min-width:150px;"/>
+                </div>
+
+                <div class="search-item" style="align-self:flex-end;">
+                    <button type="submit" class="btn btn-primary">검색</button>
+                </div>
+            </div>
+        </form>
+
+        <!-- 목록 테이블 -->
+        <div class="card" style="margin-top:16px;">
+            <table class="data-table">
+                <thead>
+                <tr>
+                    <th style="width:60px;">번호</th>
+                    <th style="width:100px;">구분</th>
+                    <th>제목</th>
+                    <th style="width:120px;">작성자</th>
+                    <th style="width:160px;">등록일시</th>
+                </tr>
+                </thead>
+                <tbody>
+                <tr th:if="${#lists.isEmpty(resultList)}">
+                    <td colspan="5" style="text-align:center;padding:32px;color:var(--muted);">조회된 데이터가 없습니다.</td>
+                </tr>
+                <tr th:each="item : ${resultList}">
+                    <td th:text="${item.bbsSn}" style="text-align:center;">1</td>
+                    <td th:text="${item.bbsKiCdNm}" style="text-align:center;">-</td>
+                    <td>
+                        <a th:href="@{/faq/detail.do(bbsSn=${item.bbsSn})}"
+                           th:text="${item.bbsTitle}"
+                           style="color:var(--primary);text-decoration:none;">제목</a>
+                    </td>
+                    <td th:text="${item.dataRegId}" style="text-align:center;">admin</td>
+                    <td th:text="${item.dataRegDt}" style="text-align:center;">2026-01-01</td>
+                </tr>
+                </tbody>
+            </table>
+        </div>
+
+    </div>
+</div>
+
+</body>
+</html>

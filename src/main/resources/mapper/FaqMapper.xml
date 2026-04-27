@@ -1,0 +1,177 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.heang.springmybatistest.mapper.FaqMapper">
+
+    <resultMap id="faqOut" type="com.heang.springmybatistest.vo.FaqOutVO">
+        <id     column="bbs_sn"         property="bbsSn"/>
+        <result column="bbs_ki_cd"      property="bbsKiCd"/>
+        <result column="bbs_ki_cd_nm"   property="bbsKiCdNm"/>
+        <result column="bbs_title"      property="bbsTitle"/>
+        <result column="bbs_cn"         property="bbsCn"/>
+        <result column="use_yn"         property="useYn"/>
+        <result column="data_reg_id"    property="dataRegId"/>
+        <result column="data_reg_dt"    property="dataRegDt"/>
+        <result column="data_chg_id"    property="dataChgId"/>
+        <result column="data_chg_dt"    property="dataChgDt"/>
+    </resultMap>
+
+    <resultMap id="commCd" type="com.heang.springmybatistest.vo.CommCdVO">
+        <result column="comm_cd"        property="commCd"/>
+        <result column="comm_dtcd"      property="commDtcd"/>
+        <result column="comm_dtl_cd_nm" property="commDtlCdNm"/>
+        <result column="inq_ord_no"     property="inqOrdNo"/>
+    </resultMap>
+
+    <!-- =====================================================
+         Board kind code dropdown (게시판 구분 드롭다운)
+         SELECT comm_cd='bbs_ki_cd' from co_comm_cd_d
+    ====================================================== -->
+    <select id="selectBbsKiCdList" resultMap="commCd">
+        SELECT comm_cd, comm_dtcd, comm_dtl_cd_nm, inq_ord_no
+        FROM co_comm_cd_d
+        WHERE comm_cd = 'bbs_ki_cd'
+          AND use_yn  = 'Y'
+        ORDER BY inq_ord_no ASC
+    </select>
+
+    <!-- =====================================================
+         List query (검색 + 페이징)
+    ====================================================== -->
+    <select id="selectList" parameterType="com.heang.springmybatistest.vo.FaqInVO" resultMap="faqOut">
+        SELECT b.bbs_sn,
+               b.bbs_ki_cd,
+               c.comm_dtl_cd_nm AS bbs_ki_cd_nm,
+               b.bbs_title,
+               b.use_yn,
+               b.data_reg_id,
+               TO_CHAR(b.data_reg_dt, 'YYYY-MM-DD HH24:MI:SS') AS data_reg_dt
+        FROM co_bbs_m b
+        LEFT JOIN co_comm_cd_d c
+               ON c.comm_cd  = 'bbs_ki_cd'
+              AND c.comm_dtcd = b.bbs_ki_cd
+        <where>
+            b.use_yn = 'Y'
+            <if test="bbsKiCd != null and bbsKiCd != ''">
+                AND b.bbs_ki_cd = #{bbsKiCd}
+            </if>
+            <if test="searchKeyword != null and searchKeyword != ''">
+                <choose>
+                    <when test="searchCondition == '2'">
+                        AND b.bbs_cn    LIKE '%' || #{searchKeyword} || '%'
+                    </when>
+                    <when test="searchCondition == '3'">
+                        AND (b.bbs_title LIKE '%' || #{searchKeyword} || '%'
+                          OR b.bbs_cn    LIKE '%' || #{searchKeyword} || '%')
+                    </when>
+                    <otherwise>
+                        AND b.bbs_title LIKE '%' || #{searchKeyword} || '%'
+                    </otherwise>
+                </choose>
+            </if>
+            <if test="searchStartDt != null and searchStartDt != ''">
+                AND b.data_reg_dt >= TO_TIMESTAMP(#{searchStartDt}, 'YYYY-MM-DD')
+            </if>
+            <if test="searchEndDt != null and searchEndDt != ''">
+                AND b.data_reg_dt &lt; TO_TIMESTAMP(#{searchEndDt}, 'YYYY-MM-DD') + INTERVAL '1 day'
+            </if>
+        </where>
+        ORDER BY b.bbs_sn DESC
+        LIMIT #{_rowcount} OFFSET #{_startrow}
+    </select>
+
+    <!-- =====================================================
+         Total count (페이징용 전체 건수)
+    ====================================================== -->
+    <select id="selectListTotCnt" parameterType="com.heang.springmybatistest.vo.FaqInVO" resultType="int">
+        SELECT COUNT(*)
+        FROM co_bbs_m b
+        <where>
+            b.use_yn = 'Y'
+            <if test="bbsKiCd != null and bbsKiCd != ''">
+                AND b.bbs_ki_cd = #{bbsKiCd}
+            </if>
+            <if test="searchKeyword != null and searchKeyword != ''">
+                <choose>
+                    <when test="searchCondition == '2'">
+                        AND b.bbs_cn    LIKE '%' || #{searchKeyword} || '%'
+                    </when>
+                    <when test="searchCondition == '3'">
+                        AND (b.bbs_title LIKE '%' || #{searchKeyword} || '%'
+                          OR b.bbs_cn    LIKE '%' || #{searchKeyword} || '%')
+                    </when>
+                    <otherwise>
+                        AND b.bbs_title LIKE '%' || #{searchKeyword} || '%'
+                    </otherwise>
+                </choose>
+            </if>
+            <if test="searchStartDt != null and searchStartDt != ''">
+                AND b.data_reg_dt >= TO_TIMESTAMP(#{searchStartDt}, 'YYYY-MM-DD')
+            </if>
+            <if test="searchEndDt != null and searchEndDt != ''">
+                AND b.data_reg_dt &lt; TO_TIMESTAMP(#{searchEndDt}, 'YYYY-MM-DD') + INTERVAL '1 day'
+            </if>
+        </where>
+    </select>
+
+    <!-- =====================================================
+         Detail (단건 조회)
+    ====================================================== -->
+    <select id="selectDetail" parameterType="com.heang.springmybatistest.vo.FaqInVO" resultMap="faqOut">
+        SELECT b.bbs_sn,
+               b.bbs_ki_cd,
+               c.comm_dtl_cd_nm AS bbs_ki_cd_nm,
+               b.bbs_title,
+               b.bbs_cn,
+               b.use_yn,
+               b.data_reg_id,
+               TO_CHAR(b.data_reg_dt, 'YYYY-MM-DD HH24:MI:SS') AS data_reg_dt,
+               b.data_chg_id,
+               TO_CHAR(b.data_chg_dt, 'YYYY-MM-DD HH24:MI:SS') AS data_chg_dt
+        FROM co_bbs_m b
+        LEFT JOIN co_comm_cd_d c
+               ON c.comm_cd  = 'bbs_ki_cd'
+              AND c.comm_dtcd = b.bbs_ki_cd
+        WHERE b.bbs_sn = #{bbsSn}
+          AND b.use_yn = 'Y'
+    </select>
+
+    <!-- =====================================================
+         Insert (등록)
+         bbs_sn is auto-filled by DEFAULT nextval('bbs_seq')
+    ====================================================== -->
+    <insert id="insert" parameterType="com.heang.springmybatistest.vo.FaqInVO">
+        INSERT INTO co_bbs_m (bbs_ki_cd, bbs_title, bbs_cn, use_yn, data_reg_id)
+        VALUES (#{bbsKiCd}, #{bbsTitle}, #{bbsCn}, 'Y', #{_ssuserId})
+    </insert>
+
+    <!-- =====================================================
+         Update (수정 — only already-registered FAQ)
+    ====================================================== -->
+    <update id="update" parameterType="com.heang.springmybatistest.vo.FaqInVO">
+        UPDATE co_bbs_m
+        <set>
+            <if test="bbsKiCd != null and bbsKiCd != ''">bbs_ki_cd  = #{bbsKiCd},</if>
+            <if test="bbsTitle != null and bbsTitle != ''">bbs_title = #{bbsTitle},</if>
+            <if test="bbsCn != null">bbs_cn = #{bbsCn},</if>
+            data_chg_id = #{_ssuserId},
+            data_chg_dt = NOW()
+        </set>
+        WHERE bbs_sn = #{bbsSn}
+          AND use_yn = 'Y'
+    </update>
+
+    <!-- =====================================================
+         Soft delete (use_yn = 'N')
+    ====================================================== -->
+    <update id="delete" parameterType="com.heang.springmybatistest.vo.FaqInVO">
+        UPDATE co_bbs_m
+        SET use_yn      = 'N',
+            data_chg_id = #{_ssuserId},
+            data_chg_dt = NOW()
+        WHERE bbs_sn = #{bbsSn}
+    </update>
+
+</mapper>

@@ -67,6 +67,12 @@
             <span class="nav-icon">🏢</span> 기업 관리 (Company)
         </a>
 
+        <a th:href="@{/faq/list.do}"
+           class="nav-item"
+           th:classappend="${activePage == 'faq'} ? ' active' : ''">
+            <span class="nav-icon">❓</span> 자주하는 질문 (FAQ)
+        </a>
+
         <a th:href="@{/common-code}"
            class="nav-item"
            th:classappend="${activePage == 'common-code'} ? ' active' : ''">
