@@ -4,6 +4,7 @@ import com.heang.springmybatistest.mapper.UserMapper;
 import com.heang.springmybatistest.model.Users;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.jspecify.annotations.NonNull;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.User;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -15,14 +16,14 @@ import java.util.List;
 
 /**
  * UserDetailsServiceImpl — Spring Security bridge to our DB (보안 사용자 조회 서비스)
- *
+ * <p>
  * How Spring Security uses this:
  *   1. User submits POST /login with username + password
  *   2. Spring Security calls loadUserByUsername(username)
  *   3. This method loads the Users record from DB via MyBatis
  *   4. Returns a UserDetails object Spring Security uses to verify the password
- *   5. If password matches → session is created → user is logged in
- *
+ *   5. If password matches → session is created → the user is logged in
+ * <p>
  * The password in DB is BCrypt hash — Spring Security compares automatically
  * using the PasswordEncoder bean defined in SecurityConfig.
  */
@@ -34,13 +35,13 @@ public class UserDetailsServiceImpl implements UserDetailsService {
     private final UserMapper userMapper;
 
     @Override
-    public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
+    public UserDetails loadUserByUsername(@NonNull String username) throws UsernameNotFoundException {
         log.debug("Login attempt for username: {}", username);
 
         // 1. Load user from DB (MyBatis query)
         Users user = userMapper.selectUserByUsername(username);
 
-        // 2. User not found → login fails with "Bad credentials"
+        // 2. User isn't found → login fails with "Bad credentials"
         if (user == null) {
             log.warn("Login failed — user not found: {}", username);
             throw new UsernameNotFoundException("User not found: " + username);

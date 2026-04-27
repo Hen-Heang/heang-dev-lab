@@ -5,6 +5,7 @@ import com.heang.springmybatistest.dto.ProductRequest;
 import com.heang.springmybatistest.dto.ProductSearchRequest;
 import com.heang.springmybatistest.model.Product;
 import com.heang.springmybatistest.service.ProductService;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
 
@@ -61,13 +62,13 @@ public class ProductController {
 
     // @ModelAttribute instead of @RequestBody because file upload uses multipart/form-data
     @PostMapping(consumes = {"multipart/form-data", "application/x-www-form-urlencoded", "application/json"})
-    public ApiResponse<Product> create(@ModelAttribute ProductRequest request) {
+    public ApiResponse<Product> create(@Valid @ModelAttribute ProductRequest request) {
         Product product = productService.create(request);
         return ApiResponse.success(product);
     }
 
     @PutMapping(value = "/{id}", consumes = {"multipart/form-data", "application/x-www-form-urlencoded", "application/json"})
-    public ApiResponse<Product> update(@PathVariable Long id, @ModelAttribute ProductRequest request) {
+    public ApiResponse<Product> update(@PathVariable Long id, @Valid @ModelAttribute ProductRequest request) {
         Product product = productService.update(id, request);
         return ApiResponse.success(product);
     }

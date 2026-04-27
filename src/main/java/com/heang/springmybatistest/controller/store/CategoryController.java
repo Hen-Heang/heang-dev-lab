@@ -4,6 +4,7 @@ import com.heang.springmybatistest.common.api.ApiResponse;
 import com.heang.springmybatistest.dto.CategoryRequest;
 import com.heang.springmybatistest.model.Category;
 import com.heang.springmybatistest.service.CategoryService;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
 
@@ -46,7 +47,7 @@ public class CategoryController {
      * Body: { "name": "Electronics" }
      */
     @PostMapping
-    public ApiResponse<Category> create(@RequestBody CategoryRequest request) {
+    public ApiResponse<Category> create(@Valid @RequestBody CategoryRequest request) {
         Category category = categoryService.create(request);
         return ApiResponse.success(category);
     }
@@ -57,7 +58,7 @@ public class CategoryController {
      * Body: { "name": "Home Appliances" }
      */
     @PutMapping("/{id}")
-    public ApiResponse<Category> update(@PathVariable Long id, @RequestBody CategoryRequest request) {
+    public ApiResponse<Category> update(@PathVariable Long id, @Valid @RequestBody CategoryRequest request) {
         Category category = categoryService.update(id, request);
         return ApiResponse.success(category);
     }

@@ -57,7 +57,7 @@ public class BgtMngController {
      *
      * Returns Map<String, Object> with:
      *   { "list": [...], "totalCount": 25 }
-     * JS accesses it as: data.list, data.totalCount
+     * JS accesses it as: data. List, data.totalCount
      */
     @ResponseBody
     @RequestMapping("/budget/selectBgtMngList.do")

@@ -34,7 +34,7 @@ public class CmmVO implements Serializable {
     // ──────────────────────────────────────────────────
 
     /**
-     * rnum — Row Number
+     * rum — Row Number
      * Sequential number assigned to each row. Used to display 1, 2, 3... on screen.
      * Filled by SQL ROW_NUMBER() or the resultMap.
      */
@@ -55,9 +55,9 @@ public class CmmVO implements Serializable {
 
     /**
      * _startrow — start row (OFFSET)
-     * Page 1: 0,  Page 2: 10,  Page 3: 20 ...
+     * Page 1: 0, Page 2: 10, Page 3: 20 ...
      * SQL: OFFSET #{_startrow}
-     *
+     * <p>
      * Formula: (pageIndex - 1) * _rowcount
      */
     private Integer _startrow = 0;
@@ -66,7 +66,7 @@ public class CmmVO implements Serializable {
      * _endrow — end row
      * Used in Oracle-style pagination: WHERE rnum BETWEEN _startrow AND _endrow
      * PostgreSQL uses LIMIT/OFFSET instead, so this is for reference only.
-     *
+     * <p>
      * Formula: pageIndex * _rowcount
      */
     private Integer _endrow = 10;

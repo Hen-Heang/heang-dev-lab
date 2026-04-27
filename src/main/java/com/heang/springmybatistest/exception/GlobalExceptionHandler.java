@@ -96,7 +96,7 @@ public class GlobalExceptionHandler {
     }
     @ExceptionHandler(AlreadyExistException.class)
     ProblemDetail handleFoundException(AlreadyExistException alreadyExistException){
-        ProblemDetail problemDetail = ProblemDetail.forStatusAndDetail(HttpStatusCode.valueOf(404), alreadyExistException.getMessage());
+        ProblemDetail problemDetail = ProblemDetail.forStatusAndDetail(HttpStatusCode.valueOf(409), alreadyExistException.getMessage());
         problemDetail.setType(URI.create("localhost:8080/error/already-exist"));
         return problemDetail;
     }
