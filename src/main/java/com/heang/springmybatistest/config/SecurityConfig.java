@@ -39,8 +39,8 @@ public class SecurityConfig {
                 // REST APIs — permitted, so existing AJAX calls keep working (기존 REST API)
                 // In a real project these would have their own JWT filter chain
                 .requestMatchers("/api/**", "/users/**", "/board/api/**").permitAll()
-                // TEMP — allow budget page without login for dev testing (개발 테스트용)
-                .requestMatchers("/budget/**").permitAll()
+                // TEMP — allow budget/faq pages without login for dev testing (개발 테스트용)
+                .requestMatchers("/budget/**", "/faq/**").permitAll()
                 // Everything else requires login (나머지는 로그인 필요)
                 .anyRequest().authenticated()
             )
@@ -69,7 +69,7 @@ public class SecurityConfig {
             // Disable CSRF for REST API paths (Thymeleaf forms get CSRF automatically)
             // th:action in Thymeleaf forms automatically injects the CSRF hidden field
             .csrf(csrf -> csrf
-                .ignoringRequestMatchers("/api/**", "/users/**", "/budget/**")
+                .ignoringRequestMatchers("/api/**", "/users/**", "/budget/**", "/faq/**")
             );
 
         return http.build();
