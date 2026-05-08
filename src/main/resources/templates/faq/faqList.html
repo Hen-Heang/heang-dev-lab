@@ -115,6 +115,27 @@
             </table>
         </div>
 
+        <!-- 페이징 (Pagination) -->
+        <div th:if="${totalPages > 1}"
+             style="display:flex;justify-content:center;gap:6px;margin-top:20px;flex-wrap:wrap;">
+
+            <!-- 이전 (Previous) -->
+            <a th:if="${pageIndex > 1}"
+               th:href="@{/faq/list.do(pageIndex=${pageIndex - 1}, bbsKiCd=${searchVO.bbsKiCd}, searchCondition=${searchVO.searchCondition}, searchKeyword=${searchVO.searchKeyword}, searchStartDt=${searchVO.searchStartDt}, searchEndDt=${searchVO.searchEndDt})}"
+               class="btn btn-secondary" style="padding:6px 12px;">이전</a>
+
+            <!-- 페이지 번호 (Page numbers) -->
+            <a th:each="i : ${#numbers.sequence(1, totalPages)}"
+               th:href="@{/faq/list.do(pageIndex=${i}, bbsKiCd=${searchVO.bbsKiCd}, searchCondition=${searchVO.searchCondition}, searchKeyword=${searchVO.searchKeyword}, searchStartDt=${searchVO.searchStartDt}, searchEndDt=${searchVO.searchEndDt})}"
+               th:text="${i}"
+               th:style="${i == pageIndex} ? 'padding:6px 12px;background:var(--primary);color:#fff;border-radius:4px;text-decoration:none;' : 'padding:6px 12px;border:1px solid var(--border);border-radius:4px;text-decoration:none;color:var(--text);'">1</a>
+
+            <!-- 다음 (Next) -->
+            <a th:if="${pageIndex < totalPages}"
+               th:href="@{/faq/list.do(pageIndex=${pageIndex + 1}, bbsKiCd=${searchVO.bbsKiCd}, searchCondition=${searchVO.searchCondition}, searchKeyword=${searchVO.searchKeyword}, searchStartDt=${searchVO.searchStartDt}, searchEndDt=${searchVO.searchEndDt})}"
+               class="btn btn-secondary" style="padding:6px 12px;">다음</a>
+        </div>
+
     </div>
 </div>
 

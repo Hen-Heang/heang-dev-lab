@@ -10,9 +10,9 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 /**
  * CommonCodeController — 공통코드 관리 컨트롤러
- *
+ * <p>
  * URL: /common-code
- *
+ * <p>
  * Demonstrates the core pattern:
  *   GET  /common-code          → list page (with optional group filter)
  *   POST /common-code/insert   → register new code
@@ -29,7 +29,7 @@ public class CommonCodeController {
     /**
      * GET /common-code
      * List all codes, optionally filtered by codeGroup (전체 코드 목록)
-     *
+     * <p>
      * ?codeGroup=USER_STATUS → shows only that group
      * no param              → shows all groups
      */
@@ -71,8 +71,7 @@ public class CommonCodeController {
     }
 
     /**
-     * POST /common-code/update
-     * Update code name / sort order / use_yn (코드 수정)
+     * POST /common-code/update     *  code name / sort order / use_yn (코드 수정)
      */
     @PostMapping("/update")
     public String update(
@@ -85,8 +84,7 @@ public class CommonCodeController {
     }
 
     /**
-     * POST /common-code/delete
-     * Delete one code by composite PK (코드 삭제)
+     * POST /common-code/delete     *  one code by composite PK (코드 삭제)
      */
     @PostMapping("/delete")
     public String delete(

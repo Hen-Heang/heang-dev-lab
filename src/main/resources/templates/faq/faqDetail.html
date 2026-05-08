@@ -34,6 +34,7 @@
             </div>
         </div>
 
+        <!-- 수정 폼 (Edit Form) -->
         <form th:action="@{/faq/updateProc.do}" method="post" id="editForm">
             <input type="hidden" name="bbsSn" th:value="${result.bbsSn}"/>
 
@@ -90,23 +91,19 @@
 
                 </div>
             </div>
-
-            <div style="display:flex;gap:10px;justify-content:center;margin-top:24px;">
-
-                <!-- 삭제 -->
-                <form th:action="@{/faq/deleteProc.do}" method="post" style="display:inline;">
-                    <input type="hidden" name="bbsSn" th:value="${result.bbsSn}"/>
-                    <button type="button" class="btn btn-danger" onclick="deleteFaq(this)">삭제</button>
-                </form>
-
-                <!-- 수정 확인 -->
-                <button type="button" class="btn btn-primary" onclick="submitEdit()">수정</button>
-
-                <!-- 목록 -->
-                <a th:href="@{/faq/list.do}" class="btn btn-secondary">목록</a>
-
-            </div>
         </form>
+
+        <!-- 삭제 폼 — editForm 밖에 별도 배치 (OLV 패턴: nested form 금지) -->
+        <form th:action="@{/faq/deleteProc.do}" method="post" id="deleteForm">
+            <input type="hidden" name="bbsSn" th:value="${result.bbsSn}"/>
+        </form>
+
+        <!-- 버튼 영역 -->
+        <div style="display:flex;gap:10px;justify-content:center;margin-top:24px;">
+            <button type="button" class="btn btn-danger"  onclick="deleteFaq()">삭제</button>
+            <button type="button" class="btn btn-primary" onclick="submitEdit()">수정</button>
+            <a th:href="@{/faq/list.do}" class="btn btn-secondary">목록</a>
+        </div>
 
     </div>
 </div>
@@ -127,9 +124,9 @@
         document.getElementById('editForm').submit();
     }
 
-    function deleteFaq(btn) {
+    function deleteFaq() {
         if (!confirm('삭제하시겠습니까?')) return;
-        btn.closest('form').submit();
+        document.getElementById('deleteForm').submit();
     }
 </script>
 

@@ -20,16 +20,22 @@ public class FaqController {
     @RequestMapping("/faq/list.do")
     public String list(
             @ModelAttribute("searchVO") FaqInVO inVO,
+            @org.springframework.web.bind.annotation.RequestParam(defaultValue = "1") int pageIndex,
             ModelMap model) throws Exception {
 
-        if (inVO.get_startrow() == null) inVO.set_startrow(0);
-        if (inVO.get_rowcount() == null) inVO.set_rowcount(10);
+        int rowcount = 10;
+        inVO.set_rowcount(rowcount);
+        inVO.set_startrow((pageIndex - 1) * rowcount);
 
         int totCnt = faqService.selectListTotCnt(inVO);
         List<FaqOutVO> resultList = faqService.selectList(inVO);
 
+        int totalPages = (int) Math.ceil((double) totCnt / rowcount);
+
         model.addAttribute("resultList", resultList);
         model.addAttribute("totCnt", totCnt);
+        model.addAttribute("pageIndex", pageIndex);
+        model.addAttribute("totalPages", totalPages);
         model.addAttribute("bbsKiCdList", faqService.selectBbsKiCdList());
         model.addAttribute("searchVO", inVO);
 

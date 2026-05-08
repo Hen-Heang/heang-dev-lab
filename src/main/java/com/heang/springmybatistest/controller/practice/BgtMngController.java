@@ -20,12 +20,12 @@ import java.util.Map;
 
 /**
  * BgtMngController — HTTP request handler for Budget Management (예산 관리 컨트롤러)
- *
+ * <p>
  * Korean enterprise pattern: @Controller + @ResponseBody (NOT @RestController)
  *   @Controller  → used for MVC pages that return a view (HTML template name)
  *   @ResponseBody → added per method when that method returns JSON data instead of a view
  *   This mixed approach is common in Korean government projects (일부는 화면, 일부는 API)
- *
+ * <p>
  * URL convention: .do suffix (Korean enterprise standard for action URLs)
  *   /budget/bgtMng             → page URL (returns HTML view)
  *   /budget/selectBgtMngList.do → API URL (returns JSON)
@@ -54,7 +54,7 @@ public class BgtMngController {
      * @RequestBody BgtMngInVO inVO
      *   → Spring reads the JSON body from the POST request and binds it to BgtMngInVO
      *   → Requires contentType: 'application/json' on the JS side
-     *
+     * <p>
      * Returns Map<String, Object> with:
      *   { "list": [...], "totalCount": 25 }
      * JS accesses it as: data. List, data.totalCount
@@ -117,19 +117,19 @@ public class BgtMngController {
 
     /**
      * Excel download — streams .xlsx file to the browser (엑셀 다운로드)
-     *
+     * <p>
      * Why NOT @ResponseBody and NOT AJAX?
      *   This method writes directly to HttpServletResponse (the raw HTTP response stream).
      *   ExcelUtils.write() sets the Content-Disposition: attachment header
      *   → browser interprets this as a file download and opens the Save dialog.
      *   AJAX cannot trigger a file Save dialog, so JS uses location.href instead.
-     *
+     * <p>
      * Why BgtMngInVO inVO (no @RequestBody)?
      *   location.href sends a GET request with query string parameters (?sidoCd=41&...)
      *   Spring binds query string params directly to the VO fields (no JSON body needed).
-     *
+     * <p>
      * Excel style follows the project's ExcelUtils pattern:
-     *   Blue header row, alternating grey rows, comma number format, auto-sized columns
+     *   Blue header row, alternating gray rows, comma number format, auto-sized columns
      */
     @RequestMapping("/budget/downloadBgtMngExcel.do")
     public void downloadBgtMngExcel(BgtMngInVO inVO,
